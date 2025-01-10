@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_login"
+    tools:context=".RegistarActivity">
+
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:contentDescription="@string/logo_content"
+        android:src="@drawable/logo2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <View
+        android:id="@+id/ContainerComponents_Registo"
+        style="@style/ContainerComponents_Registar"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <EditText
+        android:id="@+id/etNome"
+        style="@style/TextView_Email"
+        android:hint="@string/txt_username_hint"
+        android:inputType="text"
+        android:drawableRight="@drawable/ic_nome"
+        app:layout_constraintTop_toTopOf="@id/ContainerComponents_Registo"
+        app:layout_constraintStart_toStartOf="@id/ContainerComponents_Registo"
+        app:layout_constraintEnd_toEndOf="@id/ContainerComponents_Registo"
+        />
+
+    <EditText
+        android:id="@+id/etEmailRegistar"
+        style="@style/TextView_Email"
+        android:hint="@string/txt_EmailHint"
+        android:drawableRight="@drawable/ic_email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/etNome"
+        app:layout_constraintStart_toStartOf="@id/etNome"
+        app:layout_constraintEnd_toEndOf="@id/etNome"
+        />
+
+    <EditText
+        android:id="@+id/etPassRegistar"
+        style="@style/TextView_Email"
+        android:drawableRight="@drawable/ic_olho"
+        android:hint="@string/txt_PasswordHint"
+        android:inputType="textPassword"
+        app:layout_constraintTop_toBottomOf="@id/etEmailRegistar"
+        app:layout_constraintStart_toStartOf="@id/etEmailRegistar"
+        app:layout_constraintEnd_toEndOf="@id/etEmailRegistar"
+        />
+
+    <EditText
+        android:id="@+id/etRua"
+        style="@style/TextView_Email"
+        android:drawableRight="@drawable/ic_olho"
+        android:hint="@string/txt_morada"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/etPassRegistar"
+        app:layout_constraintStart_toStartOf="@id/etPassRegistar"
+        app:layout_constraintEnd_toEndOf="@id/etPassRegistar"
+        />
+
+    <EditText
+        android:id="@+id/etCodPostal"
+        style="@style/TextView_Email"
+        android:drawableRight="@drawable/ic_olho"
+        android:hint="@string/txt_codpostal"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/etRua"
+        app:layout_constraintStart_toStartOf="@id/etRua"
+        app:layout_constraintEnd_toEndOf="@id/etRua"
+        />
+
+    <EditText
+        android:id="@+id/etLocalidade"
+        style="@style/TextView_Email"
+        android:drawableRight="@drawable/ic_olho"
+        android:hint="@string/txt_localidade"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/etCodPostal"
+        app:layout_constraintStart_toStartOf="@id/etCodPostal"
+        app:layout_constraintEnd_toEndOf="@id/etCodPostal"
+        />
+    <EditText
+        android:id="@+id/etNif"
+        style="@style/TextView_Email"
+        android:drawableRight="@drawable/ic_olho"
+        android:hint="@string/txt_nif"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/etLocalidade"
+        app:layout_constraintStart_toStartOf="@id/etLocalidade"
+        app:layout_constraintEnd_toEndOf="@id/etLocalidade"
+        />
+    <EditText
+        android:id="@+id/etTelefone"
+        style="@style/TextView_Email"
+        android:drawableRight="@drawable/ic_olho"
+        android:hint="@string/txt_telefone"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/etNif"
+        app:layout_constraintStart_toStartOf="@id/etNif"
+        app:layout_constraintEnd_toEndOf="@id/etNif"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        style="@style/Bt_login"
+        android:text="@string/txt_registar"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/ContainerComponents_Registo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

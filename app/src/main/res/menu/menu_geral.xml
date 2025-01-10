@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/itemCarrinho"
+        android:icon="@drawable/carrinho"
+        android:title="Perfil"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/itemFav"
+        android:icon="@drawable/favoritos"
+        android:title="Perfil"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/itemPerfil"
+        android:icon="@drawable/ic_conta"
+        android:title="Perfil"
+        app:showAsAction="always" />
+
+</menu>

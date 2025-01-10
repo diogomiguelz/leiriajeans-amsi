@@ -1,3 +1,36 @@
 <resources>
-    <string name="app_name">LeiriaJeansAMSI</string>
+    <string name="app_name">LeiriaJeans</string>
+    <string name="logo_content">LeiriaJeans</string>
+    <string name="tvEmail_hint">Email</string>
+    <string name="tvPassword_hint">Password</string>
+    <string name="contentDescription_bt_login">Login</string>
+    <string name="login">Login</string>
+    <string name="tv_registar">Registe-se aqui</string>
+    <string name="txt_registo">Registar</string>
+    <string name="txt_Nome">Nome</string>
+    <string name="txt_registar">Registar</string>
+    <string name="txt_PasswordHint">Password</string>
+    <string name="txt_EmailHint">Email</string>
+    <string name="ViewContent_carros">Carros</string>
+    <string name="ImageContent_carros">Carros</string>
+    <string name="tv_carros">| Carros</string>
+    <string name="vprodutos">Produtos</string>
+    <string name="imgContent_produtos">Produtos</string>
+    <string name="tvProdutos">| Produtos</string>
+    <string name="tvBemVindo">Bem-Vindo,</string>
+    <string name="txtContent_carrinho">Carrinho</string>
+    <string name="txtContent_favoritos">Favoritos</string>
+    <string name="ndOpen">Open</string>
+    <string name="ndClose">Close</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="icon_carrinho">Carrinho</string>
+    <string name="icon_favoritos">Favoritos</string>
+    <string name="icon_area_pessoal">Area Pessoal</string>
+    <string name="txt_username_hint">Username</string>
+    <string name="txt_morada">Morada</string>
+    <string name="txt_codpostal">Código Postal</string>
+    <string name="txt_localidade">Localidade</string>
+    <string name="txt_nif">NIF</string>
+    <string name="txt_telefone">Telefone</string>
 </resources>

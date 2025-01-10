@@ -1,7 +1,6 @@
 package com.example.leiriajeansamsi;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,21 +12,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
 
-public class MenuMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MenuMainActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener {
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
-    private String email="Sem email";
+    private String email;
+
     private FragmentManager fragmentManager;
 
     @Override
@@ -43,31 +41,27 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.ndOpen, R.string.ndClose);
         toggle.syncState();
         drawer.addDrawerListener(toggle);
-        carregarCabecalho();
 
-        navigationView.setNavigationItemSelectedListener(this);
-        fragmentManager=getSupportFragmentManager();
+        carregarCabecalho();
+        fragmentManager = getSupportFragmentManager();
         carregarFragmentoInicial();
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     private boolean carregarFragmentoInicial() {
-        Menu menu=navigationView.getMenu();
+        Menu menu = navigationView.getMenu();
         MenuItem item=menu.getItem(0);
         item.setChecked(true);
         return onNavigationItemSelected(item);
     }
 
     private void carregarCabecalho() {
-        email = getIntent().getStringExtra(LoginActivity.EMAIL);
-        //guardar email no shared
-        SharedPreferences sharedPrefUser=getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
-        if(email!=null){
-            SharedPreferences.Editor editUser=sharedPrefUser.edit();
-            editUser.putString("EMAIL", email);
-            editUser.apply();
-        } else {
+        Intent intent = getIntent();
+        email = intent.getStringExtra(com.example.leiriajeansamsi.LoginActivity.EMAIL);
+
+        if(email != null){
             View hView = navigationView.getHeaderView(0);
-            TextView tvEmail = hView.findViewById(R.id.tvEmail);
+            TextView tvEmail=hView.findViewById(R.id.tvEmail);
             tvEmail.setText(email);
         }
     }
@@ -75,23 +69,46 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment=null;
-        if (item.getItemId() == R.id.navLista) {
-            setTitle(item.getTitle());
-            //fragment=new EstaticoFragment();
-            fragment=new ListaLivroFragment();
-        } else if (item.getItemId() == R.id.navGrelha) {
-            setTitle(item.getTitle());
-        } else
-            enviarEmail();
+        if(item.getItemId()==R.id.navProdutos){
+            fragment = new ProdutosFragment();
+            //setTitle(item.getTitle());
+        }
 
-        if (fragment!=null)
-            fragmentManager.beginTransaction().replace(R.id.contentFragment,fragment).commit();
+        if(item.getItemId()==R.id.navFaturas){
+            fragment = new FaturasFragment();
+            //setTitle(item.getTitle());
+        }
+
+        else if(item.getItemId()== R.id.navSobre){
+            fragment = new SobreFragment();
+            //setTitle(item.getTitle());
+        }
+        else if(item.getItemId()==R.id.navEmail){
+            enviarEmail();
+        }
+
+        if (fragment != null) fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     private void enviarEmail() {
-        //TODO: intent implicito-> ACTION SEND (ver android developers)
+        String subject ="LeiriJeans - Cliente";
+        String message="**Esclarecimentos da Aplicação, aqui podes descrever o que queres esclarecer**";
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("message/rfc822");
+
+        String[] recipients = {"arturjesus324@gmail.com","2220866@my.ipleiria.pt"};
+
+        intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+        intent.putExtra(intent.EXTRA_SUBJECT,subject);
+        intent.putExtra(intent.EXTRA_TEXT,message);
+
+        if(intent.resolveActivity(getPackageManager()) != null)
+            startActivity(intent);
+        else
+            Toast.makeText(this,"Não tem email configurado!", Toast.LENGTH_LONG).show();
     }
 }
