@@ -57,7 +57,7 @@ public class SingletonProdutos {
     public Carrinho carrinho;
     public LinhaCarrinho linhaCarrinho;
     public Utilizador utilizador, utilizadorData;
-    //public Pagamento pagamento;
+
     private static volatile SingletonProdutos instance = null;
     private static int user_id;
     private static int carrinho_id;
@@ -224,15 +224,11 @@ public class SingletonProdutos {
             JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, mUrlAPIProdutos(context), null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    // Add this line to log the response
-                    // converter json em livros
-                    produtos = ProdutoJsonParser.parserJsonProdutos(response);
 
+                    produtos = ProdutoJsonParser.parserJsonProdutos(response);
 
                     // informar a vista
                     if (produtosListener != null) {
-
-
                         produtosListener.onRefreshListaProdutos(produtos);
                     }
                 }
@@ -455,7 +451,7 @@ public class SingletonProdutos {
                 jsonParams.put("username", username);
                 jsonParams.put("password", password);
             } catch (JSONException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, mUrlAPILogin(context), jsonParams, new Response.Listener<JSONObject>() {
                 @Override
@@ -515,7 +511,7 @@ public class SingletonProdutos {
                             }
 
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            throw new RuntimeException(e);
                         }
                     }
                 }
@@ -555,7 +551,7 @@ public class SingletonProdutos {
                 jsonParams.put("password", password);
                 jsonParams.put("email", email);
             } catch (JSONException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
 
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, mUrlAPISignup(context), jsonParams, new Response.Listener<JSONObject>() {
@@ -741,66 +737,6 @@ public class SingletonProdutos {
         }
     }
 
-    public void adicionarPagamentoAPI(final Context context, String metodoPagamento, String metodoEnvio) {
-        if (!ProdutoJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-
-        } else {
-            StringRequest req = new StringRequest(Request.Method.POST, mUrlAPIPostPagamento(context), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    if (pagamentoListener != null) {
-                        Log.d("POST PAGAMENTO", response);
-                        pagamentoListener.onRefreshPagamento();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                    String response = new String(error.networkResponse.data);
-                    Log.e("VolleyError", "Error Response: " + response);
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() {
-
-                    Map<String, String> params = new HashMap<>();
-                    params.put("metodopag", metodoPagamento);
-                    params.put("metodo_envio", metodoEnvio);
-                    params.put("user_id", +getUserId(context) + "");
-
-                    return params;
-                }
-            };
-            volleyQueue.add(req);
-        }
-    }
-
-    public void getPagamentoAPI(final Context context, int pagamentoid) {
-        if (!ProdutoJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-
-        } else {
-            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, mUrlGetPagamento(context, pagamentoid), null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    pagamento = PagamentoJsonParser.parserJsonPagamento(response.toString());
-                    if (pagamentoListener != null) {
-                        Log.d("GET PAGAMENTO", response.toString());
-                        pagamentoListener.onRefreshPagamento();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao obter pagamento", Toast.LENGTH_SHORT).show();
-                }
-            });
-            volleyQueue.add(req);
-        }
-    }
     //endregion
 
     //region URLS API
@@ -842,10 +778,6 @@ public class SingletonProdutos {
     private String mUrlGetCarrinho(Context context) {
 
         return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/carrinhos/" + getUserId(context) + "/dados?access-token=" + getUserToken(context);
-    }
-
-    private String mUrlGetPagamento(Context context, int pagamentoid) {
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/pagamentos/" + pagamentoid + "/dados?access-token=" + getUserToken(context);
     }
 
     //MAKE A FUNCTION TO ALL THE LINKS BELLOW:
