@@ -1,4 +1,4 @@
 package com.example.leiriajeansamsi.Modelo;
 
-public class Singleton {
+public class Utilizador {
 }
