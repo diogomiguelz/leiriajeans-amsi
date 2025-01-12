@@ -740,71 +740,76 @@ public class SingletonProdutos {
     //endregion
 
     //region URLS API
+    // API Produtos
     public String mUrlAPIProdutos(Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-SIS/backend/web/api/produtos/all?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/produtos/produtos?access-token=" + getUserToken(context);
     }
 
+    // API Perfil Dados
     private String urlPostAPIPerfilDados(Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/users/" + getUserId(context) + "/criar?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/users/" + getUserId(context) + "/dados?access-token=" + getUserToken(context);
     }
 
+    // API Delete Linha
     private String urlDeleteLinha(int id, Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/produtoscarrinhos/" + id + "/delete?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/" + id + "/delete?access-token=" + getUserToken(context);
     }
 
+    // API Dados do Utilizador
     private String mUrlAPIUserData(Context context) {
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/users/" + getUserId(context) + "?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/users/" + getUserId(context) + "?access-token=" + getUserToken(context);
     }
 
+    // API Faturas
     private String mUrlGetFaturas(Context context) {
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/faturas/" + getUserId(context) + "/user?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/" + getUserId(context) + "/faturas?access-token=" + getUserToken(context);
     }
 
+    // API Linhas de Fatura
     private String mUrlGetLinhasFaturas(int fatura_id, Context context) {
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/faturas/" + fatura_id + "/dados?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/" + fatura_id + "/faturasdados?access-token=" + getUserToken(context);
     }
 
+    // API Update Linha
     private String mUrlUpdateLinha(int id, Context context) {
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/produtoscarrinhos/" + id + "/update?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/" + id + "/update?access-token=" + getUserToken(context);
     }
 
+    // API Carrinho Dados
     private String mUrlGetLinhasCarrinho(int carrinho_id, Context context) {
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/produtoscarrinhos/" + carrinho_id + "/dados?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/" + carrinho_id + "/dados?access-token=" + getUserToken(context);
     }
 
+    // API Carrinho do Utilizador
     private String mUrlGetCarrinho(Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/carrinhos/" + getUserId(context) + "/dados?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/carrinho/" + getUserId(context) + "/carrinho?access-token=" + getUserToken(context);
     }
 
-    //MAKE A FUNCTION TO ALL THE LINKS BELLOW:
+    // API Post Linha no Carrinho
     private String mUrlAPIPostLinhaCarrinho(Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/produtoscarrinhos/criar?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/criar?access-token=" + getUserToken(context);
     }
 
+    // API Post Fatura
     private String mUrlApiPostFatura(Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/faturas/criar?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/criarfatura?access-token=" + getUserToken(context);
     }
 
+    // API Post Carrinho
     private String mUrlApiPostCarrinho(Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/carrinhos/criar?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/carrinho/criar?access-token=" + getUserToken(context);
     }
 
+    // API Login
     private String mUrlAPILogin(Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/auth/login";
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/auth/login";
     }
 
+    // API Signup
     private String mUrlAPISignup(Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-SIS/backend/web/api/auth/register";
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/auth/signup";
     }
+
 
 //endregion
 }
