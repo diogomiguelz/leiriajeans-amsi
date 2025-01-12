@@ -39,4 +39,7 @@
     <string name="txt_valorproduto">0</string>
     <string name="txt_100">100€</string>
     <string name="btn_addcart">Adicionar ao Carrinho</string>
+    <string name="txt_fatura">Fatura 1</string>
+    <string name="txt_data_fatura">12/01/2025</string>
+    <string name="txt_fatura_valor">Valor da Fatura</string>
 </resources>

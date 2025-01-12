@@ -210,7 +210,7 @@ public class SingletonProdutos {
 
     public LinhaCarrinho getLinhaCarrinho(int id) {
         for (LinhaCarrinho linhaCarrinho : linhaCarrinhos) {
-            if (linhaCarrinho.getIdLinha() == id)
+            if (linhaCarrinho.getId() == id)
                 return linhaCarrinho;
         }
         return null;
@@ -355,7 +355,7 @@ public class SingletonProdutos {
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest req = new StringRequest(Request.Method.PUT, mUrlUpdateLinha(linhaCarrinho.getIdLinha(), context), new Response.Listener<String>() {
+            StringRequest req = new StringRequest(Request.Method.PUT, mUrlUpdateLinha(linhaCarrinho.getId(), context), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     if (linhaCarrinhoListener != null) {
@@ -422,7 +422,7 @@ public class SingletonProdutos {
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest req = new StringRequest(Request.Method.DELETE, urlDeleteLinha(linhaCarrinho.getIdLinha(), context), new Response.Listener<String>() {
+            StringRequest req = new StringRequest(Request.Method.DELETE, urlDeleteLinha(linhaCarrinho.getId(), context), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     if (linhaCarrinhoListener != null) {

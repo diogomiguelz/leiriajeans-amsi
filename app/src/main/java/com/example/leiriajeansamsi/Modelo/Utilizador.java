@@ -3,16 +3,13 @@ package com.example.leiriajeansamsi.Modelo;
 public class Utilizador {
     private int id;
     private String username;
-    private String primeironome;
-    private String apelido;
+    private String nome;
     private String email;
-    private String codigopostal;
+    private String codpostal;
     private String rua;
     private String localidade;
-    private String dtanasc;
     private String telefone;
     private String nif;
-    private String genero;
     private String auth_key;
     private String password_hash;
     private String password_reset_token;
@@ -21,22 +18,19 @@ public class Utilizador {
     private String updated_at;
     private String verification_token;
 
-    public Utilizador(int id, String username, String primeironome, String apelido, String email,
-                      String codigopostal, String rua, String localidade, String dtanasc,String telefone, String nif,
-                      String genero, String auth_key, String password_hash, String password_reset_token,
+    public Utilizador(int id, String username, String nome, String email,
+                      String codpostal, String rua, String localidade, String telefone, String nif,
+                      String auth_key, String password_hash, String password_reset_token,
                       String status, String created_at, String updated_at, String verification_token) {
         this.id = id;
         this.username = username;
-        this.primeironome = primeironome;
-        this.apelido = apelido;
+        this.nome = nome;
         this.email = email;
-        this.codigopostal = codigopostal;
+        this.codpostal = codpostal;
         this.rua = rua;
         this.localidade = localidade;
-        this.dtanasc = dtanasc;
         this.telefone = telefone;
         this.nif = nif;
-        this.genero = genero;
         this.auth_key = auth_key;
         this.password_hash = password_hash;
         this.password_reset_token = password_reset_token;
@@ -54,20 +48,17 @@ public class Utilizador {
         this.username = username;
     }
 
-    public void setPrimeironome(String primeironome) {
-        this.primeironome = primeironome;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public void setApelido(String apelido) {
-        this.apelido = apelido;
-    }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setCodigopostal(String codigopostal) {
-        this.codigopostal = codigopostal;
+    public void setCodpostal(String codpostal) {
+        this.codpostal = codpostal;
     }
 
     public void setRua(String rua) {
@@ -78,18 +69,12 @@ public class Utilizador {
         this.localidade = localidade;
     }
 
-    public void setDtanasc(String dtanasc) { this.dtanasc = dtanasc; }
-
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
     public void setNif(String nif) {
         this.nif = nif;
-    }
-
-    public void setGenero(String nif) {
-        this.genero = genero;
     }
 
     public void setAuth_key(String auth_key) { this.auth_key = auth_key; }
@@ -114,18 +99,17 @@ public class Utilizador {
         return username;
     }
 
-    public String getPrimeironome() {
-        return primeironome;
+    public String getNome() {
+        return nome;
     }
 
-    public String getApelido() { return apelido; }
 
     public String getEmail() {
         return email;
     }
 
-    public String getCodigopostal() {
-        return codigopostal;
+    public String getCodpostal() {
+        return codpostal;
     }
 
     public String getRua() {
@@ -136,18 +120,12 @@ public class Utilizador {
         return localidade;
     }
 
-    public String getDtanasc() { return dtanasc; }
-
     public String getTelefone() {
         return telefone;
     }
 
     public String getNif() {
         return nif;
-    }
-
-    public String getGenero() {
-        return genero;
     }
 
     public String getAuth_key() { return auth_key; }

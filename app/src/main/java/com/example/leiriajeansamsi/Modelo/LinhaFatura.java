@@ -3,20 +3,20 @@ package com.example.leiriajeansamsi.Modelo;
 public class LinhaFatura {
 
      int id;
-     int fatura_id;
-     int iva_id;
-     int produto_id;
+     int fatura;
+     int iva;
+     int produto;
      float precoVenda;
      float valorIva;
      float subTotal;
      int quantidade;
 
 
-    public LinhaFatura(int id, int fatura_id, int iva_id, int produto_id, float precoVenda, float valorIva, float subTotal, int quantidade) {
+    public LinhaFatura(int id, int fatura, int iva, int produto, float precoVenda, float valorIva, float subTotal, int quantidade) {
         this.id = id;
-        this.fatura_id = fatura_id;
-        this.iva_id = iva_id;
-        this.produto_id = produto_id;
+        this.fatura = fatura;
+        this.iva = iva;
+        this.produto = produto;
         this.precoVenda = precoVenda;
         this.valorIva = valorIva;
         this.subTotal = subTotal;
@@ -31,28 +31,28 @@ public class LinhaFatura {
         this.id = id;
     }
 
-    public int getFatura_id() {
-        return fatura_id;
+    public int getFatura() {
+        return fatura;
     }
 
-    public void setFatura_id(int fatura_id) {
-        this.fatura_id = fatura_id;
+    public void setFatura(int fatura) {
+        this.fatura = fatura;
     }
 
-    public int getIva_id() {
-        return iva_id;
+    public int getIva() {
+        return iva;
     }
 
-    public void setIva_id(int iva_id) {
-        this.iva_id = iva_id;
+    public void setIva(int iva) {
+        this.iva = iva;
     }
 
-    public int getProduto_id() {
-        return produto_id;
+    public int getProduto() {
+        return produto;
     }
 
-    public void setProduto_id(int produto_id) {
-        this.produto_id = produto_id;
+    public void setProduto(int produto) {
+        this.produto = produto;
     }
 
     public float getPrecoVenda() {
@@ -92,9 +92,9 @@ public class LinhaFatura {
     public String toString() {
         return "LinhaFatura{" +
                 "id=" + id +
-                ", fatura_id=" + fatura_id +
-                ", iva_id=" + iva_id +
-                ", produto_id=" + produto_id +
+                ", fatura=" + fatura +
+                ", iva=" + iva +
+                ", produto=" + produto +
                 ", precoVenda=" + precoVenda +
                 ", valorIva=" + valorIva +
                 ", subTotal=" + subTotal +

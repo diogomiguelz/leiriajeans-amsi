@@ -1,12 +1,12 @@
 package com.example.leiriajeansamsi.Modelo;
 
 public class LinhaCarrinho {
-    int idLinha, quantidade, carrinhoID, produtoID;
+    int id, quantidade, carrinhoID, produtoID;
     float valorIva, precoVenda, subtotal;
 
-    public LinhaCarrinho(int idLinha, int quantidade, int carrinhoID, int produtoID, float valorIva, float precoVenda, float subtotal) {
+    public LinhaCarrinho(int id, int quantidade, int carrinhoID, int produtoID, float valorIva, float precoVenda, float subtotal) {
 
-        this.idLinha = idLinha;
+        this.id = id;
         this.quantidade = quantidade;
         this.carrinhoID = carrinhoID;
         this.produtoID = produtoID;
@@ -15,12 +15,12 @@ public class LinhaCarrinho {
         this.subtotal = subtotal;
     }
 
-    public int getIdLinha() {
-        return idLinha;
+    public int getId() {
+        return id;
     }
 
-    public void setIdLinha(int idLinha) {
-        this.idLinha = idLinha;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getQuantidade() {
@@ -83,7 +83,7 @@ public class LinhaCarrinho {
     @Override
     public String toString() {
         return "LinhaCarrinho{" +
-                "idLinha=" + idLinha +
+                "id=" + id +
                 ", quantidade=" + quantidade +
                 ", carrinhoID=" + carrinhoID +
                 ", produtoID=" + produtoID +

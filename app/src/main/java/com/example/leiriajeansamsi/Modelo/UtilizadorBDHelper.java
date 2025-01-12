@@ -16,8 +16,8 @@ public class UtilizadorBDHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 18;
     private SQLiteDatabase db;
 
-    public static final String USERNAME = "username", EMAIL = "email", ID = "id", PRIMEIRO_NOME = "primeironome", APELIDO = "apelido",
-            GENERO = "genero", CODIGO_POSTAL = "codigopostal", RUA = "rua", LOCALIDADE = "localidade", DTANASC = "dtanasc",
+    public static final String USERNAME = "username", EMAIL = "email", ID = "id", NOME = "nome",
+            COD_POSTAL = "codpostal", RUA = "rua", LOCALIDADE = "localidade",
             TELEFONE = "telefone", NIF = "nif", AUTH_KEY = "auth_key", PASSWORD_HASH = "password_hash",
             PASSWORD_RESET_TOKEN = "password_reset_token", STATUS = "status", CREATED_AT = "created_at",
             UPDATED_AT = "updated_at", VERIFICATION_TOKEN = "verification_token";
@@ -34,16 +34,13 @@ public class UtilizadorBDHelper extends SQLiteOpenHelper {
         String sqlTableUtilizadores = "CREATE TABLE " + TABLE_NAME + "(" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 USERNAME + " TEXT NOT NULL," +
-                PRIMEIRO_NOME + " TEXT," +
-                APELIDO + " TEXT," +
+                NOME + " TEXT," +
                 EMAIL + " TEXT NOT NULL," +
-                CODIGO_POSTAL + " TEXT," +
+                COD_POSTAL + " TEXT," +
                 RUA + " TEXT," +
                 LOCALIDADE + " TEXT," +
-                DTANASC + " TEXT," +
                 TELEFONE + " TEXT," +
                 NIF + " TEXT, " +
-                GENERO + " TEXT," +
                 AUTH_KEY + " TEXT NOT NULL," +
                 PASSWORD_HASH + " TEXT NOT NULL," +
                 PASSWORD_RESET_TOKEN + " TEXT," +
@@ -60,16 +57,13 @@ public class UtilizadorBDHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(USERNAME, utilizador.getUsername());
-        values.put(PRIMEIRO_NOME, utilizador.getPrimeironome());
-        values.put(APELIDO, utilizador.getApelido());
+        values.put(NOME, utilizador.getNome());
         values.put(EMAIL, utilizador.getEmail());
-        values.put(CODIGO_POSTAL, utilizador.getCodigopostal());
+        values.put(COD_POSTAL, utilizador.getCodpostal());
         values.put(RUA, utilizador.getRua());
         values.put(LOCALIDADE, utilizador.getLocalidade());
-        values.put(DTANASC, utilizador.getDtanasc());
         values.put(TELEFONE, utilizador.getTelefone());
         values.put(NIF, utilizador.getNif());
-        values.put(GENERO, utilizador.getGenero());
         values.put(AUTH_KEY, utilizador.getAuth_key());
         values.put(PASSWORD_HASH, utilizador.getPassword_hash());
         values.put(PASSWORD_RESET_TOKEN, utilizador.getPassword_reset_token());
@@ -86,16 +80,13 @@ public class UtilizadorBDHelper extends SQLiteOpenHelper {
     public boolean editarUtilizadorBD(Utilizador utilizador){
         ContentValues values = new ContentValues();
         values.put(USERNAME, utilizador.getUsername());
-        values.put(PRIMEIRO_NOME, utilizador.getPrimeironome());
-        values.put(APELIDO, utilizador.getApelido());
+        values.put(NOME, utilizador.getNome());
         values.put(EMAIL, utilizador.getEmail());
-        values.put(CODIGO_POSTAL, utilizador.getCodigopostal());
+        values.put(COD_POSTAL, utilizador.getCodpostal());
         values.put(RUA, utilizador.getRua());
         values.put(LOCALIDADE, utilizador.getLocalidade());
-        values.put(DTANASC, utilizador.getDtanasc());
         values.put(TELEFONE, utilizador.getTelefone());
         values.put(NIF, utilizador.getNif());
-        values.put(GENERO, utilizador.getGenero());
         values.put(AUTH_KEY, utilizador.getAuth_key());
         values.put(PASSWORD_HASH, utilizador.getPassword_hash());
         values.put(PASSWORD_RESET_TOKEN, utilizador.getPassword_reset_token());

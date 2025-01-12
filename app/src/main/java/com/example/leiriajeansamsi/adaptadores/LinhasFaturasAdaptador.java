@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.leiriajeansamsi.Modelo.LinhaFatura;
+
 import java.util.List;
 
 import pt.ipleiria.estg.dei.books.Modelo.LinhasFaturas;
@@ -38,7 +40,7 @@ public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        LinhasFaturas linha = linhasFaturas.get(position);
+        LinhaFatura linha = linhasFaturas.get(position);
 
         holder.textViewNome.setText(linha.getNomeProduto());
         holder.textViewPreco.setText(linha.getValor()+linha.getValor_iva() + " €");
