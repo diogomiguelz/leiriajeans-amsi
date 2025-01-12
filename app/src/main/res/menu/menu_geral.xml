@@ -6,18 +6,18 @@
     <item
         android:id="@+id/itemCarrinho"
         android:icon="@drawable/carrinho"
-        android:title="Perfil"
-        app:showAsAction="always" />
+        android:title="@string/perfil"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/itemFav"
         android:icon="@drawable/favoritos"
-        android:title="Perfil"
+        android:title="@string/perfil"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/itemPerfil"
         android:icon="@drawable/ic_conta"
-        android:title="Perfil"
+        android:title="@string/perfil"
         app:showAsAction="always" />
 
 </menu>

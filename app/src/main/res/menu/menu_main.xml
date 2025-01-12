@@ -6,25 +6,25 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/navProdutos"
-            android:title="Produtos"
+            android:title="@string/produtos"
             android:icon="@drawable/ic_produtos"
             />
         <item
             android:id="@+id/navFaturas"
-            android:title="Faturas"
+            android:title="@string/faturas"
             android:icon="@drawable/ic_faturas"
             />
         <item
             android:id="@+id/navSobre"
-            android:title="Sobre Nós"
+            android:title="@string/sobre_nos"
             android:icon="@drawable/ic_sobre"/>
     </group>
     <item
-        android:title="Comunicar" >
+        android:title="@string/comunicar" >
         <menu>
             <item
                 android:id="@+id/navEmail"
-                android:title="Email"
+                android:title="@string/email"
                 android:icon="@drawable/ic_menu_email"/>
         </menu>
     </item>
