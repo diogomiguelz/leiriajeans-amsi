@@ -2,26 +2,30 @@ package com.example.leiriajeansamsi.adaptadores;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.widget.ProgressBar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.example.leiriajeansamsi.DetalhesProdutoActivity;
 import com.example.leiriajeansamsi.Modelo.Produto;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
-import com.example.leiriajeansamsi.adaptadores.ListaProdutosAdaptador;
+import com.example.leiriajeansamsi.R;
 import com.example.leiriajeansamsi.listeners.ProdutoListener;
-import com.example.leiriajeansamsi.listeners.ProdutosListener;
 
 import java.util.ArrayList;
 
 public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAdaptador.ViewHolder> implements ProdutoListener {
     private ProdutoListener produtoListener;
-
     public Context context;
     private ArrayList<Produto> produtos;
 
@@ -34,12 +38,9 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-            View inflate = layoutInflater.inflate(R.layout.item_lista_produtos, null);
-            ViewHolder viewHolder = new ViewHolder(inflate, produtoListener);
-
-            return viewHolder;
-
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View inflate = layoutInflater.inflate(R.layout.item_lista_produtos, parent, false); // Corrigido para usar 'parent' ao invés de 'null'
+        return new ViewHolder(inflate, produtoListener);
     }
 
     @Override
@@ -51,17 +52,12 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
 
         Glide.with(holder.itemView.getContext()).load(imageUrl).transform(new CenterCrop(), new RoundedCorners(30)).into(holder.imgProduto);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Use holder.getAdapterPosition() instead of position
-                if (produtoListener != null) {
-                    produtoListener.onItemClick(holder.getAdapterPosition(), product);
-                }
+        holder.itemView.setOnClickListener(view -> {
+            if (produtoListener != null) {
+                produtoListener.onItemClick(holder.getAdapterPosition(), product);
             }
         });
     }
-
 
     @Override
     public int getItemCount() {
@@ -70,17 +66,14 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
 
     public void setProdutos(ArrayList<Produto> listaProdutos) {
         this.produtos = listaProdutos;
-
     }
 
     @Override
     public void onItemClick(int position, Produto product) {
         // Cria uma intent para abrir a DetalhesProdutoActivity
         Intent intent = new Intent(context, DetalhesProdutoActivity.class);
-
         // Passa o produto selecionado para a próxima activity
         intent.putExtra(DetalhesProdutoActivity.PRODUTO, product);
-
         // Inicia a activity
         startActivity(context, intent, null);
     }
@@ -95,8 +88,6 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
             tvNomeProduto = itemView.findViewById(R.id.nomeTxt);
             tvPrecoProduto = itemView.findViewById(R.id.precoTxt);
             imgProduto = itemView.findViewById(R.id.pic);
-
         }
     }
 }
-
