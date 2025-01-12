@@ -53,4 +53,10 @@
     <string name="txt_menos">txt_menos</string>
     <string name="txt_mais">txt_mais</string>
     <string name="delete_button_text">delete_button_text</string>
+    <string name="perfil">Perfil</string>
+    <string name="produtos">Produtos</string>
+    <string name="faturas">Faturas</string>
+    <string name="sobre_nos">Sobre Nós</string>
+    <string name="comunicar">Comunicar</string>
+    <string name="email">Email</string>
 </resources>

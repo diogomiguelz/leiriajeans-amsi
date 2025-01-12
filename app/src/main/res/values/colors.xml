@@ -8,7 +8,7 @@
     <color name="background_meio_bt">#E8D780</color>
     <color name="blue">#306DD1</color>
     <color name="vermelho_claro">#FB6264</color>
-    <color name="blue_grey" />
-    <color name="red">red</color>
+    <color name="blue_grey">#607D8B</color>
+    <color name="red">#FF0000</color>
 
 </resources>
