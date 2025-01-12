@@ -889,5 +889,3 @@ public class SingletonProdutos {
 
 
 }
-public class SingletonProdutos {
-}

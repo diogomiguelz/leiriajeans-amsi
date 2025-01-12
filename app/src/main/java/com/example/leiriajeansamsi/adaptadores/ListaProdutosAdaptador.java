@@ -21,12 +21,9 @@ import com.example.leiriajeansamsi.listeners.ProdutoListener;
 
 import java.util.ArrayList;
 
-import pt.ipleiria.estg.dei.books.DetalhesProdutoActivity;
-import pt.ipleiria.estg.dei.books.Modelo.FavoritosBDHelper;
-import pt.ipleiria.estg.dei.books.Modelo.Produto;
-import pt.ipleiria.estg.dei.books.Modelo.SingletonProdutos;
-import pt.ipleiria.estg.dei.books.R;
-import pt.ipleiria.estg.dei.books.listeners.ProdutoListener;
+import com.example.leiriajeansamsi.DetalhesProdutoActivity;
+import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.R;
 
 public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAdaptador.ViewHolder> implements ProdutoListener {
     private ProdutoListener produtoListener;
@@ -56,22 +53,21 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
         Produto product = produtos.get(position);
         holder.tvNomeProduto.setText(product.getNome());
         holder.tvPrecoProduto.setText(product.getPreco() + " €");
-        String imageUrl = "http://"+ SingletonProdutos.getInstance(context).getApiIP(context) +"/AMAI-plataformas/frontend/web/public/imagens/produtos/" + product.getImagem();
+        String imageUrl = "http://"+ SingletonProdutos.getInstance(context).getApiIP(context) +"/leiriajeans/frontend/web/public/imagens/produtos/" + product.getImagem();
 
         Glide.with(holder.itemView.getContext()).load(imageUrl).transform(new CenterCrop(), new RoundedCorners(30)).into(holder.imgProduto);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Notify the listener about the item click and pass the position
+                // Use holder.getAdapterPosition() instead of position
                 if (produtoListener != null) {
-                    produtoListener.onItemClick(position, product);
+                    produtoListener.onItemClick(holder.getAdapterPosition(), product);
                 }
             }
         });
-
-
     }
+
 
     @Override
     public int getItemCount() {
@@ -85,20 +81,14 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
 
     @Override
     public void onItemClick(int position, Produto product) {
+        // Cria uma intent para abrir a DetalhesProdutoActivity
         Intent intent = new Intent(context, DetalhesProdutoActivity.class);
+
+        // Passa o produto selecionado para a próxima activity
         intent.putExtra(DetalhesProdutoActivity.PRODUTO, product);
 
-        // Check if the product is in the Favoritos table for the current user
-        int userID = SingletonProdutos.getInstance(context).getUserId(context);
-        FavoritosBDHelper dbHelper = new FavoritosBDHelper(context);
-
-        boolean isProdutoInFavorites = dbHelper.isProdutoInFavorites(userID, product.getId());
-        dbHelper.close();
-
-        // Pass the information to the details activity
-        intent.putExtra(DetalhesProdutoActivity.IS_FAVORITE, isProdutoInFavorites);
-
-        startActivity(context,intent,null);
+        // Inicia a activity
+        startActivity(context, intent, null);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

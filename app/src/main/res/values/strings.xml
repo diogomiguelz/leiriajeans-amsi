@@ -36,6 +36,8 @@
     <string name="txt_detalhes">Detalhes</string>
     <string name="txt_descricao">"Estilo e conforto em uma só peça: esta T-shirt combina em um design moderno com tecido macio e durável, perfeita para qualquer ocasião."</string>
     <string name="txt_title">Title</string>
+    <string name="txt_produtonome_title">Title</string>
+    <string name="txt_valorproduto">0</string>
     <string name="txt_100">100€</string>
     <string name="btn_addcart">Adicionar ao Carrinho</string>
 </resources>
