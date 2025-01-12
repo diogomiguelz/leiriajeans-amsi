@@ -21,12 +21,11 @@ import com.example.leiriajeansamsi.listeners.ProdutoListener;
 
 import java.util.ArrayList;
 
-import pt.ipleiria.estg.dei.books.DetalhesProdutoActivity;
-import pt.ipleiria.estg.dei.books.Modelo.FavoritosBDHelper;
-import pt.ipleiria.estg.dei.books.Modelo.Produto;
-import pt.ipleiria.estg.dei.books.Modelo.SingletonProdutos;
-import pt.ipleiria.estg.dei.books.R;
-import pt.ipleiria.estg.dei.books.listeners.ProdutoListener;
+import com.example.leiriajeansamsi.DetalhesProdutoActivity;
+import com.example.leiriajeansamsi.Modelo.Produto;
+import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.R;
+import com.example.leiriajeansamsi.listeners.ProdutoListener;
 
 public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAdaptador.ViewHolder> implements ProdutoListener {
     private ProdutoListener produtoListener;
