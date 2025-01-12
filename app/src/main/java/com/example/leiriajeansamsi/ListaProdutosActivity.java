@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.leiriajeansamsi.Modelo.Produto;
+import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.adaptadores.ListaProdutosAdaptador;
 import com.example.leiriajeansamsi.listeners.ProdutoListener;
 import com.example.leiriajeansamsi.listeners.ProdutosListener;
@@ -61,6 +62,15 @@ public class ListaProdutosActivity extends AppCompatActivity implements Produtos
         progressBar = findViewById(R.id.progressBarProdutos);
         progressBar.setVisibility(ProgressBar.GONE);
 
+    }
+
+    @Override
+    public void onItemClick(int position, Produto product) {
+
+        Intent intent = new Intent(this, DetalhesProdutoActivity.class);
+        intent.putExtra(DetalhesProdutoActivity.PRODUTO, product);
+
+        startActivity(intent);
     }
 
 
