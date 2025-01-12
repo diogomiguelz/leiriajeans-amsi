@@ -62,4 +62,9 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), RegistarActivity.class);
         startActivity(intent);
     }
+
+    public void onClickImageButton(View view) {
+        Intent intent = new Intent(getApplicationContext(), DefinicoesActivity.class);
+        startActivity(intent);
+    }
 }
