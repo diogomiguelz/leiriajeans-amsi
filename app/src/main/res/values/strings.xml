@@ -59,4 +59,8 @@
     <string name="sobre_nos">Sobre Nós</string>
     <string name="comunicar">Comunicar</string>
     <string name="email">Email</string>
+    <string name="txt_api_url">URL API</string>
+    <string name="hint_api_url">URL API</string>
+    <string name="txt_ip_api">172.22.21.212</string>
+    <string name="txt_confirmar">Confirmar</string>
 </resources>
