@@ -42,24 +42,29 @@ public class ListaFaturasAdaptador extends RecyclerView.Adapter<ListaFaturasAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        // Obtém a fatura na posição atual
         Fatura fatura = faturas.get(position);
-        holder.tvNomeFatura.setText("Fatura: "+fatura.getId());
+
+        // Define os dados no ViewHolder
+        holder.tvNomeFatura.setText("Fatura: " + fatura.getId());
         holder.tvDataFatura.setText(fatura.getData());
         holder.tvValorTotalFatura.setText(fatura.getValorTotal() + " €");
 
+        // Configura o clique no item
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(faturaListener != null){
-                    faturaListener.onItemClick(position, fatura);
-
-
+                if (faturaListener != null) {
+                    // Usa holder.getAdapterPosition() para garantir a posição atual
+                    int currentPosition = holder.getAdapterPosition();
+                    if (currentPosition != RecyclerView.NO_POSITION) {
+                        faturaListener.onItemClick(currentPosition, fatura);
+                    }
                 }
-
             }
         });
-
     }
+
 
 
 

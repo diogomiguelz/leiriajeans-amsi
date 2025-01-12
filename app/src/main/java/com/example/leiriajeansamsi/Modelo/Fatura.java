@@ -7,12 +7,12 @@ public class Fatura {
     int metodopagamento;
     int metodoexpedicao;
     int userdata_id;
-    Date data;
+    String data;
     float  valorTotal;
     String statuspedido;
 
 
-    public Fatura(int id, int metodopagamento, int metodoexpedicao, int userdata_id, Date data, float valorTotal, String statuspedido) {
+    public Fatura(int id, int metodopagamento, int metodoexpedicao, int userdata_id, String data, float valorTotal, String statuspedido) {
         this.id = id;
         this.metodopagamento = metodopagamento;
         this.metodoexpedicao = metodoexpedicao;
@@ -54,11 +54,11 @@ public class Fatura {
         this.userdata_id = userdata_id;
     }
 
-    public Date getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(String data) {
         this.data = data;
     }
 

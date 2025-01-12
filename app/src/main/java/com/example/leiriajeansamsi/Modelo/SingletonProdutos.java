@@ -78,7 +78,6 @@ public class SingletonProdutos {
     private FaturasListener faturasListener;
     private FaturaListener faturaListener;
     private LinhasFaturasListener linhasFaturasListener;
-    private PagamentoListener pagamentoListener;
     private Utilizador loggedInUser;
 
 
@@ -174,10 +173,6 @@ public class SingletonProdutos {
 
     public void setProdutoListener(ProdutoListener produtoListener) {
         this.produtoListener = produtoListener;
-    }
-
-    public void setPagamentoListener(PagamentoListener pagamentoListener) {
-        this.pagamentoListener = pagamentoListener;
     }
 
     public void setFaturasListener(FaturasListener faturaListener) {

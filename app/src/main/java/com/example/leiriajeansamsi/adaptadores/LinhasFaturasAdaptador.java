@@ -12,27 +12,27 @@ import com.example.leiriajeansamsi.Modelo.LinhaFatura;
 
 import java.util.List;
 
-import pt.ipleiria.estg.dei.books.Modelo.LinhasFaturas;
-import pt.ipleiria.estg.dei.books.R;
+import com.example.leiriajeansamsi.Modelo.LinhaFatura;
+import com.example.leiriajeansamsi.R;
 
 public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAdaptador.ViewHolder> {
 
-    private List<LinhasFaturas> linhasFaturas;
+    private List<LinhaFatura> linhaFatura;
     private Context context;
 
-    public LinhasFaturasAdaptador(Context context, List<LinhasFaturas> linhasFaturas) {
+    public LinhasFaturasAdaptador(Context context, List<LinhaFatura> linhaFatura) {
         this.context = context;
-        this.linhasFaturas = linhasFaturas;
+        this.linhaFatura = linhaFatura;
     }
 
-    public void setLinhasFaturas(List<LinhasFaturas> linhasFaturas) {
-        this.linhasFaturas = linhasFaturas;
+    public void setLinhaFatura(List<LinhaFatura> linhaFatura) {
+        this.linhaFatura = linhaFatura;
         notifyDataSetChanged();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_linhas_faturas, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_linha_fatura, parent, false);
         return new ViewHolder(view);
     }
 
@@ -40,18 +40,18 @@ public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        LinhaFatura linha = linhasFaturas.get(position);
+        LinhaFatura linha = linhaFatura.get(position);
 
-        holder.textViewNome.setText(linha.getNomeProduto());
-        holder.textViewPreco.setText(linha.getValor()+linha.getValor_iva() + " €");
+        holder.textViewNome.setText(linha.getProduto());
+        holder.textViewPreco.setText(linha.getPrecoVenda()+linha.getValorIva() + " €");
         holder.textViewPercentagemIva.setText(linha.getIva() + " %");
         holder.textViewQuantidade.setText(String.valueOf(linha.getQuantidade()));
-        holder.textViewTotal.setText(linha.getTotal() + " €");
+        holder.textViewTotal.setText(linha.getSubTotal() + " €");
     }
 
     @Override
     public int getItemCount() {
-        return linhasFaturas.size();
+        return linhaFatura.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

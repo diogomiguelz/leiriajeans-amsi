@@ -42,4 +42,15 @@
     <string name="txt_fatura">Fatura 1</string>
     <string name="txt_data_fatura">12/01/2025</string>
     <string name="txt_fatura_valor">Valor da Fatura</string>
+    <string name="txt_linhafatura_price">txt_linhafatura_price</string>
+    <string name="txt_linhafatura_name">txt_linhafatura_name</string>
+    <string name="txt_linhafatura_iva">txt_linhafatura_iva</string>
+    <string name="txt_linhafatura_quantity">txt_linhafatura_quantity</string>
+    <string name="txt_linhafatura_total">txt_linhafatura_total</string>
+    <string name="txt_carrinho_title">txt_carrinho_title</string>
+    <string name="txt_carrinho_produto_valor">txt_carrinho_produto_valor</string>
+    <string name="txt_quantidade_produto">txt_carrinho_produto_valor</string>
+    <string name="txt_menos">txt_menos</string>
+    <string name="txt_mais">txt_mais</string>
+    <string name="delete_button_text">delete_button_text</string>
 </resources>
