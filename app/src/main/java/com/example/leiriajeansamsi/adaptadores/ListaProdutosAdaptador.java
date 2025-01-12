@@ -2,28 +2,22 @@ package com.example.leiriajeansamsi.adaptadores;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.os.Bundle;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.leiriajeansamsi.Modelo.Produto;
+import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.adaptadores.ListaProdutosAdaptador;
 import com.example.leiriajeansamsi.listeners.ProdutoListener;
+import com.example.leiriajeansamsi.listeners.ProdutosListener;
 
 import java.util.ArrayList;
-
-import com.example.leiriajeansamsi.DetalhesProdutoActivity;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
-import com.example.leiriajeansamsi.R;
 
 public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAdaptador.ViewHolder> implements ProdutoListener {
     private ProdutoListener produtoListener;

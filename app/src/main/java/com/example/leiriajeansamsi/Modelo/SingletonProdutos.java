@@ -34,7 +34,6 @@ import com.example.leiriajeansamsi.listeners.LinhasCarrinhosListener;
 
 import com.example.leiriajeansamsi.listeners.LinhasFaturasListener;
 import com.example.leiriajeansamsi.listeners.LoginListener;
-import com.example.leiriajeansamsi.listeners.PagamentoListener;
 import com.example.leiriajeansamsi.listeners.ProdutoListener;
 import com.example.leiriajeansamsi.listeners.ProdutosListener;
 import com.example.leiriajeansamsi.listeners.ProfileUpdateListener;
@@ -54,12 +53,12 @@ public class SingletonProdutos {
 
 
     public ArrayList<Fatura> faturas = new ArrayList<>();
-    public ArrayList<LinhasFaturas> linhasFaturas = new ArrayList<>();
+    public ArrayList<LinhaFatura> linhasFaturas = new ArrayList<>();
     public ArrayList<LinhaCarrinho> linhaCarrinhos = new ArrayList<>();
     public Carrinho carrinho;
     public LinhaCarrinho linhaCarrinho;
     public Utilizador utilizador, utilizadorData;
-    public Pagamento pagamento;
+    //public Pagamento pagamento;
     private static volatile SingletonProdutos instance = null;
     private static int user_id;
     private static int carrinho_id;
@@ -141,7 +140,7 @@ public class SingletonProdutos {
         return linhaCarrinhos;
     }
 
-    public ArrayList<LinhasFaturas> getLinhasFaturas() {
+    public ArrayList<LinhaFatura> getLinhasFaturas() {
         return linhasFaturas;
     }
 
@@ -886,6 +885,4 @@ public class SingletonProdutos {
         return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/pagamentos/criar?access-token=" + getUserToken(context);
     }
 //endregion
-
-
 }
