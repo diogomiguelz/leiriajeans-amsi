@@ -9,11 +9,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.leiriajeansamsi.Modelo.Fatura;
+
 import java.util.ArrayList;
 
-import pt.ipleiria.estg.dei.books.Modelo.Fatura;
-import pt.ipleiria.estg.dei.books.R;
-import pt.ipleiria.estg.dei.books.listeners.FaturaListener;
+import com.example.leiriajeansamsi.Modelo.Fatura;
+import com.example.leiriajeansamsi.R;
+import com.example.leiriajeansamsi.listeners.FaturaListener;
 
 public class ListaFaturasAdaptador extends RecyclerView.Adapter<ListaFaturasAdaptador.ViewHolder>{
 

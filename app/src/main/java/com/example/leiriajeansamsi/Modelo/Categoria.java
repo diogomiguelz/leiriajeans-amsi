@@ -1,29 +1,27 @@
 package com.example.leiriajeansamsi.Modelo;
 
-
-
 public class Categoria {
 
-    int id;
-    int userdata_id;
-    int produto_id;
-    double ivatotal;
-    double total;
+    private int id;
+    private int userdata;
+    private int produto;
+    private double ivatotal;
+    private double total;
 
-    public Categoria(int id, int userdata_id, double ivatotal, int produto_id, double total) {
+    public Categoria(int id, int userdata, double ivatotal, int produto, double total) {
         this.id = id;
-        this.userdata_id = userdata_id;
+        this.userdata = userdata;
         this.ivatotal = ivatotal;
-        this.produto_id = produto_id;
+        this.produto = produto;
         this.total = total;
     }
 
     public int getUserdata_id() {
-        return userdata_id;
+        return userdata;
     }
 
     public void setUserdata_id(int userdata_id) {
-        this.userdata_id = userdata_id;
+        this.userdata = userdata_id;
     }
 
     public int getId() {
@@ -50,12 +48,12 @@ public class Categoria {
         this.ivatotal = ivatotal;
     }
 
-    public int getProduto_id() {
-        return produto_id;
+    public int getProduto() {
+        return produto;
     }
 
-    public void setProduto_id(int produto_id) {
-        this.produto_id = produto_id;
+    public void setProduto(int produto) {
+        this.produto = produto;
     }
 
     // Método toString para facilitar a visualização do objeto
@@ -63,8 +61,8 @@ public class Categoria {
     public String toString() {
         return "Carrinho{" +
                 "id=" + id +
-                ", userdata_id=" + userdata_id +
-                ", produto_id=" + produto_id +
+                ", userdata=" + userdata +
+                ", produto=" + produto +
                 ", ivatotal=" + ivatotal +
                 ", total=" + total +
                 '}';

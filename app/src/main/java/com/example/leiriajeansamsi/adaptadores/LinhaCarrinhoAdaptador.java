@@ -16,17 +16,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.example.leiriajeansamsi.Modelo.Carrinho;
+import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
+import com.example.leiriajeansamsi.Modelo.Produto;
+import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 
 import java.util.ArrayList;
 
-import pt.ipleiria.estg.dei.books.MainActivity;
-import pt.ipleiria.estg.dei.books.Modelo.Carrinho;
-import pt.ipleiria.estg.dei.books.Modelo.LinhaCarrinho;
-import pt.ipleiria.estg.dei.books.Modelo.Produto;
-import pt.ipleiria.estg.dei.books.Modelo.SingletonProdutos;
-import pt.ipleiria.estg.dei.books.R;
-import pt.ipleiria.estg.dei.books.listeners.LinhaCarrinhoListener;
-import pt.ipleiria.estg.dei.books.listeners.LinhasCarrinhosListener;
+import com.example.leiriajeansamsi.MainActivity;
+import com.example.leiriajeansamsi.Modelo.Carrinho;
+import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
+import com.example.leiriajeansamsi.Modelo.Produto;
+import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.R;
+import com.example.leiriajeansamsi.listeners.LinhaCarrinhoListener;
+import com.example.leiriajeansamsi.listeners.LinhasCarrinhosListener;
 
 public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAdaptador.ViewHolder> {
 

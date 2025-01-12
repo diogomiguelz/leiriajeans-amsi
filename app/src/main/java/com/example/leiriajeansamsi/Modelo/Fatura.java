@@ -4,18 +4,18 @@ import java.util.Date;
 
 public class Fatura {
     int id;
-    int metodopagamento_id;
-    int metodoexpedicao_id;
+    int metodopagamento;
+    int metodoexpedicao;
     int userdata_id;
     Date data;
     float  valorTotal;
     String statuspedido;
 
 
-    public Fatura(int id, int metodopagamento_id, int metodoexpedicao_id, int userdata_id, Date data, float valorTotal, String statuspedido) {
+    public Fatura(int id, int metodopagamento, int metodoexpedicao, int userdata_id, Date data, float valorTotal, String statuspedido) {
         this.id = id;
-        this.metodopagamento_id = metodopagamento_id;
-        this.metodoexpedicao_id = metodoexpedicao_id;
+        this.metodopagamento = metodopagamento;
+        this.metodoexpedicao = metodoexpedicao;
         this.userdata_id = userdata_id;
         this.data = data;
         this.valorTotal = valorTotal;
@@ -30,20 +30,20 @@ public class Fatura {
         this.id = id;
     }
 
-    public int getMetodopagamento_id() {
-        return metodopagamento_id;
+    public int getMetodopagamento() {
+        return metodopagamento;
     }
 
-    public void setMetodopagamento_id(int metodopagamento_id) {
-        this.metodopagamento_id = metodopagamento_id;
+    public void setMetodopagamento(int metodopagamento) {
+        this.metodopagamento = metodopagamento;
     }
 
-    public int getMetodoexpedicao_id() {
-        return metodoexpedicao_id;
+    public int getMetodoexpedicao() {
+        return metodoexpedicao;
     }
 
-    public void setMetodoexpedicao_id(int metodoexpedicao_id) {
-        this.metodoexpedicao_id = metodoexpedicao_id;
+    public void setMetodoexpedicao(int metodoexpedicao) {
+        this.metodoexpedicao = metodoexpedicao;
     }
 
     public int getUserdata_id() {
@@ -82,8 +82,8 @@ public class Fatura {
     public String toString() {
         return "Fatura{" +
                 "id=" + id +
-                ", metodopagamento_id=" + metodopagamento_id +
-                ", metodoexpedicao_id=" + metodoexpedicao_id +
+                ", metodopagamento=" + metodopagamento +
+                ", metodoexpedicao=" + metodoexpedicao +
                 ", userdata_id=" + userdata_id +
                 ", data=" + data +
                 ", valorTotal=" + valorTotal +

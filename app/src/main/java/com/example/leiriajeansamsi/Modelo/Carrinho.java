@@ -2,18 +2,16 @@ package com.example.leiriajeansamsi.Modelo;
 
 public class Carrinho {
 
-    int id, userId;
-    String metodoEnvio, status, dtaPedido;
-    float valorTotal;
+    int id, userdataId, produto;
+    float ivatotal, total;
 
 
-    public Carrinho(int id, int userId, String metodoEnvio, String status, String dtaPedido, float valorTotal) {
+    public Carrinho(int id, int userdataId, int produto, float ivatotal, float total) {
         this.id = id;
-        this.userId = userId;
-        this.metodoEnvio = metodoEnvio;
-        this.status = status;
-        this.dtaPedido = dtaPedido;
-        this.valorTotal = valorTotal;
+        this.userdataId = userdataId;
+        this.produto = produto;
+        this.ivatotal = ivatotal;
+        this.total = total;
     }
 
     public int getId() {
@@ -24,55 +22,38 @@ public class Carrinho {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getuserdataId() {
+        return userdataId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setuserdataId(int userId) {
+        this.userdataId = userId;
     }
 
-    public String getMetodoEnvio() {
-        return metodoEnvio;
+    public float gettotal() {
+        return total;
     }
 
-    public void setMetodoEnvio(String metodoEnvio) {
-        this.metodoEnvio = metodoEnvio;
+    public void setTotal(float total) {
+        this.total = total;
     }
 
-    public String getStatus() {
-        return status;
+    public float getIvatotal() {
+        return total;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDtaPedido() {
-        return dtaPedido;
-    }
-
-    public void setDtaPedido(String dtaPedido) {
-        this.dtaPedido = dtaPedido;
-    }
-
-    public float getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(float valorTotal) {
-        this.valorTotal = valorTotal;
+    public void setIvatotal(float ivatotal) {
+        this.ivatotal = ivatotal;
     }
 
     @Override
     public String toString() {
         return "Carrinho{" +
                 "id=" + id +
-                ", userId=" + userId +
-                ", metodoEnvio='" + metodoEnvio + '\'' +
-                ", status='" + status + '\'' +
-                ", dtaPedido='" + dtaPedido + '\'' +
-                ", valorTotal=" + valorTotal +
+                ", userdataId=" + userdataId +
+                ", produto=" + produto + '\'' +
+                ", ivatotal='" + ivatotal + '\'' +
+                ", total='" + total +
                 '}';
     }
 }
