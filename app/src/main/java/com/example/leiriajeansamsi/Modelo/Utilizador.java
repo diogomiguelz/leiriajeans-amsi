@@ -40,6 +40,9 @@ public class Utilizador {
         this.verification_token = verification_token;
     }
 
+    public Utilizador(int id, String username, String nome, String codpostal, String rua, String localidade, String telefone, String nif, String status, String createdAt, String updatedAt, String verificationToken) {
+    }
+
     public void setId(int id) {
         this.id = id;
     }
