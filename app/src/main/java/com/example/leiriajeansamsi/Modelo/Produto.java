@@ -1,28 +1,28 @@
 package com.example.leiriajeansamsi.Modelo;
 
-public class Produto {
+import android.os.Parcel;
 
-    int id;
-    String nome;
-    String descricao;
-    double preco;
-    String sexo;
-    int stock;
-    int cor_id;
-    int iva_id;
-    int categoria_id;
+import java.io.Serializable;
 
-    public Produto(int id, String nome, String descricao, double preco, String sexo, int stock, int cor_id, int iva_id, int categoria_id) {
+public class Produto implements Serializable {
+
+    private int id, iva, stock;
+    private String nome, descricao, categoria, imagem, cor, sexo;
+    private float preco;
+
+    public Produto(int id, int iva, int stock, String nome, String descricao, String categoria, String imagem, String cor, String sexo, float preco) {
         this.id = id;
+        this.iva = iva;
+        this.stock = stock;
         this.nome = nome;
         this.descricao = descricao;
-        this.preco = preco;
+        this.categoria = categoria;
+        this.imagem = imagem;
+        this.cor = cor;
         this.sexo = sexo;
-        this.stock = stock;
-        this.cor_id = cor_id;
-        this.iva_id = iva_id;
-        this.categoria_id = categoria_id;
+        this.preco = preco;
     }
+
 
     public int getId() {
         return id;
@@ -30,6 +30,22 @@ public class Produto {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getIva() {
+        return iva;
+    }
+
+    public void setIva(int iva) {
+        this.iva = iva;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
     public String getNome() {
@@ -48,12 +64,28 @@ public class Produto {
         this.descricao = descricao;
     }
 
-    public double getPreco() {
-        return preco;
+    public String getCategoria() {
+        return categoria;
     }
 
-    public void setPreco(double preco) {
-        this.preco = preco;
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
+    }
+
+    public String getCor() {
+        return cor;
+    }
+
+    public void setCor(String cor) {
+        this.cor = cor;
     }
 
     public String getSexo() {
@@ -64,51 +96,44 @@ public class Produto {
         this.sexo = sexo;
     }
 
-    public int getStock() {
-        return stock;
+    public float getPreco() {
+        return preco;
     }
 
-    public void setStock(int stock) {
-        this.stock = stock;
+    public void setPreco(float preco) {
+        this.preco = preco;
     }
 
-    public int getCor_id() {
-        return cor_id;
-    }
-
-    public void setCor_id(int cor_id) {
-        this.cor_id = cor_id;
-    }
-
-    public int getIva_id() {
-        return iva_id;
-    }
-
-    public void setIva_id(int iva_id) {
-        this.iva_id = iva_id;
-    }
-
-    public int getCategoria_id() {
-        return categoria_id;
-    }
-
-    public void setCategoria_id(int categoria_id) {
-        this.categoria_id = categoria_id;
-    }
-
-    // Método toString para facilitar a visualização do objeto
     @Override
     public String toString() {
         return "Produto{" +
                 "id=" + id +
+                ", iva=" + iva +
                 ", nome='" + nome + '\'' +
-                ", descricao='" + descricao + '\'' +
-                ", preco=" + preco +
-                ", sexo='" + sexo + '\'' +
                 ", stock=" + stock +
-                ", cor_id=" + cor_id +
-                ", iva_id=" + iva_id +
-                ", categoria_id=" + categoria_id +
+                ", descricao='" + descricao + '\'' +
+                ", cor='" + cor + '\'' +
+                ", sexo='" + sexo + '\'' +
+                ", categoria='" + categoria + '\'' +
+                ", imagem='" + imagem + '\'' +
+                ", preco=" + preco +
                 '}';
     }
+
+    protected Produto(Parcel in) {
+        id = in.readInt();
+        iva = in.readInt();
+        nome = in.readString();
+        stock = in.readInt();
+        descricao = in.readString();
+        cor = in.readString();
+        sexo = in.readString();
+        categoria = in.readString();
+        imagem = in.readString();
+        preco = in.readFloat();
+
+    }
+
 }
+
+
