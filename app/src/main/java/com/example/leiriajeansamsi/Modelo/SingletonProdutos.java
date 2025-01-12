@@ -44,7 +44,6 @@ import com.example.leiriajeansamsi.listeners.SignupListener;
 import com.example.leiriajeansamsi.listeners.UtilizadorDataListener;
 import com.example.leiriajeansamsi.utils.LinhasFaturasJsonParser;
 import com.example.leiriajeansamsi.utils.LoginJsonParser;
-import com.example.leiriajeansamsi.utils.PagamentoJsonParser;
 import com.example.leiriajeansamsi.utils.ProdutoJsonParser;
 
 public class SingletonProdutos {
@@ -875,9 +874,5 @@ public class SingletonProdutos {
         return "http://" + getApiIP(context) + "/AMAI-SIS/backend/web/api/auth/register";
     }
 
-    private String mUrlAPIPostPagamento(Context context) {
-
-        return "http://" + getApiIP(context) + "/AMAI-plataformas/backend/web/api/pagamentos/criar?access-token=" + getUserToken(context);
-    }
 //endregion
 }

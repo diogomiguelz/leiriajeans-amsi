@@ -2,8 +2,8 @@ package com.example.leiriajeansamsi.Modelo;
 
 public class Carrinho {
 
-    int id, userdataId, produto;
-    float ivatotal, total;
+    private int id, userdataId, produto;
+    private float ivatotal, total;
 
 
     public Carrinho(int id, int userdataId, int produto, float ivatotal, float total) {
