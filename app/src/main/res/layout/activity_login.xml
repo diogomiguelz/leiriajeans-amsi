@@ -20,7 +20,7 @@
         />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/ImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/api"
@@ -40,10 +40,10 @@
         app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <EditText
-        android:id="@+id/etEmail"
+        android:id="@+id/etUsername"
         style="@style/TextView_Email"
         android:inputType="textEmailAddress"
-        android:hint="@string/tvEmail_hint"
+        android:hint="@string/tvUsername_hint"
         android:drawableRight="@drawable/ic_email"
         app:layout_constraintEnd_toEndOf="@id/containerComponents"
         app:layout_constraintStart_toStartOf="@id/containerComponents"
@@ -58,7 +58,7 @@
         android:drawableRight="@drawable/ic_olho"
         app:layout_constraintEnd_toEndOf="@id/containerComponents"
         app:layout_constraintStart_toStartOf="@id/containerComponents"
-        app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/etUsername" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bt_login"

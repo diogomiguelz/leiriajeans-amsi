@@ -4,18 +4,30 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+
+import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Utilizador;
+import com.example.leiriajeansamsi.listeners.LoginListener;
+import com.example.leiriajeansamsi.listeners.SignupListener;
 
 import com.example.leiriajeansamsi.MenuMainActivity;
+import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Utilizador;
 import com.example.leiriajeansamsi.RegistarActivity;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoginListener, SignupListener {
 
     public static final String EMAIL = "email";
+    public static final String USERNAME = "username";
+    public static final String TOKEN = "token";
     //Declaração
-    private EditText etEmail, etPassword;
+    private EditText etUsername, etPassword;
 
     private final int MIN_PASS=4;
 
@@ -24,8 +36,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setTitle("Login");
-        //Inicialização
-        etEmail=findViewById(R.id.etEmail);
+
+        etUsername=findViewById(R.id.etUsername);
         etPassword=findViewById(R.id.etPassword);
 
     }
@@ -43,19 +55,46 @@ public class LoginActivity extends AppCompatActivity {
         return pass.length()>=MIN_PASS;
     }
 
+    private boolean isUsernameValido(String username) {
+        if (username == null) {
+            return false;
+        }
+
+        String usernamePattern = "^[a-zA-Z0-9_]{3,20}$";
+
+        return username.matches(usernamePattern);
+    }
+
     public void onClickLogin(View view) {
-        String email=etEmail.getText().toString();
-        String pass=etPassword.getText().toString();
-//        if(!isEmailValido(email) | !isPasswordValida(pass)) {
-//            Toast.makeText(this,"Login Inválido!", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
+        String username = etUsername.getText().toString();
+        String pass = etPassword.getText().toString();
 
-        Intent intent = new Intent(getApplicationContext(), MenuMainActivity.class);
-        intent.putExtra(EMAIL, email);
-        startActivity(intent);
-        finish();
+        Log.d("LoginActivity", "Username: " + username + ", Password: " + pass);
 
+        if (!isUsernameValido(username)) {
+            etUsername.setError("Username Inválido!");
+            return;
+        }
+        if (!isPasswordValida(pass)) {
+            etPassword.setError("Password Inválida!");
+            return;
+        }
+
+        SingletonProdutos.getInstance(this).loginAPI(username, pass, getApplicationContext());
+    }
+
+    public void onUpdateLogin(Utilizador utilizador) {
+        if(utilizador.getAuth_key() != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(TOKEN, utilizador.getAuth_key());
+            intent.putExtra(USERNAME, utilizador.getUsername());
+
+            startActivity(intent);
+            //finish();
+        }
+        else {
+            Toast.makeText(this, "Token incorreto", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onClickRegistar(View view) {
@@ -66,5 +105,19 @@ public class LoginActivity extends AppCompatActivity {
     public void onClickImageButton(View view) {
         Intent intent = new Intent(getApplicationContext(), DefinicoesActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onUpdateSignup(Utilizador newUser) {
+        // Handle successful signup
+        if (newUser.getAuth_key() != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(TOKEN, newUser.getAuth_key());
+            intent.putExtra(USERNAME, newUser.getUsername());
+            startActivity(intent);
+            //finish(); // Consider whether you want to finish the login activity
+        } else {
+            Toast.makeText(this, "Token incorreto", Toast.LENGTH_SHORT).show();
+        }
     }
 }
