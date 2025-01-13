@@ -443,54 +443,69 @@ public class SingletonProdutos {
     }
 
     public void loginAPI(final String username, final String password, final Context context) {
-        if (!ProdutoJsonParser.isConnectionInternet(context))
+        if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-        else {
-            JSONObject jsonParams = new JSONObject();
-            try {
-                jsonParams.put("username", username);
-                jsonParams.put("password", password);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+            if (loginListener != null) {
+                loginListener.onUpdateLogin(null);
             }
-            JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, mUrlAPILogin(context), jsonParams, new Response.Listener<JSONObject>() {
+            return;
+        }
+
+        String mUrlAPI = mUrlAPILogin(context);
+        Log.d("LoginAPI", "URL: " + mUrlAPI);
+        
+        JSONObject jsonParams = new JSONObject();
+        try {
+            jsonParams.put("username", username);
+            jsonParams.put("password", password);
+            Log.d("LoginAPI", "Dados enviados: " + jsonParams.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            if (loginListener != null) {
+                loginListener.onUpdateLogin(null);
+            }
+            return;
+        }
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, mUrlAPI, jsonParams,
+            new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    utilizador = LoginJsonParser.parserJsonLogin(response);
-
-                    // Save the user's ID, token, and username to SharedPreferences
-                    saveUserId(context, utilizador.getId());
-                    saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
-
-                    // Add the user to the local database only if it doesn't already exist
-                    if (utilizador.getId() != 0 || utilizador.getAuth_key() != null) {
-                        getUserDataAPI(context);
-                    }
-
-                    if (loginListener != null) {
-                        loginListener.onUpdateLogin(utilizador);
+                    Log.d("LoginAPI", "Resposta: " + response.toString());
+                    try {
+                        utilizador = LoginJsonParser.parserJsonLogin(response);
+                        if (utilizador != null && utilizador.getAuth_key() != null) {
+                            saveUserId(context, utilizador.getId());
+                            saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
+                            
+                            if (loginListener != null) {
+                                loginListener.onUpdateLogin(utilizador);
+                            }
+                        } else {
+                            if (loginListener != null) {
+                                loginListener.onUpdateLogin(null);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e("LoginAPI", "Erro: " + e.getMessage());
+                        if (loginListener != null) {
+                            loginListener.onUpdateLogin(null);
+                        }
                     }
                 }
-            }, new Response.ErrorListener() {
+            },
+            new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Credenciais incorretas", Toast.LENGTH_SHORT).show();
-
-                    if (utilizador != null) {
-                        Log.e("LoginAPI", "Utilizador not null: " + utilizador.getUsername());
-                        // Check if other conditions or actions need to be taken
-                    } else {
-                        Log.e("LoginAPI", "Utilizador is null");
-                    }
-
-                    // Check if loginListener is not null before using it
+                    String mensagemErro = "Credenciais incorretas";
+                    Toast.makeText(context, mensagemErro, Toast.LENGTH_SHORT).show();
                     if (loginListener != null) {
-                        loginListener.onUpdateLogin(utilizador);
+                        loginListener.onUpdateLogin(null);
                     }
                 }
             });
-            volleyQueue.add(req);
-        }
+
+        volleyQueue.add(req);
     }
 
     public void getUserDataAPI(Context context) {
@@ -518,7 +533,7 @@ public class SingletonProdutos {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro ao acessar o servidor: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
             volleyQueue.add(req);

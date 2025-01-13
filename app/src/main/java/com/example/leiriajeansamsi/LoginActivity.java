@@ -31,6 +31,8 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
 
     private final int MIN_PASS=4;
 
+    private boolean isLoggingIn = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
         etUsername=findViewById(R.id.etUsername);
         etPassword=findViewById(R.id.etPassword);
 
+        SingletonProdutos.getInstance(this).setLoginListener(this);
     }
 
     private boolean isEmailValido(String email){
@@ -66,6 +69,11 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
     }
 
     public void onClickLogin(View view) {
+        if (isLoggingIn) {
+            return;
+        }
+        isLoggingIn = true;
+
         String username = etUsername.getText().toString();
         String pass = etPassword.getText().toString();
 
@@ -73,27 +81,31 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
 
         if (!isUsernameValido(username)) {
             etUsername.setError("Username Inválido!");
+            isLoggingIn = false;
             return;
         }
         if (!isPasswordValida(pass)) {
             etPassword.setError("Password Inválida!");
+            isLoggingIn = false;
             return;
         }
 
-        SingletonProdutos.getInstance(this).loginAPI(username, pass, getApplicationContext());
+        SingletonProdutos.getInstance(this).loginAPI(username, pass, this);
     }
 
+    @Override
     public void onUpdateLogin(Utilizador utilizador) {
-        if(utilizador.getAuth_key() != null) {
-            Intent intent = new Intent(this, MainActivity.class);
+        isLoggingIn = false;
+        if (utilizador != null && utilizador.getAuth_key() != null) {
+            Log.d("LoginActivity", "Login bem sucedido, navegando para MenuMainActivity");
+            Intent intent = new Intent(this, MenuMainActivity.class);
             intent.putExtra(TOKEN, utilizador.getAuth_key());
             intent.putExtra(USERNAME, utilizador.getUsername());
-
             startActivity(intent);
-            //finish();
-        }
-        else {
-            Toast.makeText(this, "Token incorreto", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            Log.e("LoginActivity", "Login falhou - utilizador ou token nulo");
+            Toast.makeText(this, "Falha no login: Credenciais inválidas", Toast.LENGTH_SHORT).show();
         }
     }
 

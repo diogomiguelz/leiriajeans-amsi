@@ -1,5 +1,6 @@
 package com.example.leiriajeansamsi.utils;
 
+import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,6 +11,8 @@ public class LoginJsonParser {
     public static Utilizador parserJsonLogin(JSONObject response) {
         Utilizador utilizador = null;
         try {
+            Log.d("LoginParser", "Parsing response: " + response.toString());
+            
             JSONObject loginJSON = new JSONObject(response.toString());
             int id = loginJSON.getInt("id");
             String username = loginJSON.getString("username");
@@ -25,7 +28,10 @@ public class LoginJsonParser {
             utilizador = new Utilizador(id, username, "", "", email, "",
                     "","", "", auth_key, password_hash, password_reset_token,
                     status, created_at, updated_at, verification_token);
+            
+            Log.d("LoginParser", "Utilizador criado com sucesso: " + utilizador.getUsername());
         } catch (JSONException e) {
+            Log.e("LoginParser", "Erro ao fazer parse: " + e.getMessage());
             throw new RuntimeException(e);
         }
         return utilizador;
