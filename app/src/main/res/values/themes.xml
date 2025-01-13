@@ -1,15 +1,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.LeiriaJeansAMSI" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Leiriajeans" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/background_meio_bt</item>
     </style>
 
-    <style name="Theme.LeiriaJeans" parent="Base.Theme.LeiriaJeansAMSI" />
+    <!-- Default application theme. -->
+    <style name="Theme.Leiriajeans" parent="Base.Theme.Leiriajeans" />
 
-    <style name="Theme.LeiriaJeans.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <!-- No Action Bar theme. -->
+    <style name="Theme.Leiriajeans.NoActionBar" parent="Base.Theme.Leiriajeans">
+        <item name="windowActionBar">false</item> <!-- This line disables the ActionBar -->
+        <item name="windowNoTitle">true</item> <!-- This line hides the title bar -->
     </style>
-
 </resources>

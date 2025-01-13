@@ -33,8 +33,11 @@ public class MenuMainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_main);
 
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
         drawer = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navView);
 
@@ -69,13 +72,14 @@ public class MenuMainActivity extends AppCompatActivity implements
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment=null;
-        if(item.getItemId()==R.id.navProdutos){
-            fragment = new ProdutosFragment();
-            //setTitle(item.getTitle());
+
+        if (item.getItemId() == R.id.navProdutos) {
+            Intent intent = new Intent(MenuMainActivity.this, ListaProdutosActivity.class);
+            startActivity(intent);
         }
 
         if(item.getItemId()==R.id.navFaturas){
-            fragment = new FaturasFragment();
+            //fragment = new FaturasFragment();
             //setTitle(item.getTitle());
         }
 

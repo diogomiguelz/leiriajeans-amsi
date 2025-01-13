@@ -26,7 +26,6 @@ public class ProdutoJsonParser {
                 String nome = produtoJSON.getString("nome");
                 String descricao = produtoJSON.getString("descricao");
                 String cor = produtoJSON.getString("cor"); // Novo campo 'cor'
-                String sexo = produtoJSON.getString("sexo"); // Novo campo 'sexo'
                 int stock = produtoJSON.getInt("stock"); // Novo campo 'stock'
                 float preco = (float) produtoJSON.getDouble("preco");
                 int iva = produtoJSON.getInt("iva");
@@ -34,7 +33,7 @@ public class ProdutoJsonParser {
                 String imagem = produtoJSON.getString("imagens");
 
                 // criar o Produto com os campos
-                Produto produto = new Produto(id, iva, stock, nome, descricao, categoria, imagem, cor, sexo, preco);
+                Produto produto = new Produto(id, iva, stock, nome, descricao, categoria, imagem, cor, preco);
                 produtos.add(produto);
             }
         } catch (JSONException e) {
@@ -53,7 +52,6 @@ public class ProdutoJsonParser {
             String nome = produtoJSON.getString("nome");
             String descricao = produtoJSON.getString("descricao");
             String cor = produtoJSON.getString("cor"); // Novo campo 'cor'
-            String sexo = produtoJSON.getString("sexo"); // Novo campo 'sexo'
             int stock = produtoJSON.getInt("stock"); // Novo campo 'stock'
             float preco = (float) produtoJSON.getDouble("preco");
             int iva = produtoJSON.getInt("iva");
@@ -61,7 +59,7 @@ public class ProdutoJsonParser {
             String imagem = produtoJSON.getString("imagens");
 
             // Criar o Produto
-            produto = new Produto(id, iva, stock, nome, descricao, categoria, imagem, cor, sexo, preco);
+            produto = new Produto(id, iva, stock, nome, descricao, categoria, imagem, cor, preco);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

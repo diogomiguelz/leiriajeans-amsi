@@ -7,10 +7,10 @@ import java.io.Serializable;
 public class Produto implements Serializable {
 
     private int id, iva, stock;
-    private String nome, descricao, categoria, imagem, cor, sexo;
+    private String nome, descricao, categoria, imagem, cor;
     private float preco;
 
-    public Produto(int id, int iva, int stock, String nome, String descricao, String categoria, String imagem, String cor, String sexo, float preco) {
+    public Produto(int id, int iva, int stock, String nome, String descricao, String categoria, String imagem, String cor, float preco) {
         this.id = id;
         this.iva = iva;
         this.stock = stock;
@@ -19,7 +19,6 @@ public class Produto implements Serializable {
         this.categoria = categoria;
         this.imagem = imagem;
         this.cor = cor;
-        this.sexo = sexo;
         this.preco = preco;
     }
 
@@ -88,14 +87,6 @@ public class Produto implements Serializable {
         this.cor = cor;
     }
 
-    public String getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
-    }
-
     public float getPreco() {
         return preco;
     }
@@ -113,7 +104,6 @@ public class Produto implements Serializable {
                 ", stock=" + stock +
                 ", descricao='" + descricao + '\'' +
                 ", cor='" + cor + '\'' +
-                ", sexo='" + sexo + '\'' +
                 ", categoria='" + categoria + '\'' +
                 ", imagem='" + imagem + '\'' +
                 ", preco=" + preco +
@@ -127,7 +117,6 @@ public class Produto implements Serializable {
         stock = in.readInt();
         descricao = in.readString();
         cor = in.readString();
-        sexo = in.readString();
         categoria = in.readString();
         imagem = in.readString();
         preco = in.readFloat();
