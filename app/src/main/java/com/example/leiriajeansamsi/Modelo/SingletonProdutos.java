@@ -22,6 +22,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.example.leiriajeansamsi.LoginActivity;
@@ -79,6 +80,7 @@ public class SingletonProdutos {
     private LinhasFaturasListener linhasFaturasListener;
     private Utilizador loggedInUser;
 
+    private List<LinhaCarrinho> linhasCarrinho; // Lista de produtos no carrinho
 
     public static synchronized SingletonProdutos getInstance(Context context) {
         if (instance == null) {
@@ -94,7 +96,16 @@ public class SingletonProdutos {
 
     private SingletonProdutos(Context context) {
         produtos = new ArrayList<>();
-        /*produtosBD = new ProdutoBDHelper(context);*/
+        volleyQueue = Volley.newRequestQueue(context); // Inicializa a RequestQueue aqui
+        getAllProdutosAPI(context); // Chama o método para buscar produtos
+    }
+
+    private void inicializarProdutos() {
+        // Exemplo de adição de produtos
+        produtos.add(new Produto(1, 23, 100, "Produto 1", "Descrição do Produto 1", "Categoria 1", "url_imagem_1", "Cor 1", 10.0f)); // ID 1
+        produtos.add(new Produto(2, 23, 200, "Produto 2", "Descrição do Produto 2", "Categoria 2", "url_imagem_2", "Cor 2", 20.0f)); // ID 2
+        produtos.add(new Produto(8, 23, 150, "Produto 8", "Descrição do Produto 8", "Categoria 8", "url_imagem_8", "Cor 8", 30.0f)); // ID 8
+        produtos.add(new Produto(9, 23, 250, "Produto 9", "Descrição do Produto 9", "Categoria 9", "url_imagem_9", "Cor 9", 40.0f)); // ID 9
     }
 
     //region GETTERS AND SETTERS
@@ -123,7 +134,7 @@ public class SingletonProdutos {
     }
 
     public Carrinho getCarrinho() {
-        return carrinho;
+        return this.carrinho;
     }
 
     public Utilizador getUtilizador() {
@@ -209,35 +220,37 @@ public class SingletonProdutos {
         }
         return null;
     }
+
+    public List<LinhaCarrinho> getLinhasCarrinho() {
+        return linhasCarrinho;
+    }
+
     //endregion
 
     //region PEDIDOS API CRUD
     public void getAllProdutosAPI(final Context context) {
-
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-
-
-            if (produtosListener != null)
+            if (produtosListener != null) {
                 produtosListener.onRefreshListaProdutos(produtos);
+            }
         } else {
-            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, mUrlAPIProdutos(context), null, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-
-                    produtos = ProdutoJsonParser.parserJsonProdutos(response);
-
-                    // informar a vista
-                    if (produtosListener != null) {
-                        produtosListener.onRefreshListaProdutos(produtos);
+            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, mUrlAPIProdutos(context), null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        produtos = ProdutoJsonParser.parserJsonProdutos(response);
+                        // Informar a vista
+                        if (produtosListener != null) {
+                            produtosListener.onRefreshListaProdutos(produtos);
+                        }
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             volleyQueue.add(req);
         }
     }
@@ -320,7 +333,7 @@ public class SingletonProdutos {
                 public void onResponse(JSONArray response) {
                     // Add this line to log the response
                     // converter json em livros
-                    linhaCarrinhos = LinhaCarrinhoJsonParser.parserJsonLinhaCarrinho(response);
+                    linhaCarrinhos = LinhaCarrinhoJsonParser.parserJsonLinhaCarrinho(response, context);
                     Log.d("API_Response", response.toString());
                     Log.d("LinhaCarrinho", linhaCarrinhos.toString());
 
@@ -373,39 +386,23 @@ public class SingletonProdutos {
 
 
     public void adicionarLinhaCarrinhoAPI(final Context context, Produto produto, Carrinho carrinho) {
-        if (!ProdutoJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-        } else {
-            StringRequest req = new StringRequest(Request.Method.POST, mUrlAPIPostLinhaCarrinho(context), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    if (linhaCarrinhoListener != null) {
-                        Log.d("LINHAS CARRINHO LISTENER", response);
-                        linhaCarrinhoListener.onItemUpdate();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                    String response = new String(error.networkResponse.data);
-                    Log.e("VolleyError", "Error Response: " + response);
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("quantidade", "1");
-                    params.put("produto_id", produto.getId() + "");
-                    params.put("carrinho_id", carrinho.getId() + "");
-
-                    return params;
-                }
-            };
-            volleyQueue.add(req);
+        if (carrinho == null) {
+            Toast.makeText(context, "Carrinho não disponível", Toast.LENGTH_SHORT).show();
+            return;
         }
 
+        // Obtenha o user_id do utilizador logado
+        int userId = getUserId(context); // Supondo que você tenha um método para obter o ID do usuário logado
+
+        // Inicialize ivatotal e total como 0
+        float ivatotal = 0.0f;
+        float total = 0.0f;
+
+        // Crie um novo objeto LinhaCarrinho com os valores necessários
+        LinhaCarrinho novaLinha = new LinhaCarrinho(0, 1, carrinho.getId(), produto, ivatotal, produto.getPreco());
+
+        // Agora você pode fazer a requisição para adicionar a linha ao carrinho
+        // Aqui você deve implementar a lógica para enviar a nova linha para a API
     }
 
     public void deleteLinhaCarrinhoAPI(final Context context, final LinhaCarrinho linhaCarrinho) {
@@ -453,7 +450,7 @@ public class SingletonProdutos {
 
         String mUrlAPI = mUrlAPILogin(context);
         Log.d("LoginAPI", "URL: " + mUrlAPI);
-        
+
         JSONObject jsonParams = new JSONObject();
         try {
             jsonParams.put("username", username);
@@ -477,7 +474,7 @@ public class SingletonProdutos {
                         if (utilizador != null && utilizador.getAuth_key() != null) {
                             saveUserId(context, utilizador.getId());
                             saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
-                            
+
                             if (loginListener != null) {
                                 loginListener.onUpdateLogin(utilizador);
                             }
@@ -771,6 +768,74 @@ public class SingletonProdutos {
         }
     }
 
+    public void criarCarrinhoAPI(final Context context) {
+        String url = mUrlApiPostCarrinho(context); // URL para criar o carrinho
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+            new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        // Verifique se o campo "id" está presente na resposta
+                        if (jsonResponse.has("id")) {
+                            int carrinhoId = jsonResponse.getInt("id"); // Obtenha o ID do carrinho
+                            int userId = getUserId(context); // Supondo que você tenha um método para obter o ID do usuário
+                            Carrinho novoCarrinho = new Carrinho(carrinhoId, userId, 0, 0, 0);
+                            setCarrinho(novoCarrinho); // Armazena o novo carrinho
+                            Toast.makeText(context, "Carrinho criado com sucesso! ID: " + carrinhoId, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Erro: ID do carrinho não retornado.", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Erro ao processar a resposta: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro ao criar carrinho: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("userdata_id", "1"); // Adicione o ID do usuário aqui
+                params.put("total", "0");
+                params.put("ivatotal", "0");
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
+
+    // Método para definir o carrinho
+    public void setCarrinho(Carrinho novoCarrinho) {
+        this.carrinho = novoCarrinho;
+    }
+
+    // Método para obter um produto pelo ID
+    public Produto getProdutoById(int id) {
+        Log.d("SingletonProdutos", "Buscando produto com ID: " + id);
+        for (Produto produto : produtos) {
+            Log.d("SingletonProdutos", "Produto encontrado: " + produto.getId());
+            if (produto.getId() == id) {
+                return produto;
+            }
+        }
+        Log.e("SingletonProdutos", "Produto com ID " + id + " não encontrado.");
+        return null; // Retorna null se o produto não for encontrado
+    }
+
+    // Método para adicionar um produto ao carrinho
+    public void adicionarProdutoAoCarrinho(LinhaCarrinho linhaCarrinho) {
+        linhasCarrinho.add(linhaCarrinho);
+    }
+
     //endregion
 
     //region URLS API
@@ -846,4 +911,6 @@ public class SingletonProdutos {
 
 
 //endregion
+
+
 }

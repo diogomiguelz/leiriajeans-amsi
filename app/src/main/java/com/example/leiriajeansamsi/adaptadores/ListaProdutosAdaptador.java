@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.leiriajeansamsi.DetalhesProdutoActivity;
+import com.example.leiriajeansamsi.Modelo.Carrinho;
 import com.example.leiriajeansamsi.Modelo.Produto;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.R;
@@ -63,6 +66,17 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
                 produtoListener.onItemClick(holder.getAdapterPosition(), product);
             }
         });
+
+        holder.btnAddToCart.setOnClickListener(view -> {
+            Carrinho carrinho = SingletonProdutos.getInstance(context).getCarrinho();
+            if (carrinho == null) {
+                SingletonProdutos.getInstance(context).criarCarrinhoAPI(context);
+                Toast.makeText(context, "Criando novo carrinho...", Toast.LENGTH_SHORT).show();
+            } else {
+                SingletonProdutos.getInstance(context).adicionarLinhaCarrinhoAPI(context, product, carrinho);
+                Toast.makeText(context, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -88,12 +102,14 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
         TextView tvNomeProduto;
         TextView tvPrecoProduto;
         ImageView imgProduto;
+        Button btnAddToCart;
 
         public ViewHolder(@NonNull View itemView, ProdutoListener produtoListener) {
             super(itemView);
             tvNomeProduto = itemView.findViewById(R.id.nomeTxt);
             tvPrecoProduto = itemView.findViewById(R.id.precoTxt);
             imgProduto = itemView.findViewById(R.id.pic);
+            btnAddToCart = itemView.findViewById(R.id.btnAddToCart);
         }
     }
 }

@@ -10,6 +10,11 @@
             android:icon="@drawable/ic_produtos"
             />
         <item
+            android:id="@+id/navCarrinho"
+            android:title="Carrinho"
+            android:icon="@drawable/ic_produtos"
+            />
+        <item
             android:id="@+id/navFaturas"
             android:title="@string/faturas"
             android:icon="@drawable/ic_faturas"
