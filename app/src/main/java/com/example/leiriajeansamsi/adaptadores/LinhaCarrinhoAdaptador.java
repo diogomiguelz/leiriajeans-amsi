@@ -1,7 +1,5 @@
 package com.example.leiriajeansamsi.adaptadores;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,129 +11,67 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.example.leiriajeansamsi.Modelo.Carrinho;
 import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
-import com.example.leiriajeansamsi.Modelo.Produto;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
-
-import java.util.ArrayList;
-
-import com.example.leiriajeansamsi.MainActivity;
-import com.example.leiriajeansamsi.Modelo.Carrinho;
-import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
-import com.example.leiriajeansamsi.Modelo.Produto;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.R;
-import com.example.leiriajeansamsi.listeners.LinhaCarrinhoListener;
-import com.example.leiriajeansamsi.listeners.LinhasCarrinhosListener;
 
-public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAdaptador.ViewHolder> {
+import java.util.List;
 
-    public Context context;
-    private LinhasCarrinhosListener linhasCarrinhosListener;
-    private LinhaCarrinhoListener linhaCarrinhoListener;
-    private ArrayList<LinhaCarrinho> linhasCarrinho;
-    private Carrinho carrinho;
-    private MainActivity mainActivity;
+public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAdaptador.LinhaCarrinhoViewHolder> {
 
+    private Context context;
+    private List<LinhaCarrinho> linhasCarrinho;
 
-    public LinhaCarrinhoAdaptador(Context context, LinhasCarrinhosListener linhasCarrinhosListener, ArrayList<LinhaCarrinho> linhasCarrinho, LinhaCarrinhoListener linhaCarrinhoListener,Carrinho carrinho) {
+    public LinhaCarrinhoAdaptador(Context context, List<LinhaCarrinho> linhasCarrinho) {
         this.context = context;
-        this.linhasCarrinhosListener = linhasCarrinhosListener;
         this.linhasCarrinho = linhasCarrinho;
-        this.linhaCarrinhoListener = linhaCarrinhoListener;
-        this.carrinho = carrinho;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_carrinho, parent, false);
-        return new ViewHolder(view, linhasCarrinhosListener);
-
-
+    public LinhaCarrinhoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_carrinho, parent, false);
+        return new LinhaCarrinhoViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-
+    public void onBindViewHolder(@NonNull LinhaCarrinhoViewHolder holder, int position) {
         LinhaCarrinho linhaCarrinho = linhasCarrinho.get(position);
-        int idpro = linhaCarrinho.getProdutoID();
-        Produto produto = SingletonProdutos.getInstance(context).getProduto(idpro);
-        if(produto!=null){
-            String nomeproduto = produto.getNome();
-            holder.tvNomeProdutoCarrinho.setText(produto.getNome());
-            holder.tvPrecoProdutoCarrinho.setText(produto.getPreco() + " € - "+String.format("%.2f",(produto.getPreco()*linhaCarrinho.getQuantidade()))+" €");
-            holder.tvQuantidadeProdutoCarrinho.setText(linhaCarrinho.getQuantidade() + "");
-            String imageUrl = "http://"+ SingletonProdutos.getInstance(context).getApiIP(context) +"/AMAI-plataformas/frontend/web/public/imagens/produtos/" + produto.getImagem();
-            Glide.with(holder.itemView.getContext()).load(imageUrl).transform(new CenterCrop(), new RoundedCorners(30)).into(holder.imgProdutoCarrinho);
+
+        // Preenche os dados no layout do item
+        holder.tvNomeProdutoCarrinho.setText(linhaCarrinho.getProduto().getNome());
+        holder.tvPrecoProdutoCarrinho.setText(String.format("R$ %.2f", linhaCarrinho.getProduto().getPreco()));
+        holder.tvQuantidadeProdutoCarrinho.setText("Quantidade: " + linhaCarrinho.getQuantidade());
+
+        // Carregar a imagem do produto se a imagem for local (se não, use recursos locais)
+        String imagemProduto = linhaCarrinho.getProduto().getImagem();
+        if (imagemProduto != null && !imagemProduto.isEmpty()) {
+            // Supondo que as imagens estão em drawable (você pode ajustar conforme necessário)
+            int imageRes = context.getResources().getIdentifier(imagemProduto, "drawable", context.getPackageName());
+            if (imageRes != 0) {
+                holder.imgProdutoCarrinho.setImageResource(imageRes);
+            }
         }
 
+        // Configurações de botões (aumentar, diminuir, deletar)
+        holder.btnAumentaQtd.setOnClickListener(v -> {
+            // Aumentar a quantidade
+            linhaCarrinho.setQuantidade(linhaCarrinho.getQuantidade() + 1);
+            notifyItemChanged(position); // Atualiza a linha
+        });
 
-
-
-        //holder.tvTotalCarrinho.setText("0.00 €");
-
-        holder.btnIncrease.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Increase quantity
-                linhaCarrinho.adicionarQuantidade();
-
-                SingletonProdutos.getInstance(context).updateLinhaCarrinhoAPI(context,linhaCarrinho);
-                SingletonProdutos.getInstance(context).setLinhaCarrinhoListener(linhaCarrinhoListener);
-                SingletonProdutos.getInstance(context).getCarrinhoAPI(context);
-
-                notifyItemChanged(position);
+        holder.btnDiminuiQtd.setOnClickListener(v -> {
+            // Diminuir a quantidade
+            if (linhaCarrinho.getQuantidade() > 1) {
+                linhaCarrinho.setQuantidade(linhaCarrinho.getQuantidade() - 1);
+                notifyItemChanged(position); // Atualiza a linha
             }
         });
 
-        holder.btnDecrease.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Decrease quantity
-                linhaCarrinho.diminuirQuantidade();
-
-                SingletonProdutos.getInstance(context).updateLinhaCarrinhoAPI(context,linhaCarrinho);
-                SingletonProdutos.getInstance(context).setLinhaCarrinhoListener(linhaCarrinhoListener);
-                SingletonProdutos.getInstance(context).getCarrinhoAPI(context);
-                notifyItemChanged(position);
-
-            }
+        holder.btnDelete.setOnClickListener(v -> {
+            // Remover o item do carrinho
+            linhasCarrinho.remove(position);
+            notifyItemRemoved(position); // Remove o item da lista
         });
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context buttonContext = v.getContext();
-                // Delete item
-                AlertDialog alert = new AlertDialog.Builder(buttonContext)
-                        .setTitle("Remover produto")
-                        .setMessage("Tem a certeza que pretende remover o produto do carrinho?")
-                        .setPositiveButton("Sim", (dialog, which) -> {
-                            SingletonProdutos.getInstance(buttonContext).deleteLinhaCarrinhoAPI(buttonContext,linhaCarrinho);
-                            SingletonProdutos.getInstance(buttonContext).setLinhaCarrinhoListener(linhaCarrinhoListener);
-
-                            linhasCarrinho.remove(position);
-
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, linhasCarrinho.size());
-                            SingletonProdutos.getInstance(context).getCarrinhoAPI(context);
-
-
-                        })
-                        .setNegativeButton("Não", null)
-                        .create();
-                alert.show();
-
-
-            }
-        });
-
-
     }
 
     @Override
@@ -143,24 +79,25 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
         return linhasCarrinho.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNomeProdutoCarrinho, tvPrecoProdutoCarrinho, tvQuantidadeProdutoCarrinho, btnIncrease, btnDecrease;
+    public void updateData(List<LinhaCarrinho> novasLinhas) {
+        this.linhasCarrinho = novasLinhas;
+        notifyDataSetChanged();
+    }
+
+    public static class LinhaCarrinhoViewHolder extends RecyclerView.ViewHolder {
+        TextView tvNomeProdutoCarrinho, tvPrecoProdutoCarrinho, tvQuantidadeProdutoCarrinho;
         ImageView imgProdutoCarrinho;
-        Button btnDelete;
+        Button btnAumentaQtd, btnDiminuiQtd, btnDelete;
 
-
-        public ViewHolder(@NonNull View itemView, LinhasCarrinhosListener linhasCarrinhosListener) {
+        public LinhaCarrinhoViewHolder(View itemView) {
             super(itemView);
             tvNomeProdutoCarrinho = itemView.findViewById(R.id.tvNomeProdutoCarrinho);
             tvPrecoProdutoCarrinho = itemView.findViewById(R.id.tvPrecoProdutoCarrinho);
             tvQuantidadeProdutoCarrinho = itemView.findViewById(R.id.tvQuantidadeProdutoCarrinho);
             imgProdutoCarrinho = itemView.findViewById(R.id.imgProdutoCarrinho);
-            btnIncrease = itemView.findViewById(R.id.btnAumentaQtd);
-            btnDecrease = itemView.findViewById(R.id.btnDiminuiQtd);
+            btnAumentaQtd = itemView.findViewById(R.id.btnAumentaQtd);
+            btnDiminuiQtd = itemView.findViewById(R.id.btnDiminuiQtd);
             btnDelete = itemView.findViewById(R.id.btnDelete);
-
-
-
         }
     }
 }
