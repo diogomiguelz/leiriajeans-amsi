@@ -47,7 +47,7 @@ import com.example.leiriajeansamsi.utils.LinhasFaturasJsonParser;
 import com.example.leiriajeansamsi.utils.LoginJsonParser;
 import com.example.leiriajeansamsi.utils.ProdutoJsonParser;
 
-public class SingletonProdutos {
+public class    SingletonProdutos {
 
     public ArrayList<Produto> produtos = new ArrayList<>();
 

@@ -5,7 +5,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_login"
-    tools:context=".ProdutosFragment">
+    tools:context=".SobreFragment">
 
+    <!-- Contêiner principal -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- MapView configurado com o estilo CartoDB Positron -->
+        <org.osmdroid.views.MapView
+            android:id="@+id/mapa"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:scrollbars="none"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- TextView para exibir as informações da empresa -->
+        <TextView
+            android:id="@+id/text_informacoes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/mapa"
+            android:padding="16dp"
+            android:text="Carregando informações..."
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
