@@ -556,7 +556,18 @@ public class SingletonProdutos {
         editor.apply();
     }
 
-    public void signupAPI(final String username, final String password, final String email, final Context context) {
+    public void signupAPI(
+            final String username,
+            final String password,
+            final String email,
+            final String rua,
+            final String codpostal,
+            final String localidade,
+            final String nif,
+            final String telefone,
+            final String nomeUtilizador,
+            final Context context) {
+
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
         } else {
@@ -565,6 +576,12 @@ public class SingletonProdutos {
                 jsonParams.put("username", username);
                 jsonParams.put("password", password);
                 jsonParams.put("email", email);
+                jsonParams.put("rua", rua);
+                jsonParams.put("codpostal", codpostal);
+                jsonParams.put("localidade", localidade);
+                jsonParams.put("nif", nif);
+                jsonParams.put("telefone", telefone);
+                jsonParams.put("nome", nomeUtilizador);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -574,14 +591,14 @@ public class SingletonProdutos {
                 public void onResponse(JSONObject response) {
                     utilizador = LoginJsonParser.parserJsonLogin(response);
 
-                    // Update the loggedInUser in SingletonProdutos with the new user data
+                    // Atualizar o usuário logado no SingletonProdutos
                     loggedInUser = utilizador;
 
-                    // Save the user's ID and token to SharedPreferences
+                    // Salvar ID e token do usuário no SharedPreferences
                     saveUserId(context, utilizador.getId());
                     saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
 
-                    // Perform additional actions as needed
+                    // Notificar o listener de sucesso no signup
                     if (signupListener != null) {
                         signupListener.onUpdateSignup(utilizador);
                     }
@@ -589,13 +606,15 @@ public class SingletonProdutos {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Error durante o signup", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro durante o signup", Toast.LENGTH_SHORT).show();
+                    Log.e("Signup", "Erro: " + error.getMessage());
                 }
             });
 
             volleyQueue.add(req);
         }
     }
+
 
     public void logout(Context context) {
         // Clear the SharedPreferences data
@@ -821,7 +840,7 @@ public class SingletonProdutos {
     }
 
     // API Signup
-    private String mUrlAPISignup(Context context) {
+    public String mUrlAPISignup(Context context) {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/auth/signup";
     }
 
