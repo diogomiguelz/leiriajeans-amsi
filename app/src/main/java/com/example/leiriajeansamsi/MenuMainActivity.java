@@ -71,23 +71,25 @@ public class MenuMainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Fragment fragment=null;
+        Fragment fragment = null;
 
         if (item.getItemId() == R.id.navProdutos) {
             fragment = new ListaProdutosFragment();
             setTitle(item.getTitle());
         }
 
-        if(item.getItemId()==R.id.navFaturas){
-            //fragment = new FaturasFragment();
-            //setTitle(item.getTitle());
+        if (item.getItemId() == R.id.navCarrinho) {
+            fragment = new CarrinhoFragment();
+            setTitle(item.getTitle());
         }
 
-        else if(item.getItemId()== R.id.navSobre){
+        if (item.getItemId() == R.id.navFaturas) {
+            //fragment = new FaturasFragment();
+            //setTitle(item.getTitle());
+        } else if (item.getItemId() == R.id.navSobre) {
             fragment = new SobreFragment();
             //setTitle(item.getTitle());
-        }
-        else if(item.getItemId()==R.id.navEmail){
+        } else if (item.getItemId() == R.id.navEmail) {
             enviarEmail();
         }
 

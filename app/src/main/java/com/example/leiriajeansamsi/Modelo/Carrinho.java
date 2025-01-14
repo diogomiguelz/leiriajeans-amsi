@@ -1,11 +1,22 @@
 package com.example.leiriajeansamsi.Modelo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Carrinho {
+    private int id;
+    private int userdataId;
+    private int produto;
+    private float ivatotal;
+    private float total;
+    private List<LinhaCarrinho> linhas;
 
-    private int id, userdataId, produto;
-    private float ivatotal, total;
+    // Construtor padrão inicializa a lista de linhas
+    public Carrinho() {
+        this.linhas = new ArrayList<>();
+    }
 
-
+    // Construtor completo
     public Carrinho(int id, int userdataId, int produto, float ivatotal, float total) {
         this.id = id;
         this.userdataId = userdataId;
@@ -14,6 +25,8 @@ public class Carrinho {
         this.total = total;
     }
 
+
+    // Getters e Setters
     public int getId() {
         return id;
     }
@@ -22,15 +35,23 @@ public class Carrinho {
         this.id = id;
     }
 
-    public int getuserdataId() {
+    public int getUserdataId() {
         return userdataId;
     }
 
-    public void setuserdataId(int userId) {
-        this.userdataId = userId;
+    public void setUserdataId(int userdataId) {
+        this.userdataId = userdataId;
     }
 
-    public float gettotal() {
+    public float getIvatotal() {
+        return ivatotal;
+    }
+
+    public void setIvatotal(float ivatotal) {
+        this.ivatotal = ivatotal;
+    }
+
+    public float getTotal() {
         return total;
     }
 
@@ -38,12 +59,18 @@ public class Carrinho {
         this.total = total;
     }
 
-    public float getIvatotal() {
-        return total;
+    public List<LinhaCarrinho> getLinhas() {
+        return linhas;
     }
 
-    public void setIvatotal(float ivatotal) {
-        this.ivatotal = ivatotal;
+    // Adicionar uma linha ao carrinho
+    public void adicionarLinha(LinhaCarrinho linha) {
+        this.linhas.add(linha);
+    }
+
+    // Remover uma linha do carrinho
+    public void removerLinha(LinhaCarrinho linha) {
+        this.linhas.remove(linha);
     }
 
     @Override
@@ -51,9 +78,9 @@ public class Carrinho {
         return "Carrinho{" +
                 "id=" + id +
                 ", userdataId=" + userdataId +
-                ", produto=" + produto + '\'' +
-                ", ivatotal='" + ivatotal + '\'' +
-                ", total='" + total +
+                ", ivatotal=" + ivatotal +
+                ", total=" + total +
+                ", linhas=" + linhas +
                 '}';
     }
 }

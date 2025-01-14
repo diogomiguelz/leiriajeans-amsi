@@ -27,7 +27,7 @@
     <string name="icon_carrinho">Carrinho</string>
     <string name="icon_area_pessoal">Area Pessoal</string>
     <string name="txt_username_hint">Username</string>
-    <string name="txt_morada">Morada</string>
+    <string name="txt_morada">Rua</string>
     <string name="txt_codpostal">Código Postal</string>
     <string name="txt_localidade">Localidade</string>
     <string name="txt_nif">NIF</string>
@@ -64,4 +64,5 @@
     <string name="txt_ip_api">172.22.21.212</string>
     <string name="txt_confirmar">Confirmar</string>
     <string name="tvUsername_hint">Username</string>
+    <string name="txt_nomeproprio">Nome</string>
 </resources>
