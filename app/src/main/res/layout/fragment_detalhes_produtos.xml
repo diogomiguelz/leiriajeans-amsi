@@ -18,9 +18,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="90dp">
+            android:background="@color/white"
+            android:paddingBottom="500dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -42,6 +44,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <TextView
@@ -68,7 +71,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"/>
+                android:layout_marginEnd="16dp"
+                android:background="@color/white"/>
 
             <TextView
                 android:id="@+id/textView19"

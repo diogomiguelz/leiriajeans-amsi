@@ -1,5 +1,6 @@
 package com.example.leiriajeansamsi;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.leiriajeansamsi.Modelo.Carrinho;
 import com.example.leiriajeansamsi.Modelo.Produto;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
-import com.example.leiriajeansamsi.listeners.CarrinhoListener;
 
 public class DetalhesProdutosFragment extends Fragment {
 
@@ -26,7 +26,6 @@ public class DetalhesProdutosFragment extends Fragment {
     private Produto produto;
 
     public static final String PRODUTO = "PRODUTO";
-    private CarrinhoListener carrinhoListener;
 
     @Nullable
     @Override
@@ -42,21 +41,27 @@ public class DetalhesProdutosFragment extends Fragment {
         btnAdicionarCarrinho = view.findViewById(R.id.btnAdicionarCarrinho);
 
         // Get product from arguments
-        if (getArguments() != null && getArguments().containsKey(DetalhesProdutoActivity.PRODUTO)) {
-            produto = getArguments().getParcelable(DetalhesProdutoActivity.PRODUTO);
+        if (getArguments() != null && getArguments().containsKey(PRODUTO)) {
+            produto = getArguments().getParcelable(PRODUTO);
 
             // Populate the UI with product data
             tvNomeProduto.setText(produto.getNome());
             tvPrecoProduto.setText(produto.getPreco() + " €");
             tvDescricaoProduto.setText(produto.getDescricao());
 
-            String imageUrl = "http://" + SingletonProdutos.getInstance(getContext()).getApiIP(getContext()) +
-                    "/leiriajeans/frontend/web/public/images/produtos/" + produto.getImagem();
+            // URL da imagem
+            String imageUrl = "http://" + SingletonProdutos.getInstance(getContext()).getApiIP(getContext())
+                    + produto.getImagem();
 
+            // Ajuste a URL para garantir que o caminho da imagem esteja correto
+            imageUrl = imageUrl.replace("images/produtos/", "public/imagens/produtos/");
+
+            // Usar Glide para carregar a imagem
             Glide.with(getContext())
                     .load(imageUrl)
                     .placeholder(R.drawable.ipllogo)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.logo2)  // Imagem de erro se o Glide falhar
                     .into(imgCapaProduto);
         }
 
