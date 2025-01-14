@@ -434,6 +434,11 @@ public class SingletonProdutos {
         return preferences.getInt("user_id", 0); // 0 is the default value if the user ID is not found
     }
 
+    public String getUsername(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        return preferences.getString("username", "");
+    }
+
     public String getUserToken(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
         return preferences.getString("user_token", null);
@@ -474,6 +479,7 @@ public class SingletonProdutos {
                         if (utilizador != null && utilizador.getAuth_key() != null) {
                             saveUserId(context, utilizador.getId());
                             saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
+                            saveUsername(context, utilizador.getUsername());
 
                             if (loginListener != null) {
                                 loginListener.onUpdateLogin(utilizador);
@@ -505,37 +511,49 @@ public class SingletonProdutos {
         volleyQueue.add(req);
     }
 
-    public void getUserDataAPI(Context context) {
+    public void getUserDataAPI(Context context, final UtilizadorDataListener listener) {
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
         } else {
             int utilizadorID = getUserId(context); // Fetch user ID from SharedPreferences
-            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, mUrlAPIUserData(context), null, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    for (int i = 0; i < response.length(); i++) {
-                        try {
-                            JSONObject item = response.getJSONObject(i);
-                            utilizadorData = LoginJsonParser.parserJsonGetUtilizadorData(item);
+            String username = getUsername(context); // Método fictício para obter o username
+            String accessToken = getUserToken(context);
+            if (username != null && accessToken != null) {
+                String url = "http://172.22.21.212/leiriajeans/backend/web/api/user/dados?username=" + username + "&access-token=" + accessToken;
 
-                            if (utilizadorDataListener != null) {
-                                utilizadorDataListener.onGetUtilizadorData(utilizadorData);
+                JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject user = response.getJSONObject("user");
+                            JSONObject userForm = response.getJSONObject("userForm");
+
+                            utilizadorData = LoginJsonParser.parserJsonGetUtilizadorData(userForm);
+
+                            if (listener != null) {
+                                listener.onGetUtilizadorData(utilizadorData);
                             }
 
                         } catch (JSONException e) {
+                            Log.e("getUserDataAPI", "Erro ao fazer parse: " + e.getMessage());
                             throw new RuntimeException(e);
                         }
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao acessar o servidor: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            volleyQueue.add(req);
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("getUserDataAPI", "Erro ao acessar o servidor: " + error.getMessage());
+                        Toast.makeText(context, "Erro ao acessar o servidor: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                volleyQueue.add(req);
+            } else {
+                Toast.makeText(context, "Username ou Access Token não encontrados", Toast.LENGTH_SHORT).show();
+            }
         }
     }
+
+
 
 
     public void saveUserToken(Context context, String token, String username) {
@@ -550,6 +568,13 @@ public class SingletonProdutos {
         SharedPreferences preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("user_id", userId);
+        editor.apply();
+    }
+
+    public void saveUsername(Context context, String username) {
+        SharedPreferences preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("username", username);
         editor.apply();
     }
 
@@ -594,6 +619,7 @@ public class SingletonProdutos {
                     // Salvar ID e token do usuário no SharedPreferences
                     saveUserId(context, utilizador.getId());
                     saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
+                    saveUsername(context, utilizador.getUsername());
 
                     // Notificar o listener de sucesso no signup
                     if (signupListener != null) {
@@ -844,9 +870,12 @@ public class SingletonProdutos {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/produtos/produtos?access-token=" + getUserToken(context);
     }
 
-    // API Perfil Dados
     private String urlPostAPIPerfilDados(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/users/" + getUserId(context) + "/dados?access-token=" + getUserToken(context);
+
+        String username = getUsername(context);
+        String accessToken = getUserToken(context);
+
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" + username + "&access-token=" + accessToken;
     }
 
     // API Delete Linha

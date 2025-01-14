@@ -65,4 +65,14 @@
     <string name="txt_confirmar">Confirmar</string>
     <string name="tvUsername_hint">Username</string>
     <string name="txt_nomeproprio">Nome</string>
+    <string name="txt_perfil_username">Username</string>
+    <string name="txt_perfil_primeiro_nome">Nome</string>
+    <string name="txt_perfil_email">email</string>
+    <string name="txt_perfil_d_pessoais">Dados Pessoais</string>
+    <string name="txt_perfil_d_morada">Rua</string>
+    <string name="txt_perfil_ver_faturas">Ver Faturas</string>
+    <string name="txt_perfil_telemovel">Telemóvel</string>
+    <string name="txt_perfil_nif">NIF:</string>
+    <string name="txt_btn_editar_perfil">Editar Perfil</string>
+    <string name="txt_editar">Editar Perfil</string>
 </resources>
