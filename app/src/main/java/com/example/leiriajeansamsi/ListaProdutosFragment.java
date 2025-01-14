@@ -1,5 +1,6 @@
 package com.example.leiriajeansamsi;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +13,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -79,11 +82,29 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
 
     @Override
     public void onItemClick(int position, Produto product) {
-        // Open the product details activity
-        Intent intent = new Intent(getContext(), DetalhesProdutoActivity.class);
-        intent.putExtra(DetalhesProdutoActivity.PRODUTO, product);
-        startActivity(intent);
+        // Obtém o contexto e a Activity atual
+        Context context = getContext();
+        if (context instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) context;
+
+            // Criar o Fragmento
+            DetalhesProdutosFragment detalhesProdutosFragment = new DetalhesProdutosFragment();
+
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            DetalhesProdutosFragment detalhesProdutoFragment = new DetalhesProdutosFragment();
+
+            // Passar dados (exemplo do ID do produto)
+            Bundle args = new Bundle();
+            args.putInt("produto_id", product.getId());
+            detalhesProdutoFragment.setArguments(args);
+
+            // Adicionar o fragmento
+            transaction.add(R.id.fragment_container, detalhesProdutoFragment);
+            transaction.addToBackStack(null); // Adicionar à pilha para navegação
+            transaction.commit();
+        }
     }
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {

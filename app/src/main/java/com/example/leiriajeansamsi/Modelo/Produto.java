@@ -1,10 +1,9 @@
 package com.example.leiriajeansamsi.Modelo;
 
 import android.os.Parcel;
+import android.os.Parcelable;  // Certifique-se de importar Parcelable
 
-import java.io.Serializable;
-
-public class Produto implements Serializable {
+public class Produto implements Parcelable {
 
     private int id, iva, stock;
     private String nome, descricao, categoria, imagem, cor;
@@ -22,6 +21,7 @@ public class Produto implements Serializable {
         this.preco = preco;
     }
 
+    // Getters e setters
 
     public int getId() {
         return id;
@@ -110,6 +110,7 @@ public class Produto implements Serializable {
                 '}';
     }
 
+    // Implementação do Parcelable
     protected Produto(Parcel in) {
         id = in.readInt();
         iva = in.readInt();
@@ -120,9 +121,37 @@ public class Produto implements Serializable {
         categoria = in.readString();
         imagem = in.readString();
         preco = in.readFloat();
-
     }
 
+    // Método obrigatório para escrever os dados no Parcel
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(iva);
+        dest.writeString(nome);
+        dest.writeInt(stock);
+        dest.writeString(descricao);
+        dest.writeString(cor);
+        dest.writeString(categoria);
+        dest.writeString(imagem);
+        dest.writeFloat(preco);
+    }
+
+    // Método obrigatório para criar a instância a partir de um Parcel
+    public static final Creator<Produto> CREATOR = new Creator<Produto>() {
+        @Override
+        public Produto createFromParcel(Parcel in) {
+            return new Produto(in);
+        }
+
+        @Override
+        public Produto[] newArray(int size) {
+            return new Produto[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 }
-
-

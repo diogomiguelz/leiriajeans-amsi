@@ -17,12 +17,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.leiriajeansamsi.Modelo.Carrinho;
 import com.example.leiriajeansamsi.Modelo.Produto;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.listeners.CarrinhoListener;
 
-public class ListaDetalhesProdutosFragment extends Fragment {
+public class DetalhesProdutosFragment extends Fragment {
 
     private TextView tvNomeProduto, tvPrecoProduto, tvDescricaoProduto, btnAdicionarCarrinho;
     private ImageView imgCapaProduto;
     private Produto produto;
+
+    public static final String PRODUTO = "PRODUTO";
+    private CarrinhoListener carrinhoListener;
 
     @Nullable
     @Override

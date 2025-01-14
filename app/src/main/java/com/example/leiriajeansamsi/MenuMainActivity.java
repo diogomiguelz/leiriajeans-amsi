@@ -38,7 +38,7 @@ public class MenuMainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
 
 
-        drawer = findViewById(R.id.drawerLayout);
+        drawer = findViewById(R.id.fragment_container);
         navigationView = findViewById(R.id.navView);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.ndOpen, R.string.ndClose);
