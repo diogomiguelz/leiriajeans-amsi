@@ -74,8 +74,8 @@ public class MenuMainActivity extends AppCompatActivity implements
         Fragment fragment=null;
 
         if (item.getItemId() == R.id.navProdutos) {
-            Intent intent = new Intent(MenuMainActivity.this, ListaProdutosActivity.class);
-            startActivity(intent);
+            fragment = new ListaProdutosFragment();
+            setTitle(item.getTitle());
         }
 
         if(item.getItemId()==R.id.navFaturas){

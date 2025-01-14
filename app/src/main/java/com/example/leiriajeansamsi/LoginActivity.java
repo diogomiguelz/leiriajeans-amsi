@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
     public void onUpdateLogin(Utilizador utilizador) {
         isLoggingIn = false;
         if (utilizador != null && utilizador.getAuth_key() != null) {
-            Log.d("LoginActivity", "Login bem sucedido, navegando para MenuMainActivity");
+            Log.d("LoginActivity", "Login bem sucedido, a navegar para MenuMainActivity");
             Intent intent = new Intent(this, MenuMainActivity.class);
             intent.putExtra(TOKEN, utilizador.getAuth_key());
             intent.putExtra(USERNAME, utilizador.getUsername());
