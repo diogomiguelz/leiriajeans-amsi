@@ -31,6 +31,7 @@ public class LoginJsonParser {
             
             Log.d("LoginParser", "Utilizador criado com sucesso: " + utilizador.getUsername());
         } catch (JSONException e) {
+
             Log.e("LoginParser", "Erro ao fazer parse: " + e.getMessage());
             throw new RuntimeException(e);
         }
@@ -49,7 +50,7 @@ public class LoginJsonParser {
             String nif = loginJSON.getString("nif");
             String telefone = loginJSON.getString("telefone");
 
-            utilizador = new Utilizador(id, "", nome, "", rua,
+            utilizador = new Utilizador(id, "", nome, codpostal, rua,
                     localidade, telefone, nif,"",
                     "", "", "");
         } catch (JSONException e) {

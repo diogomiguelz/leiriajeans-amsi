@@ -60,7 +60,7 @@ public class MenuMainActivity extends AppCompatActivity implements
 
     private void carregarCabecalho() {
         Intent intent = getIntent();
-        email = intent.getStringExtra(com.example.leiriajeansamsi.LoginActivity.EMAIL);
+        email = intent.getStringExtra(LoginActivity.USERNAME);
 
         if(email != null){
             View hView = navigationView.getHeaderView(0);
@@ -80,6 +80,11 @@ public class MenuMainActivity extends AppCompatActivity implements
 
         if (item.getItemId() == R.id.navCarrinho) {
             fragment = new CarrinhoFragment();
+            setTitle(item.getTitle());
+        }
+
+        if (item.getItemId() == R.id.navPerfil) {
+            fragment = new PerfilFragment();
             setTitle(item.getTitle());
         }
 
@@ -106,7 +111,7 @@ public class MenuMainActivity extends AppCompatActivity implements
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("message/rfc822");
 
-        String[] recipients = {"arturjesus324@gmail.com","2220866@my.ipleiria.pt"};
+        String[] recipients = {"2220866@my.ipleiria.pt"};
 
         intent.putExtra(Intent.EXTRA_EMAIL, recipients);
         intent.putExtra(intent.EXTRA_SUBJECT,subject);

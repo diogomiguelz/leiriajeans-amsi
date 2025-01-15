@@ -1,6 +1,7 @@
 package com.example.leiriajeansamsi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +31,10 @@ public class DetalhesProdutosFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate o layout do fragmento
         View view = inflater.inflate(R.layout.fragment_detalhes_produtos, container, false);
+
+        getActivity().setTitle("Detalhes do Produto");
 
         // Initialize UI components
         tvNomeProduto = view.findViewById(R.id.nomeTxt);

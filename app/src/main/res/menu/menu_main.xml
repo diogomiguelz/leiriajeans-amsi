@@ -19,6 +19,7 @@
             android:title="@string/faturas"
             android:icon="@drawable/ic_faturas"
             />
+
         <item
             android:id="@+id/navSobre"
             android:title="@string/sobre_nos"
@@ -31,6 +32,16 @@
                 android:id="@+id/navEmail"
                 android:title="@string/email"
                 android:icon="@drawable/ic_menu_email"/>
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/perfil" >
+        <menu>
+            <item
+                android:id="@+id/navPerfil"
+                android:title="@string/perfil"
+                android:icon="@drawable/icons8_administrator_male_96"/>
         </menu>
     </item>
 </menu>
