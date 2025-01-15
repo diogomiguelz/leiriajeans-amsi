@@ -59,7 +59,9 @@ public class SobreFragment extends Fragment {
         mapView.getOverlays().add(marker);
 
         // Informações da empresa
-        String informacoes = "Endereço: Politécnico de Leiria\n" +
+        String informacoes =
+                "Fundada em 2024, a nossa loja nasceu com a missão de trazer estilo, conforto e qualidade para o guarda-roupa de todos os nossos clientes. Inspirados pelas últimas tendências da moda e comprometidos com a sustentabilidade, oferecemos uma seleção de roupas cuidadosamente escolhidas para refletir as necessidades e preferências de cada pessoa. \n"+
+                "Endereço: Politécnico de Leiria\n" +
                 "Telefone: +351 123 456 789\n" +
                 "Email: contato@leiriajeans.pt";
         textInformacoes.setText(informacoes);
