@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.example.leiriajeansamsi.LoginActivity;
 import com.example.leiriajeansamsi.listeners.CarrinhoListener;
@@ -49,12 +51,12 @@ import com.example.leiriajeansamsi.utils.LinhasFaturasJsonParser;
 import com.example.leiriajeansamsi.utils.LoginJsonParser;
 import com.example.leiriajeansamsi.utils.ProdutoJsonParser;
 
-public class    SingletonProdutos {
+public class SingletonProdutos {
 
-    // Constantes para endpoints
-    private static final String CARRINHO_API = "carrinho";
-    private static final String CRIAR_CARRINHO_API = "carrinho/criar";
-    private static final String LINHAS_CARRINHO_API = "linhas-carrinhos";
+    //region DECLARAÇOES
+
+    private Produto produtoParaAdicionar;
+    private int quantidadeParaAdicionar;
     private int carrinhoId = -1;
 
     public ArrayList<Produto> produtos = new ArrayList<>();
@@ -89,7 +91,9 @@ public class    SingletonProdutos {
     private Utilizador loggedInUser;
 
     private List<LinhaCarrinho> linhasCarrinho; // Lista de produtos no carrinho
+    //endregion
 
+    //region singleton
     public static synchronized SingletonProdutos getInstance(Context context) {
         if (instance == null) {
             synchronized (SingletonProdutos.class) {
@@ -105,16 +109,9 @@ public class    SingletonProdutos {
     private SingletonProdutos(Context context) {
         produtos = new ArrayList<>();
         volleyQueue = Volley.newRequestQueue(context); // Inicializa a RequestQueue aqui
-        getAllProdutosAPI(context); // Chama o método para buscar produtos
+        getAllProdutosAPI(context); // Chama o metodo para buscar produtos
     }
-
-    private void inicializarProdutos() {
-        // Exemplo de adição de produtos
-        produtos.add(new Produto(1, 23, 100, "Produto 1", "Descrição do Produto 1", "Categoria 1", "url_imagem_1", "Cor 1", 10.0f)); // ID 1
-        produtos.add(new Produto(2, 23, 200, "Produto 2", "Descrição do Produto 2", "Categoria 2", "url_imagem_2", "Cor 2", 20.0f)); // ID 2
-        produtos.add(new Produto(8, 23, 150, "Produto 8", "Descrição do Produto 8", "Categoria 8", "url_imagem_8", "Cor 8", 30.0f)); // ID 8
-        produtos.add(new Produto(9, 23, 250, "Produto 9", "Descrição do Produto 9", "Categoria 9", "url_imagem_9", "Cor 9", 40.0f)); // ID 9
-    }
+    //endregion
 
     //region GETTERS AND SETTERS
 
@@ -205,11 +202,14 @@ public class    SingletonProdutos {
         this.linhasFaturasListener = linhasFaturasListener;
     }
 
-    public Produto getProduto(int id) {
+    public Produto getProdutoById(int id) {
+        Log.d("SingletonProdutos", "A procurar o produto com ID: " + id);
         for (Produto produto : produtos) {
-            if (produto.getId() == id)
+            if (produto.getId() == id) {
                 return produto;
+            }
         }
+        Log.e("SingletonProdutos", "Produto com ID " + id + " não encontrado.");
         return null;
     }
 
@@ -230,236 +230,18 @@ public class    SingletonProdutos {
     }
 
     public List<LinhaCarrinho> getLinhasCarrinho() {
+        if (linhasCarrinho == null) {
+            linhasCarrinho = new ArrayList<>();
+        }
         return linhasCarrinho;
     }
+
 
     //endregion
 
     //region PEDIDOS API CRUD
-    public void getAllProdutosAPI(final Context context) {
-        if (!ProdutoJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-            if (produtosListener != null) {
-                produtosListener.onRefreshListaProdutos(produtos);
-            }
-        } else {
-            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, mUrlAPIProdutos(context), null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        produtos = ProdutoJsonParser.parserJsonProdutos(response);
-                        // Informar a vista
-                        if (produtosListener != null) {
-                            produtosListener.onRefreshListaProdutos(produtos);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            volleyQueue.add(req);
-        }
-    }
 
-
-    public void getCarrinhoAPI(Context context) {
-        Log.d("CarrinhoDebug", "Verificando carrinho para usuário: " + getUserId(context));
-        Log.d("CarrinhoDebug", "URL: " + mUrlGetCarrinhoAPI(context));
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, mUrlGetCarrinhoAPI(context), null,
-            response -> {
-                try {
-                    carrinhoId = response.getInt("id");
-                    Log.d("CarrinhoDebug", "Carrinho obtido com sucesso. ID: " + carrinhoId);
-                    if (produtoParaAdicionar != null) {
-                        adicionarLinhaCarrinhoAPI(context, produtoParaAdicionar, quantidadeParaAdicionar);
-                        produtoParaAdicionar = null;
-                        quantidadeParaAdicionar = 0;
-                    }
-                } catch (JSONException e) {
-                    Log.e("CarrinhoDebug", "Erro ao parser resposta do carrinho: " + e.getMessage());
-                    criarCarrinhoAPI(context);
-                }
-            },
-            error -> {
-                Log.e("CarrinhoDebug", "Erro ao verificar carrinho: " + error.getMessage());
-                criarCarrinhoAPI(context);
-            });
-
-        volleyQueue.add(request);
-    }
-
-    private void criarCarrinhoAPI(Context context) {
-        int userId = getUserId(context);
-        String url = getBaseUrl(context) + CRIAR_CARRINHO_API + "?access-token=" + getUserToken(context);
-
-        Log.d("CarrinhoDebug", "Criando carrinho. URL: " + url);
-
-        StringRequest request = new StringRequest(Request.Method.POST, url,
-            response -> {
-                try {
-                    JSONObject jsonResponse = new JSONObject(response);
-                    carrinhoId = jsonResponse.getInt("id");
-                    Log.d("CarrinhoDebug", "Novo carrinho criado. ID: " + carrinhoId);
-                    // Após criar o carrinho, tenta adicionar o produto
-                    if (produtoParaAdicionar != null) {
-                        adicionarLinhaCarrinhoAPI(context, produtoParaAdicionar, quantidadeParaAdicionar);
-                        produtoParaAdicionar = null;
-                        quantidadeParaAdicionar = 0;
-                    }
-                } catch (JSONException e) {
-                    Log.e("CarrinhoDebug", "Erro ao parser resposta de criação: " + e.getMessage());
-                }
-            },
-            error -> {
-                Log.e("CarrinhoDebug", "Erro ao criar carrinho: " + error.getMessage());
-            }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("userdata_id", String.valueOf(userId));
-                params.put("total", "0"); // Valor inicial
-                params.put("ivatotal", "0"); // Valor inicial
-                return params;
-            }
-        };
-
-        volleyQueue.add(request);
-    }
-
-    public void adicionarLinhaCarrinhoAPI(Context context, Produto produto, int quantidade) {
-        if (carrinhoId == -1) {
-            // Armazena o produto para adicionar depois que o carrinho for criado
-            produtoParaAdicionar = produto;
-            quantidadeParaAdicionar = quantidade;
-            getCarrinhoAPI(context);
-            return;
-        }
-
-        String url = getBaseUrl(context) + "linhas-carrinhos/postlinhacarrinho?access-token=" + getUserToken(context);
-
-        Log.d("CarrinhoDebug", "Adicionando linha ao carrinho. URL: " + url);
-
-        StringRequest request = new StringRequest(Request.Method.POST, url,
-            response -> {
-                Log.d("CarrinhoDebug", "Linha adicionada com sucesso: " + response);
-            },
-            error -> {
-                Log.e("CarrinhoDebug", "Erro ao adicionar linha: " + error.getMessage());
-            }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("carrinho_id", String.valueOf(carrinhoId));
-                params.put("produto_id", String.valueOf(produto.getId()));
-                params.put("quantidade", String.valueOf(quantidade));
-                return params;
-            }
-        };
-
-        volleyQueue.add(request);
-    }
-
-    public void getLinhasCarrinhoAPI(Context context) {
-        if (!ProdutoJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String url = mUrlGetLinhasCarrinhoAPI(context, carrinhoId);
-        Log.d("CarrinhoDebug", "Obtendo linhas do carrinho. URL: " + url);
-
-        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url, null,
-                response -> {
-                    ArrayList<LinhaCarrinho> linhasCarrinho = LinhaCarrinhoJsonParser.parserJsonLinhaCarrinho(response, context);
-                    if (linhasCarrinhoListener != null) {
-                        linhasCarrinhoListener.onRefreshListaLinhasCarrinhos(linhasCarrinho);
-                    }
-                },
-                error -> {
-                    Log.e("CarrinhoDebug", "Erro ao obter linhas: " + error.getMessage());
-                    Toast.makeText(context, "Erro ao obter linhas do carrinho", Toast.LENGTH_SHORT).show();
-                });
-
-        volleyQueue.add(req);
-    }
-
-    private String mUrlAPILinhasCarrinho(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos";
-    }
-
-    public void atualizarLinhaCarrinhoAPI(Context context, LinhaCarrinho linha, LinhaCarrinhoListener listener) {
-        StringRequest req = new StringRequest(Request.Method.PUT, 
-                mUrlUpdateLinha(linha.getId(), context), // Usando o endpoint correto
-                response -> {
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        if (jsonObject.getBoolean("success")) {
-                            Toast.makeText(context, "Carrinho atualizado", Toast.LENGTH_SHORT).show();
-                            if (listener != null) listener.onItemUpdate();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                },
-                error -> Toast.makeText(context, "Erro ao atualizar carrinho", Toast.LENGTH_SHORT).show()) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("quantidade", String.valueOf(linha.getQuantidade()));
-                params.put("precoVenda", String.valueOf(linha.getPrecoVenda()));
-                params.put("valorIva", String.valueOf(linha.getValorIva()));
-                params.put("subTotal", String.valueOf(linha.getSubTotal()));
-                return params;
-            }
-        };
-        volleyQueue.add(req);
-    }
-
-    public void removerLinhaCarrinhoAPI(Context context, int linhaId, LinhaCarrinhoListener listener) {
-        StringRequest req = new StringRequest(Request.Method.DELETE, 
-                urlDeleteLinha(linhaId, context), // Usando o endpoint correto
-                response -> {
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        if (jsonObject.getBoolean("success")) {
-                            Toast.makeText(context, "Item removido do carrinho", Toast.LENGTH_SHORT).show();
-                            if (listener != null) listener.onItemUpdate();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                },
-                error -> Toast.makeText(context, "Erro ao remover item", Toast.LENGTH_SHORT).show());
-        volleyQueue.add(req);
-    }
-
-    public void deleteLinhaCarrinhoAPI(final Context context, final LinhaCarrinho linhaCarrinho) {
-        if (!ProdutoJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-        } else {
-            StringRequest req = new StringRequest(Request.Method.DELETE, urlDeleteLinha(linhaCarrinho.getId(), context), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    if (linhaCarrinhoListener != null) {
-                        Log.d("LINHAS CARRINHO LISTENER", linhaCarrinhoListener.toString());
-                        linhaCarrinhoListener.onItemUpdate();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    String response = new String(error.networkResponse.data);
-                    Log.e("VolleyError", "Error Response: " + response);
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            volleyQueue.add(req);
-        }
-    }
-
+    //region user
     public int getUserId(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
         return preferences.getInt("user_id", 0); // 0 is the default value if the user ID is not found
@@ -501,43 +283,43 @@ public class    SingletonProdutos {
         }
 
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, mUrlAPI, jsonParams,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d("LoginAPI", "Resposta: " + response.toString());
-                    try {
-                        utilizador = LoginJsonParser.parserJsonLogin(response);
-                        if (utilizador != null && utilizador.getAuth_key() != null) {
-                            saveUserId(context, utilizador.getId());
-                            saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
-                            saveUsername(context, utilizador.getUsername());
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("LoginAPI", "Resposta: " + response.toString());
+                        try {
+                            utilizador = LoginJsonParser.parserJsonLogin(response);
+                            if (utilizador != null && utilizador.getAuth_key() != null) {
+                                saveUserId(context, utilizador.getId());
+                                saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
+                                saveUsername(context, utilizador.getUsername());
 
-                            if (loginListener != null) {
-                                loginListener.onUpdateLogin(utilizador);
+                                if (loginListener != null) {
+                                    loginListener.onUpdateLogin(utilizador);
+                                }
+                            } else {
+                                if (loginListener != null) {
+                                    loginListener.onUpdateLogin(null);
+                                }
                             }
-                        } else {
+                        } catch (Exception e) {
+                            Log.e("LoginAPI", "Erro: " + e.getMessage());
                             if (loginListener != null) {
                                 loginListener.onUpdateLogin(null);
                             }
                         }
-                    } catch (Exception e) {
-                        Log.e("LoginAPI", "Erro: " + e.getMessage());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String mensagemErro = "Credenciais incorretas";
+                        Toast.makeText(context, mensagemErro, Toast.LENGTH_SHORT).show();
                         if (loginListener != null) {
                             loginListener.onUpdateLogin(null);
                         }
                     }
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    String mensagemErro = "Credenciais incorretas";
-                    Toast.makeText(context, mensagemErro, Toast.LENGTH_SHORT).show();
-                    if (loginListener != null) {
-                        loginListener.onUpdateLogin(null);
-                    }
-                }
-            });
+                });
 
         volleyQueue.add(req);
     }
@@ -644,10 +426,10 @@ public class    SingletonProdutos {
                 public void onResponse(JSONObject response) {
                     utilizador = LoginJsonParser.parserJsonLogin(response);
 
-                    // Atualizar o usuário logado no SingletonProdutos
+                    // Atualizar o utilizador logado no SingletonProdutos
                     loggedInUser = utilizador;
 
-                    // Salvar ID e token do usuário no SharedPreferences
+                    // Guardar ID e token do utilizador no SharedPreferences
                     saveUserId(context, utilizador.getId());
                     saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
                     saveUsername(context, utilizador.getUsername());
@@ -729,93 +511,27 @@ public class    SingletonProdutos {
             volleyQueue.add(req);
         }
     }
+    //endregion
 
-    public void adicionarFaturaAPI(final Context context) {
+    //region produtos
+    public void getAllProdutosAPI(final Context context) {
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-        } else {
-            StringRequest req = new StringRequest(Request.Method.POST, mUrlApiPostFatura(context), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-
-                    if (faturasListener != null) {
-                        Log.d("POST FATURAS", response);
-                        faturasListener.onRefreshListaFatura(faturas);
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                    String response = new String(error.networkResponse.data);
-                    Log.e("VolleyError", "Error Response: " + response);
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("user_id", getUserId(context) + "");
-
-
-                    return params;
-                }
-            };
-            volleyQueue.add(req);
-        }
-
-    }
-
-
-    public void getFaturasAPI(final Context context) {
-        if (!ProdutoJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-            if (faturasListener != null) {
-
-                faturasListener.onRefreshListaFatura(faturas);
+            if (produtosListener != null) {
+                produtosListener.onRefreshListaProdutos(produtos);
             }
         } else {
-            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, mUrlGetFaturas(context), null, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-
-                    faturas = FaturasJsonParser.parserJsonFaturas(response);
-                    //getLinhasFaturasAPI(context, faturas.get(0));
-                    Log.d("Faturas", faturas.toString());
-                    if (faturasListener != null) {
-                        Log.d("GET FATURAS", response.toString());
-                        faturasListener.onRefreshListaFatura(faturas);
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d("GET FATURAS error", error.getMessage());
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }
-            );
-            volleyQueue.add(req);
-
-        }
-    }
-
-    public void getLinhasFaturasAPI(final Context context, Fatura fatura) {
-        if (!ProdutoJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-        } else {
-            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, mUrlGetLinhasFaturas(fatura.getId(), context), null, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    linhasFaturas = LinhasFaturasJsonParser.parserJsonLinhasFaturas(response);
-                    Log.d("Fatuas", linhasFaturas.toString());
-                    if (linhasFaturasListener != null) {
-                        Log.d("GET LINHAS FATURAS", response.toString());
-                        linhasFaturasListener.onRefreshListaLinhasFaturas(fatura);
-                    }
-                }
-            }, new Response.ErrorListener() {
+            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, mUrlAPIProdutos(context), null,
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            produtos = ProdutoJsonParser.parserJsonProdutos(response);
+                            // Informar a vista
+                            if (produtosListener != null) {
+                                produtosListener.onRefreshListaProdutos(produtos);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -824,144 +540,254 @@ public class    SingletonProdutos {
             volleyQueue.add(req);
         }
     }
+    //endregion
 
-    // Método para definir o carrinho
+    //region carrinho e linhacarrinho
+
+    public void getCarrinhoAPI(Context context) {
+        carrinhoId = getLastCarrinhoId(context); // Recupera o carrinho guardado localmente
+        if (carrinhoId > 0) {
+            Log.d("CarrinhoDebug", "Carrinho já associado ao utilizador: " + carrinhoId);
+            getLinhasCarrinhoAPI(context); // Carrega as linhas do carrinho
+        } else {
+            Log.d("CarrinhoDebug", "Carrinho não associado ao utilizador. A tentar verificar na API...");
+            verificarECriarCarrinho(context, null, 0); // Verifica ou cria novo carrinho
+        }
+    }
+
+
+    private void criarCarrinhoAPI(Context context) {
+        int userId = getUserId(context);
+        String url = getBaseUrl(context) + "carrinho/criar?access-token=" + getUserToken(context);
+
+        Log.d("CarrinhoDebug", "A criar carrinho. URL: " + url);
+
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        carrinhoId = jsonResponse.getInt("id"); // Guarda o ID devolvido pelo backend
+                        Log.d("CarrinhoDebug", "Novo carrinho criado. ID: " + carrinhoId);
+                        saveLastCarrinhoId(context, carrinhoId); // Persiste o ID do carrinho
+                        getLinhasCarrinhoAPI(context); // Carrega as linhas do carrinho
+                    } catch (JSONException e) {
+                        Log.e("CarrinhoDebug", "Erro ao processar resposta de criação: " + e.getMessage());
+                    }
+                },
+                error -> Log.e("CarrinhoDebug", "Erro ao criar carrinho: " + error.getMessage())) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("userdata_id", String.valueOf(userId));
+                params.put("total", "0"); // Valor inicial
+                params.put("ivatotal", "0"); // Valor inicial
+                return params;
+            }
+        };
+
+        volleyQueue.add(request);
+    }
+
+    public void adicionarLinhaCarrinhoAPI(Context context, Produto produto, int quantidade) {
+        if (carrinhoId == -1) {
+            // Armazena o produto para adicionar depois que o carrinho for criado
+            produtoParaAdicionar = produto;
+            quantidadeParaAdicionar = quantidade;
+            getCarrinhoAPI(context);
+            return;
+        }
+
+        String url = mUrlAPIPostLinhaCarrinho(context);
+
+        Log.d("CarrinhoDebug", "A adicionar linha ao carrinho. URL: " + url);
+
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+            response -> {
+                Log.d("CarrinhoDebug", "Linha adicionada com sucesso: " + response);
+            },
+            error -> {
+                Log.e("CarrinhoDebug", "Erro ao adicionar linha: " + error.getMessage());
+            }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("carrinho_id", String.valueOf(carrinhoId));
+                params.put("produto_id", String.valueOf(produto.getId()));
+                params.put("quantidade", String.valueOf(quantidade));
+                return params;
+            }
+        };
+
+        volleyQueue.add(request);
+    }
+
+    public void getLinhasCarrinhoAPI(Context context) {
+        if (carrinhoId <= 0) {
+            Log.e("CarrinhoDebug", "Carrinho não associado ao utilizador.");
+            return;
+        }
+
+        String url = mUrlGetLinhasCarrinhoAPI(context, carrinhoId);
+        Log.d("CarrinhoDebug", "A obter as linhas do carrinho. URL: " + url);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        ArrayList<LinhaCarrinho> linhas = new ArrayList<>();
+
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject linhaObj = response.getJSONObject(i);
+
+                            int id = linhaObj.getInt("id");
+                            int quantidade = linhaObj.getInt("quantidade");
+                            float precoVenda = (float) linhaObj.getDouble("precoVenda");
+                            float valorIva = (float) linhaObj.getDouble("valorIva");
+                            int carrinhoId = linhaObj.getInt("carrinho_id");
+                            int produtoId = linhaObj.getInt("produto_id");
+
+                            Produto produto = getProdutoById(produtoId);
+                            if (produto != null) {
+                                LinhaCarrinho linha = new LinhaCarrinho(id, quantidade, carrinhoId, produto, valorIva, precoVenda);
+                                linhas.add(linha);
+                            } else {
+                                Log.e("CarrinhoDebug", "Produto não encontrado para ID: " + produtoId);
+                            }
+                        }
+
+                        linhaCarrinhos = linhas;
+
+                        if (linhasCarrinhoListener != null) {
+                            linhasCarrinhoListener.onRefreshListaLinhasCarrinhos(linhaCarrinhos);
+                        }
+                    } catch (JSONException e) {
+                        Log.e("CarrinhoDebug", "Erro ao processar linhas do carrinho: " + e.getMessage());
+                    }
+                },
+                error -> Log.e("CarrinhoDebug", "Erro ao obter linhas do carrinho: " + error.getMessage()));
+
+        volleyQueue.add(request);
+    }
+
+
+    public void atualizarLinhaCarrinhoAPI(Context context, LinhaCarrinho linha, LinhaCarrinhoListener listener) {
+        String url = mUrlUpdateLinha(linha.getId(), context);
+
+        StringRequest req = new StringRequest(Request.Method.PUT, url,
+                response -> {
+                    try {
+                        Log.d("AtualizarLinhaCarrinhoAPI", "Resposta do servidor: " + response);
+                        JSONObject jsonObject = new JSONObject(response);
+
+                        // Verifica se a resposta contém os campos esperados
+                        if (jsonObject.has("id") && jsonObject.has("quantidade")) {
+                            // Atualização foi bem-sucedida
+                            Toast.makeText(context, "Carrinho atualizado com sucesso", Toast.LENGTH_SHORT).show();
+
+                            // Notifica o listener para atualizar a interface
+                            if (listener != null) listener.onItemUpdate();
+                        } else {
+                            // Caso os campos esperados não estejam presentes
+                            Toast.makeText(context, "Erro ao atualizar carrinho: resposta inesperada", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Erro ao processar resposta do servidor", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    // Lida com erros na requisição
+                    Toast.makeText(context, "Erro ao atualizar carrinho: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("SingletonProdutos", "Erro ao atualizar linha: " + error.getMessage());
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("quantidade", String.valueOf(linha.getQuantidade()));
+                params.put("precoVenda", String.valueOf(linha.getPrecoVenda()));
+                params.put("valorIva", String.valueOf(linha.getValorIva()));
+                params.put("subTotal", String.valueOf(linha.getSubTotal()));
+                return params;
+            }
+        };
+
+        volleyQueue.add(req);
+    }
+
+    public void removerLinhaCarrinhoAPI(Context context, int id, LinhasCarrinhosListener listener) {
+        String url = urlDeleteLinhaCarrinho(id, context);
+
+        StringRequest request = new StringRequest(Request.Method.DELETE, url,
+                response -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean success = jsonResponse.optBoolean("success", false);
+
+                        if (success) {
+                            Log.d("SingletonProdutos", "Produto eliminado com sucesso do carrinho.");
+                            if (listener != null) {
+                                listener.onRefreshListaLinhasCarrinhos(null); // Informe que uma linha foi removida
+                            }
+                        } else {
+                            Log.e("SingletonProdutos", "Erro ao remover item do carrinho.");
+                        }
+                    } catch (JSONException e) {
+                        Log.e("SingletonProdutos", "Erro ao processar a resposta da API: " + e.getMessage());
+                    }
+                },
+                error -> Log.e("SingletonProdutos", "Erro na requisição: " + (error.getMessage() != null ? error.getMessage() : "Erro desconhecido"))
+        );
+
+        Volley.newRequestQueue(context).add(request);
+    }
+
+    // metodo para definir o carrinho
     public void setCarrinho(Carrinho novoCarrinho) {
         this.carrinho = novoCarrinho;
     }
 
-    // Método para obter um produto pelo ID
-    public Produto getProdutoById(int id) {
-        Log.d("SingletonProdutos", "Buscando produto com ID: " + id);
-        for (Produto produto : produtos) {
-            Log.d("SingletonProdutos", "Produto encontrado: " + produto.getId());
-            if (produto.getId() == id) {
-                return produto;
-            }
-        }
-        Log.e("SingletonProdutos", "Produto com ID " + id + " não encontrado.");
-        return null; // Retorna null se o produto não for encontrado
-    }
-
-    // Método para adicionar um produto ao carrinho
+    // Metodo para adicionar um produto ao carrinho
     public void adicionarProdutoAoCarrinho(LinhaCarrinho linhaCarrinho) {
         linhasCarrinho.add(linhaCarrinho);
     }
 
-    //endregion
-
-    //region URLS API
-    // API Produtos
-    public String mUrlAPIProdutos(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/produtos/produtos?access-token=" + getUserToken(context);
-    }
-
-    private String urlPostAPIPerfilDados(Context context) {
-
-        String username = getUsername(context);
-        String accessToken = getUserToken(context);
-
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" + username + "&access-token=" + accessToken;
-    }
-
-    // API Delete Linha
-    private String urlDeleteLinha(int id, Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/" + id + "/delete?access-token=" + getUserToken(context);
-    }
-
-    // API Dados do Utilizador
-    private String mUrlAPIUserData(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/users/" + getUserId(context) + "?access-token=" + getUserToken(context);
-    }
-
-    // API Faturas
-    private String mUrlGetFaturas(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/" + getUserId(context) + "/faturas?access-token=" + getUserToken(context);
-    }
-
-    // API Linhas de Fatura
-    private String mUrlGetLinhasFaturas(int fatura_id, Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/" + fatura_id + "/faturasdados?access-token=" + getUserToken(context);
-    }
-
-    // API Update Linha
-    private String mUrlUpdateLinha(int id, Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/" + id + "/update?access-token=" + getUserToken(context);
-    }
-
-    // API Carrinho Dados
-    private String mUrlGetLinhasCarrinhoAPI(Context context, int carrinhoId) {
-        return getBaseUrl(context) + LINHAS_CARRINHO_API + "/dados?access-token=" 
-               + getUserToken(context) + "&carrinho_id=" + carrinhoId;
-    }
-
-    // API Carrinho do Utilizador
-    
-
-    // API Post Linha no Carrinho
-    private String mUrlAPIPostLinhaCarrinho(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/postlinhacarrinho?access-token=" + getUserToken(context);
-    }
-
-    // API Post Fatura
-    private String mUrlApiPostFatura(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/criarfatura?access-token=" + getUserToken(context);
-    }
-
-    // API Post Carrinho
-
-
-    // API Login
-    private String mUrlAPILogin(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/auth/login";
-    }
-
-    // API Signup
-    public String mUrlAPISignup(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/auth/signup";
-    }
-
-    // Adicionar URLs para os novos endpoints
-    private String mUrlAPIUpdateLinhaCarrinho(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/atualizar";
-    }
-
-    private String mUrlAPIDeleteLinhaCarrinho(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/deletar";
-    }
-
-    //endregion
-
     public void verificarECriarCarrinho(Context context, Produto produto, int quantidade) {
-        Log.d("CarrinhoDebug", "Verificando carrinho para usuário: " + getUserId(context));
-        Log.d("CarrinhoDebug", "URL: " + mUrlGetCarrinhoAPI(context));
+        Log.d("CarrinhoDebug", "A verificar carrinho para utilizador: " + getUserId(context));
+        String url = mUrlGetCarrinhoAPI(context);
+        Log.d("CarrinhoDebug", "URL: " + url);
 
-        StringRequest req = new StringRequest(Request.Method.GET,
-                mUrlGetCarrinhoAPI(context),
+        StringRequest req = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    Log.d("CarrinhoDebug", "Resposta verificação: " + response);
                     try {
                         JSONObject jsonCarrinho = new JSONObject(response);
-                        adicionarLinhaCarrinhoAPI(context, produto, quantidade);
+                        carrinhoId = jsonCarrinho.getInt("id");
+                        saveLastCarrinhoId(context, carrinhoId);
+                        Log.d("CarrinhoDebug", "Carrinho associado ao utilizador: " + carrinhoId);
+                        if (produto != null) {
+                            adicionarLinhaCarrinhoAPI(context, produto, quantidade);
+                        } else {
+                            getLinhasCarrinhoAPI(context); // Caso sem produto, apenas carregar linhas
+                        }
                     } catch (JSONException e) {
                         Log.e("CarrinhoDebug", "Erro ao parser resposta: " + e.getMessage());
                         criarNovoCarrinho(context, produto, quantidade);
                     }
                 },
                 error -> {
-                    Log.e("CarrinhoDebug", "Erro ao verificar carrinho: " + error.toString());
-                    if (error instanceof com.android.volley.ClientError) {
-                        // Se for 404, criamos um novo carrinho
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
+                        Log.e("CarrinhoDebug", "Carrinho não encontrado na API. A criar novo...");
                         criarNovoCarrinho(context, produto, quantidade);
                     } else {
+                        Log.e("CarrinhoDebug", "Erro ao verificar carrinho: " + error.toString());
                         Toast.makeText(context, "Erro ao verificar carrinho", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }
+        );
         volleyQueue.add(req);
     }
 
     private void criarNovoCarrinho(Context context, Produto produto, int quantidade) {
-        Log.d("CarrinhoDebug", "Criando novo carrinho");
+        Log.d("CarrinhoDebug", "A criar novo carrinho");
         Log.d("CarrinhoDebug", "URL: " + mUrlPostCarrinhoAPI(context));
 
         StringRequest req = new StringRequest(Request.Method.POST,
@@ -971,7 +797,7 @@ public class    SingletonProdutos {
                     try {
                         JSONObject resp = new JSONObject(response);
                         if (!resp.has("errors")) {
-                            // Salvar o ID do carrinho criado
+                            // Guardar o ID do carrinho criado
                             saveLastCarrinhoId(context, resp.getInt("id"));
                             Toast.makeText(context, "Carrinho criado com sucesso", Toast.LENGTH_SHORT).show();
                             adicionarLinhaCarrinhoAPI(context, produto, quantidade);
@@ -992,16 +818,16 @@ public class    SingletonProdutos {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("userdata_id", String.valueOf(getUserId(context)));
-                
-                // Adicionando campos obrigatórios
+
+                // Adicionar campos obrigatórios
                 params.put("total", "0"); // Valor inicial zero
                 params.put("ivatotal", "0"); // Valor inicial zero
-                
+
                 // Data atual
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 params.put("data", sdf.format(new Date()));
                 params.put("estado", "1");
-                
+
                 return params;
             }
 
@@ -1013,33 +839,395 @@ public class    SingletonProdutos {
         volleyQueue.add(req);
     }
 
-    private String mUrlPostCarrinhoAPI(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/carrinho/criar?access-token=" + getUserToken(context);
-    }
-
-    private String mUrlGetCarrinhoAPI(Context context) {
-        return getBaseUrl(context) + CARRINHO_API + "/carrinho?access-token=" 
-               + getUserToken(context) + "&user_id=" + getUserId(context);
-    }
-
-    // Método para guardar o ID do último carrinho criado
-    private void saveLastCarrinhoId(Context context, int id) {
+    // Metodo para guardar o ID do último carrinho criado
+    private void saveLastCarrinhoId(Context context, int carrinhoId) {
         SharedPreferences prefs = context.getSharedPreferences("CarrinhoPrefs", Context.MODE_PRIVATE);
-        prefs.edit().putInt("last_carrinho_id", id).apply();
+        prefs.edit().putInt("last_carrinho_id", carrinhoId).apply();
     }
 
-    // Método para obter o ID do último carrinho
+
+
+
+    // Metodo para obter o ID do último carrinho
     private int getLastCarrinhoId(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("CarrinhoPrefs", Context.MODE_PRIVATE);
-        return prefs.getInt("last_carrinho_id", 0);
+        return prefs.getInt("last_carrinho_id", -1);
     }
+
+    //endregion
+
+    //region fatura e linhafatura
+
+    // Metodo para criar uma fatura
+    public void criarFaturaAPI(Context context, int userId, int metodoPagamentoId, int metodoExpedicaoId, FaturasListener listener) {
+        String url = getBaseUrl(context) + "faturas/criar?access-token=" + getUserToken(context);
+
+        Log.d("FaturaAPI", "A iniciar criação de fatura");
+        Log.d("FaturaAPI", "URL: " + url);
+
+        final float valorTotalFinal = calcularValorTotal();
+
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    Log.d("FaturaAPI", "Resposta recebida: " + response.toString());
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        if (jsonResponse.has("data")) {
+                            JSONObject dataObj = jsonResponse.getJSONObject("data");
+                            if (dataObj.has("id")) {
+                                Fatura faturaCriada = new Fatura();
+                                faturaCriada.setId(dataObj.getInt("id"));
+                                faturaCriada.setMetodoPagamentoId(dataObj.getInt("metodopagamento_id"));
+                                faturaCriada.setMetodoExpedicaoId(dataObj.getInt("metodoexpedicao_id"));
+                                faturaCriada.setData(dataObj.getString("data"));
+                                faturaCriada.setValorTotal(valorTotalFinal);
+                                faturaCriada.setStatusPedido(Fatura.StatusPedido.pago); // Define como pago
+
+                                if (listener != null) {
+                                    listener.onFaturaCriada(faturaCriada);
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        Log.e("FaturaAPI", "Erro ao processar resposta: " + e.getMessage());
+                    }
+                },
+                error -> {
+                    Log.e("FaturaAPI", "Erro ao criar fatura: " + error.getMessage());
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", String.valueOf(userId));
+                params.put("metodopagamento_id", String.valueOf(metodoPagamentoId));
+                params.put("metodoexpedicao_id", String.valueOf(metodoExpedicaoId));
+                params.put("data", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+                params.put("valorTotal", String.format(Locale.US, "%.2f", valorTotalFinal));
+                params.put("statuspedido", "pago"); // Envia como "pago" para o backend
+                return params;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded";
+            }
+        };
+
+        volleyQueue.add(request);
+    }
+
+
+    // Metodo auxiliar para calcular o valor total
+    private float calcularValorTotal() {
+        float total = 0;
+        for (LinhaCarrinho linha : linhaCarrinhos) {
+            total += linha.getSubTotal();
+        }
+        return total;
+    }
+
+
+
+
+    public void getFaturasAPI(Context context, int userId, FaturasListener listener) {
+        String url = "http://172.22.21.212/leiriajeans/backend/web/api/faturas/faturas?id=" + userId + "&access-token=" + getUserToken(context);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    ArrayList<Fatura> faturas = FaturasJsonParser.parserJsonFaturas(response);
+                    if (listener != null) {
+                        listener.onRefreshListaFatura(faturas);
+                    }
+                },
+                error -> {
+                    Log.e("FaturaAPI", "Erro ao obter faturas: " + error.getMessage());
+                    Toast.makeText(context, "Erro ao carregar faturas", Toast.LENGTH_SHORT).show();
+                });
+
+        volleyQueue.add(request);
+    }
+
+
+
+
+    // Metodo para criar uma linha de fatura
+    public void criarLinhaFaturaAPI(final Context context, final LinhaFatura linhaFatura, final LinhasFaturasListener listener) {
+        String url = getBaseUrl(context) + "linhas-faturas/criarlinhafatura?access-token=" + getUserToken(context);
+
+        Log.d("LinhaFaturaAPI", "A criar linha de fatura. URL: " + url);
+        Log.d("LinhaFaturaAPI", "Fatura ID: " + linhaFatura.getFaturaId());
+
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    Log.d("LinhaFaturaAPI", "Resposta: " + response);
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        if (jsonResponse.has("success") && jsonResponse.getBoolean("success")) {
+                            if (listener != null) {
+                                listener.onLinhaFaturaCriada(linhaFatura);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        Log.e("LinhaFaturaAPI", "Erro ao processar resposta: " + e.getMessage());
+                    }
+                },
+                error -> {
+                    Log.e("LinhaFaturaAPI", "Erro ao criar linha de fatura: " + error.getMessage());
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("fatura_id", String.valueOf(linhaFatura.getFaturaId()));
+                params.put("produto_id", String.valueOf(linhaFatura.getProdutoId()));
+                params.put("quantidade", String.valueOf(linhaFatura.getQuantidade()));
+                params.put("precoVenda", String.format(Locale.US, "%.2f", linhaFatura.getPrecoVenda()));
+                params.put("valorIva", String.format(Locale.US, "%.2f", linhaFatura.getValorIva()));
+                params.put("subTotal", String.format(Locale.US, "%.2f", linhaFatura.getSubTotal()));
+                return params;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded";
+            }
+        };
+
+        volleyQueue.add(request);
+    }
+
+
+    // Metodo para buscar as linhas de uma fatura
+    public void getLinhasFaturasAPI(final Context context, final int faturaId, final LinhasFaturasListener listener) {
+        String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhas-faturas/dados?access-token="
+                + getUserToken(context) + "&fatura_id=" + faturaId;
+
+        Log.d("LinhaFaturaAPI", "Obtendo linhas da fatura. URL: " + url);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    Log.d("LinhaFaturaAPI", "Resposta recebida: " + response.toString());
+                    linhasFaturas = LinhasFaturasJsonParser.parserJsonLinhasFaturas(response);
+                    if (listener != null) {
+                        listener.onRefreshListaLinhasFaturas(faturaId, linhasFaturas);
+                    }
+                },
+                error -> {
+                    String errorMsg = "";
+                    if (error.networkResponse != null && error.networkResponse.data != null) {
+                        try {
+                            errorMsg = new String(error.networkResponse.data, "UTF-8");
+                        } catch (Exception e) {
+                            errorMsg = error.getMessage();
+                        }
+                    }
+                    Log.e("LinhaFaturaAPI", "Erro ao obter linhas da fatura: " + errorMsg);
+                });
+
+        volleyQueue.add(request);
+    }
+
+    public List<LinhaFatura> convertCarrinhoParaLinhasFaturas() {
+        List<LinhaFatura> linhasFaturas = new ArrayList<>();
+        for (LinhaCarrinho linhaCarrinho : linhaCarrinhos) {
+            LinhaFatura linhaFatura = new LinhaFatura(
+                    0,  // ID temporário
+                    0,  // ID da fatura
+                    linhaCarrinho.getProduto().getIva(),
+                    linhaCarrinho.getProduto().getId(),
+                    linhaCarrinho.getProduto().getPreco(),
+                    linhaCarrinho.getValorIva(),
+                    linhaCarrinho.getSubTotal(),
+                    linhaCarrinho.getQuantidade()
+            );
+            linhasFaturas.add(linhaFatura);
+        }
+        return linhasFaturas;
+    }
+    //endregion
+
+    //region metodos pagamento e metodos expedicao
+
+    // Metodo para obter os métodos de pagamento da API
+    public void getMetodosPagamentoAPI(Context context, Consumer<List<MetodoPagamento>> callback) {
+        String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/metodos-pagamentos?access-token=" + getUserToken(context);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    List<MetodoPagamento> metodosPagamento = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject jsonMetodo = response.getJSONObject(i);
+                            MetodoPagamento metodo = new MetodoPagamento();
+                            metodo.setId(jsonMetodo.getInt("id"));
+                            metodo.setNome(jsonMetodo.getString("nome"));
+                            metodosPagamento.add(metodo);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    callback.accept(metodosPagamento);
+                },
+                error -> Log.e("MetodosPagamentoAPI", "Erro ao buscar métodos: " + error.getMessage())
+        );
+
+        volleyQueue.add(request);
+    }
+
+    // Metodo para obter os métodos de expedição da API
+    public void getMetodosExpedicaoAPI(Context context, Consumer<List<MetodoExpedicao>> callback) {
+        String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/metodos-expedicoes?access-token=" + getUserToken(context);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    List<MetodoExpedicao> metodosExpedicao = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject jsonMetodo = response.getJSONObject(i);
+                            MetodoExpedicao metodo = new MetodoExpedicao();
+                            metodo.setId(jsonMetodo.getInt("id"));
+                            metodo.setNome(jsonMetodo.getString("nome"));
+                            metodo.setCusto((float) jsonMetodo.getDouble("custo"));
+                            metodo.setPrazoEntrega(jsonMetodo.getInt("prazo_entrega"));
+                            metodo.setDescricao(jsonMetodo.optString("descricao", ""));
+                            metodosExpedicao.add(metodo);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    callback.accept(metodosExpedicao);
+                },
+                error -> Log.e("MetodosExpedicaoAPI", "Erro ao buscar métodos: " + error.getMessage())
+        );
+
+        volleyQueue.add(request);
+    }
+
+    //endregion
+
+    //endregion
+
+    //region URLS API
 
     private String getBaseUrl(Context context) {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/";
     }
 
-    // Variáveis para armazenar temporariamente o produto a ser adicionado
-    private Produto produtoParaAdicionar;
-    private int quantidadeParaAdicionar;
+    //region API PRODUTOS
 
+    public String mUrlAPIProdutos(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/produtos/produtos?access-token=" + getUserToken(context);
+    }
+
+    //endregion
+
+    //region API USER
+
+    private String urlPostAPIPerfilDados(Context context) {
+
+        String username = getUsername(context);
+        String accessToken = getUserToken(context);
+
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" + username + "&access-token=" + accessToken;
+    }
+
+    // API Dados do Utilizador
+    private String mUrlAPIUserData(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/users/" + getUserId(context) + "?access-token=" + getUserToken(context);
+    }
+
+    // API Login
+    private String mUrlAPILogin(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/auth/login";
+    }
+
+    // API Signup
+    public String mUrlAPISignup(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/auth/signup";
+    }
+
+    //endregion
+
+    //region CARRINHOS
+
+    private String mUrlPostCarrinhoAPI(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/carrinho/criar?access-token=" + getUserToken(context);
+    }
+
+
+    private String mUrlGetCarrinhoAPI(Context context) {
+        return getBaseUrl(context) + "carrinho/carrinho?access-token="
+                + getUserToken(context) + "&user_id=" + getUserId(context);
+    }
+
+    //endregion
+
+    //region LINHAS CARRINHOS
+
+    // API Delete Linha
+    private String urlDeleteLinhaCarrinho(int id, Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhas-carrinhos/deletelinhacarrinho"
+                + "?access-token=" + getUserToken(context) + "&id=" + id;
+    }
+
+    // API Update Linha
+    private String mUrlUpdateLinha(int id, Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhas-carrinhos/updatelinhacarrinho/"
+                + "?access-token=" + getUserToken(context) + "&id=" + id;
+    }
+
+    // API Carrinho Dados
+    private String mUrlGetLinhasCarrinhoAPI(Context context, int carrinhoId) {
+        return getBaseUrl(context) + "linhas-carrinhos/dados?access-token="
+                + getUserToken(context) + "&carrinho_id=" + carrinhoId;
+    }
+
+    // API Post Linha no Carrinho
+    private String mUrlAPIPostLinhaCarrinho(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhas-carrinhos/postlinhacarrinho?access-token=" + getUserToken(context);
+    }
+
+    //endregion
+
+    //region FATURAS
+
+    // API Faturas
+    private String mUrlGetFaturas(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/" + getUserId(context) + "/faturas?access-token=" + getUserToken(context);
+    }
+
+    // API Faturas: Criar nova fatura
+    private String mUrlPostFaturaAPI(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/criarfatura?access-token=" + getUserToken(context);
+    }
+
+    // API Faturas: Obter todas as faturas associadas ao utilizador
+    private String mUrlGetFaturasAPI(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/faturas?access-token=" + getUserToken(context) + "&id=" + getUserId(context);
+    }
+
+    //endregion
+
+    //region LINHAS FATURAS
+
+    // API Linhas de Fatura
+    private String mUrlGetLinhasFaturas(int fatura_id, Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/faturas/" + fatura_id + "/faturasdados?access-token=" + getUserToken(context);
+    }
+
+    // API Linhas de Faturas: Criar linha de fatura
+    private String mUrlPostLinhaFaturaAPI(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhas-faturas/criarlinhafatura?access-token=" + getUserToken(context);
+    }
+
+
+
+
+    // API Linhas de Faturas: Obter linhas de uma fatura específica
+    private String mUrlGetLinhasFaturasAPI(int faturaId, Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhas-faturas/dados?access-token=" + getUserToken(context) + "&fatura_id=" + faturaId;
+    }
+
+    //endregion
+
+    //endregion
 }

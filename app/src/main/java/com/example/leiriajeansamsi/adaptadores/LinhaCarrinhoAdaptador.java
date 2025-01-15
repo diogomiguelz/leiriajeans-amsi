@@ -1,4 +1,3 @@
-
 package com.example.leiriajeansamsi.adaptadores;
 
 import android.content.Context;
@@ -6,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.R;
+import com.example.leiriajeansamsi.listeners.LinhaCarrinhoListener;
 
 import java.util.List;
 
@@ -22,10 +22,12 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
 
     private Context context;
     private List<LinhaCarrinho> linhasCarrinho;
+    private LinhaCarrinhoListener linhaCarrinhoListener;
 
-    public LinhaCarrinhoAdaptador(Context context, List<LinhaCarrinho> linhasCarrinho) {
+    public LinhaCarrinhoAdaptador(Context context, List<LinhaCarrinho> linhasCarrinho, LinhaCarrinhoListener linhaCarrinhoListener) {
         this.context = context;
         this.linhasCarrinho = linhasCarrinho;
+        this.linhaCarrinhoListener = linhaCarrinhoListener;
     }
 
     @NonNull
@@ -40,27 +42,57 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
         LinhaCarrinho linhaCarrinho = linhasCarrinho.get(position);
 
         holder.tvNomeProdutoCarrinho.setText(linhaCarrinho.getProduto().getNome());
-        holder.tvPrecoProdutoCarrinho.setText(String.format("R$ %.2f", linhaCarrinho.getProduto().getPreco()));
+        holder.tvPrecoProdutoCarrinho.setText(String.format("%.2f €", linhaCarrinho.getProduto().getPreco()));
         holder.tvQuantidadeProdutoCarrinho.setText("Quantidade: " + linhaCarrinho.getQuantidade());
 
         holder.btnAumentaQtd.setOnClickListener(v -> {
             linhaCarrinho.setQuantidade(linhaCarrinho.getQuantidade() + 1);
-            SingletonProdutos.getInstance(context).atualizarLinhaCarrinhoAPI(context, linhaCarrinho, null);
-            notifyItemChanged(position);
+            linhaCarrinho.calcularSubTotal();
+
+            SingletonProdutos.getInstance(context).atualizarLinhaCarrinhoAPI(context, linhaCarrinho, new LinhaCarrinhoListener() {
+                @Override
+                public void onItemUpdate() {
+                    notifyItemChanged(position);
+                }
+
+                @Override
+                public void atualizarCarrinho(List<LinhaCarrinho> linhas) {
+                    linhasCarrinho.clear();
+                    linhasCarrinho.addAll(linhas);
+                    notifyDataSetChanged();
+                }
+            });
         });
 
         holder.btnDiminuiQtd.setOnClickListener(v -> {
             if (linhaCarrinho.getQuantidade() > 1) {
                 linhaCarrinho.setQuantidade(linhaCarrinho.getQuantidade() - 1);
-                SingletonProdutos.getInstance(context).atualizarLinhaCarrinhoAPI(context, linhaCarrinho, null);
-                notifyItemChanged(position);
+                linhaCarrinho.calcularSubTotal();
+
+                SingletonProdutos.getInstance(context).atualizarLinhaCarrinhoAPI(context, linhaCarrinho, new LinhaCarrinhoListener() {
+                    @Override
+                    public void onItemUpdate() {
+                        notifyItemChanged(position);
+                    }
+
+                    @Override
+                    public void atualizarCarrinho(List<LinhaCarrinho> linhas) {
+                        linhasCarrinho.clear();
+                        linhasCarrinho.addAll(linhas);
+                        notifyDataSetChanged();
+                    }
+                });
+            } else {
+                Toast.makeText(context, "Quantidade mínima é 1", Toast.LENGTH_SHORT).show();
             }
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            SingletonProdutos.getInstance(context).removerLinhaCarrinhoAPI(context, linhaCarrinho.getId(), null);
-            linhasCarrinho.remove(position);
-            notifyItemRemoved(position);
+            SingletonProdutos.getInstance(context).removerLinhaCarrinhoAPI(context, linhaCarrinho.getId(), listaAtualizada -> {
+                linhasCarrinho.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, linhasCarrinho.size());
+            });
         });
     }
 
@@ -70,8 +102,9 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
     }
 
     public void updateData(List<LinhaCarrinho> novasLinhas) {
-        this.linhasCarrinho = novasLinhas;
-        notifyDataSetChanged();
+        this.linhasCarrinho.clear(); // Limpa os dados atuais
+        this.linhasCarrinho.addAll(novasLinhas); // Adiciona os novos dados
+        notifyDataSetChanged(); // Notifica o RecyclerView para atualizar a interface
     }
 
     public static class LinhaCarrinhoViewHolder extends RecyclerView.ViewHolder {

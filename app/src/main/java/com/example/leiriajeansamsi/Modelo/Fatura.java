@@ -1,27 +1,45 @@
 package com.example.leiriajeansamsi.Modelo;
 
-import java.util.Date;
+import java.io.Serializable;
 
-public class Fatura {
-    int id;
-    int metodopagamento;
-    int metodoexpedicao;
-    int userdata_id;
-    String data;
-    float  valorTotal;
-    String statuspedido;
+public class Fatura implements Serializable {
+    private int id;
+    private int metodoPagamentoId;
+    private int metodoExpedicaoId;
+    private String data;
+    private float valorTotal;
+    private StatusPedido statusPedido;
 
+    // Enum para status do pedido
+    public enum StatusPedido {
+        pendente,
+        pago,
+        anulada;
 
-    public Fatura(int id, int metodopagamento, int metodoexpedicao, int userdata_id, String data, float valorTotal, String statuspedido) {
-        this.id = id;
-        this.metodopagamento = metodopagamento;
-        this.metodoexpedicao = metodoexpedicao;
-        this.userdata_id = userdata_id;
-        this.data = data;
-        this.valorTotal = valorTotal;
-        this.statuspedido = statuspedido;
+        @Override
+        public String toString() {
+            return name().toLowerCase(); // Garante que sempre retorne em minúsculas
+        }
     }
 
+
+
+
+    // Construtor vazio
+    public Fatura() {
+    }
+
+    // Construtor completo
+    public Fatura(int id, int metodoPagamentoId, int metodoExpedicaoId, String data, float valorTotal, StatusPedido statusPedido) {
+        this.id = id;
+        this.metodoPagamentoId = metodoPagamentoId;
+        this.metodoExpedicaoId = metodoExpedicaoId;
+        this.data = data;
+        this.valorTotal = valorTotal;
+        this.statusPedido = statusPedido;
+    }
+
+    // Getters e setters
     public int getId() {
         return id;
     }
@@ -30,28 +48,20 @@ public class Fatura {
         this.id = id;
     }
 
-    public int getMetodopagamento() {
-        return metodopagamento;
+    public int getMetodoPagamentoId() {
+        return metodoPagamentoId;
     }
 
-    public void setMetodopagamento(int metodopagamento) {
-        this.metodopagamento = metodopagamento;
+    public void setMetodoPagamentoId(int metodoPagamentoId) {
+        this.metodoPagamentoId = metodoPagamentoId;
     }
 
-    public int getMetodoexpedicao() {
-        return metodoexpedicao;
+    public int getMetodoExpedicaoId() {
+        return metodoExpedicaoId;
     }
 
-    public void setMetodoexpedicao(int metodoexpedicao) {
-        this.metodoexpedicao = metodoexpedicao;
-    }
-
-    public int getUserdata_id() {
-        return userdata_id;
-    }
-
-    public void setUserdata_id(int userdata_id) {
-        this.userdata_id = userdata_id;
+    public void setMetodoExpedicaoId(int metodoExpedicaoId) {
+        this.metodoExpedicaoId = metodoExpedicaoId;
     }
 
     public String getData() {
@@ -70,27 +80,32 @@ public class Fatura {
         this.valorTotal = valorTotal;
     }
 
-    public String getStatuspedido() {
-        return statuspedido;
+    public StatusPedido getStatusPedido() {
+        return statusPedido;
     }
 
-    public void setStatuspedido(String statuspedido) {
-        this.statuspedido = statuspedido;
+    public void setStatusPedido(StatusPedido statusPedido) {
+        this.statusPedido = statusPedido;
     }
-    // Método toString para facilitar a visualização do objeto
+
+    // Metodo auxiliar para definir status a partir de string
+    public void setStatusPedidoFromString(String status) {
+        try {
+            this.statusPedido = StatusPedido.valueOf(status.toLowerCase()); // Converte para minúsculo antes de comparar
+        } catch (IllegalArgumentException e) {
+            this.statusPedido = StatusPedido.pendente;
+        }
+    }
+
     @Override
     public String toString() {
         return "Fatura{" +
                 "id=" + id +
-                ", metodopagamento=" + metodopagamento +
-                ", metodoexpedicao=" + metodoexpedicao +
-                ", userdata_id=" + userdata_id +
-                ", data=" + data +
+                ", metodoPagamentoId=" + metodoPagamentoId +
+                ", metodoExpedicaoId=" + metodoExpedicaoId +
+                ", data='" + data + '\'' +
                 ", valorTotal=" + valorTotal +
-                ", statuspedido='" + statuspedido + '\'' +
+                ", statusPedido=" + statusPedido +
                 '}';
     }
 }
-
-
-

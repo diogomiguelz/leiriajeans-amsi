@@ -36,7 +36,7 @@ public class PerfilFragment extends Fragment {
 
         singleton = SingletonProdutos.getInstance(getContext());
 
-        // Usando o listener para aguardar os dados
+        // A usar o listener para aguardar os dados
         singleton.getUserDataAPI(getContext(), new UtilizadorDataListener() {
             @Override
             public void onGetUtilizadorData(Utilizador utilizadorData) {
@@ -50,7 +50,7 @@ public class PerfilFragment extends Fragment {
 
         // Find TextView objects by their IDs
         tvUsername = view.findViewById(R.id.tvUsername);
-        tvNome = view.findViewById(R.id.tvNome);
+        //tvNome = view.findViewById(R.id.tvNome);
         tvEmail = view.findViewById(R.id.tvEmail);
         tvTelefone = view.findViewById(R.id.tvTelefone);
         tvNIF = view.findViewById(R.id.tvNif);

@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
 
+
 public class MenuMainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
@@ -89,8 +90,8 @@ public class MenuMainActivity extends AppCompatActivity implements
         }
 
         if (item.getItemId() == R.id.navFaturas) {
-            //fragment = new FaturasFragment();
-            //setTitle(item.getTitle());
+            fragment = new FaturasFragment();
+            setTitle(item.getTitle());
         } else if (item.getItemId() == R.id.navSobre) {
             fragment = new SobreFragment();
             //setTitle(item.getTitle());

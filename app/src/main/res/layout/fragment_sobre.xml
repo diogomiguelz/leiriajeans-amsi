@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/mapa"
             android:padding="16dp"
-            android:text="Carregando informações..."
+            android:text="A carregar informações..."
             android:textSize="18sp"
             android:textColor="#333333"
             android:layout_marginStart="16dp"

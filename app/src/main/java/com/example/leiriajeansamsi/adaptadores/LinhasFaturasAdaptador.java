@@ -6,64 +6,70 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.leiriajeansamsi.Modelo.LinhaFatura;
-
-import java.util.List;
 
 import com.example.leiriajeansamsi.Modelo.LinhaFatura;
 import com.example.leiriajeansamsi.R;
 
-public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAdaptador.ViewHolder> {
+import java.util.List;
+import java.util.Locale;
 
-    private List<LinhaFatura> linhaFatura;
-    private Context context;
+public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAdaptador.LinhaFaturaViewHolder> {
 
-    public LinhasFaturasAdaptador(Context context, List<LinhaFatura> linhaFatura) {
+    private final List<LinhaFatura> linhasFaturas;
+    private final Context context;
+
+    public LinhasFaturasAdaptador(Context context, List<LinhaFatura> linhasFaturas) {
         this.context = context;
-        this.linhaFatura = linhaFatura;
+        this.linhasFaturas = linhasFaturas;
     }
 
-    public void setLinhaFatura(List<LinhaFatura> linhaFatura) {
-        this.linhaFatura = linhaFatura;
-        notifyDataSetChanged();
-    }
-
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LinhaFaturaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_linha_fatura, parent, false);
-        return new ViewHolder(view);
+        return new LinhaFaturaViewHolder(view);
     }
 
-
-
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        LinhaFatura linha = linhaFatura.get(position);
+    public void onBindViewHolder(@NonNull LinhaFaturaViewHolder holder, int position) {
+        LinhaFatura linhaFatura = linhasFaturas.get(position);
 
-        holder.textViewNome.setText(linha.getProduto());
-        holder.textViewPreco.setText(linha.getPrecoVenda()+linha.getValorIva() + " €");
-        holder.textViewPercentagemIva.setText(linha.getIva() + " %");
-        holder.textViewQuantidade.setText(String.valueOf(linha.getQuantidade()));
-        holder.textViewTotal.setText(linha.getSubTotal() + " €");
+        // Formatação dos valores monetários
+        float precoUnitario = linhaFatura.getPrecoVenda();
+        float subtotal = linhaFatura.getSubTotal();
+        float valorIva = linhaFatura.getValorIva();
+
+        // Configuração dos textos
+        holder.tvNomeProduto.setText(String.format("Produto #%d", linhaFatura.getProdutoId()));
+        holder.tvQuantidade.setText(String.format("Quantidade: %d", linhaFatura.getQuantidade()));
+        holder.tvPreco.setText(String.format(Locale.getDefault(),
+                "Preço unitário: %.2f €\nIVA: %.2f €\nSubtotal: %.2f €",
+                precoUnitario, valorIva, subtotal));
     }
 
     @Override
     public int getItemCount() {
-        return linhaFatura.size();
+        return linhasFaturas != null ? linhasFaturas.size() : 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewNome, textViewPreco, textViewPrecoIva, textViewPercentagemIva, textViewQuantidade, textViewTotal;
+    public void updateLinhasFaturas(List<LinhaFatura> novasLinhas) {
+        this.linhasFaturas.clear();
+        if (novasLinhas != null) {
+            this.linhasFaturas.addAll(novasLinhas);
+        }
+        notifyDataSetChanged();
+    }
 
-        public ViewHolder(View itemView) {
+    public static class LinhaFaturaViewHolder extends RecyclerView.ViewHolder {
+        TextView tvNomeProduto, tvQuantidade, tvPreco;
+
+        public LinhaFaturaViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewNome = itemView.findViewById(R.id.tvNome);
-            textViewPreco = itemView.findViewById(R.id.tvPreco);
-            textViewPercentagemIva = itemView.findViewById(R.id.tvPercentagemIva);
-            textViewQuantidade = itemView.findViewById(R.id.tvQuantidade);
-            textViewTotal = itemView.findViewById(R.id.tvTotal);
+            tvNomeProduto = itemView.findViewById(R.id.tvNomeProduto);
+            tvQuantidade = itemView.findViewById(R.id.tvQuantidade);
+            tvPreco = itemView.findViewById(R.id.tvPreco);
         }
     }
 }

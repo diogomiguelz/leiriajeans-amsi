@@ -23,7 +23,7 @@ public class CarrinhoJsonParser {
             float ivatotal = (float) response.getDouble("ivatotal");
             float total = (float) response.getDouble("total");
 
-            // Criando um objeto Carrinho com os dados extraídos
+            // cria um objeto Carrinho com os dados extraídos
             carrinho = new Carrinho(id, userdataId, produto, ivatotal, total);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -46,7 +46,7 @@ public class CarrinhoJsonParser {
                 float ivatotal = (float) carrinhoJSON.getDouble("ivatotal");
                 float total = (float) carrinhoJSON.getDouble("total");
 
-                // Adicionando o carrinho à lista
+                // A adicionar o carrinho à lista
                 Carrinho carrinho = new Carrinho(id, userdataId, produto, ivatotal, total);
                 carrinhos.add(carrinho);
             }

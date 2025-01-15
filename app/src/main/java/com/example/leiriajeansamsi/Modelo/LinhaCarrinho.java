@@ -9,7 +9,7 @@ public class LinhaCarrinho {
     private float subTotal; // Subtotal (quantidade * preçoVenda + valorIva)
     private int carrinhoId; // Id do carrinho ao qual esta linha pertence
     private Produto produto; // Alterado de produtoId para objeto Produto
-    private int userdataId; // Id do usuário associado à linha
+    private int userdataId; // Id do utilizador associado à linha
 
     // Construtor
     public LinhaCarrinho(int id, int quantidade, int carrinhoId, Produto produto, float valorIva, float precoVenda) {
@@ -87,7 +87,7 @@ public class LinhaCarrinho {
         this.userdataId = userdataId;
     }
 
-    // Método para calcular o subtotal com base na quantidade, preço e IVA
+    // Metodo para calcular o subtotal com base na quantidade, preço e IVA
     public void calcularSubTotal() {
         this.subTotal = (this.quantidade * this.precoVenda) + this.valorIva;
     }

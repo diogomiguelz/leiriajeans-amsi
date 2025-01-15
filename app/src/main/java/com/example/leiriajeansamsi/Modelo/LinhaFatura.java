@@ -1,28 +1,32 @@
 package com.example.leiriajeansamsi.Modelo;
 
 public class LinhaFatura {
+    private int id;
+    private int faturaId;
+    private int ivaId;
+    private int produtoId;
+    private float precoVenda;
+    private float valorIva;
+    private float subTotal;
+    private int quantidade;
 
-     int id;
-     int fatura;
-     int iva;
-     int produto;
-     float precoVenda;
-     float valorIva;
-     float subTotal;
-     int quantidade;
+    // Construtor vazio
+    public LinhaFatura() {
+    }
 
-
-    public LinhaFatura(int id, int fatura, int iva, int produto, float precoVenda, float valorIva, float subTotal, int quantidade) {
+    // Construtor completo
+    public LinhaFatura(int id, int faturaId, int ivaId, int produtoId, float precoVenda, float valorIva, float subTotal, int quantidade) {
         this.id = id;
-        this.fatura = fatura;
-        this.iva = iva;
-        this.produto = produto;
+        this.faturaId = faturaId;
+        this.ivaId = ivaId;
+        this.produtoId = produtoId;
         this.precoVenda = precoVenda;
         this.valorIva = valorIva;
         this.subTotal = subTotal;
         this.quantidade = quantidade;
     }
 
+    // Getters e setters
     public int getId() {
         return id;
     }
@@ -31,28 +35,28 @@ public class LinhaFatura {
         this.id = id;
     }
 
-    public int getFatura() {
-        return fatura;
+    public int getFaturaId() {
+        return faturaId;
     }
 
-    public void setFatura(int fatura) {
-        this.fatura = fatura;
+    public void setFaturaId(int faturaId) {
+        this.faturaId = faturaId;
     }
 
-    public int getIva() {
-        return iva;
+    public int getIvaId() {
+        return ivaId;
     }
 
-    public void setIva(int iva) {
-        this.iva = iva;
+    public void setIvaId(int ivaId) {
+        this.ivaId = ivaId;
     }
 
-    public int getProduto() {
-        return produto;
+    public int getProdutoId() {
+        return produtoId;
     }
 
-    public void setProduto(int produto) {
-        this.produto = produto;
+    public void setProdutoId(int produtoId) {
+        this.produtoId = produtoId;
     }
 
     public float getPrecoVenda() {
@@ -87,14 +91,13 @@ public class LinhaFatura {
         this.quantidade = quantidade;
     }
 
-    // Método toString para facilitar a visualização do objeto
     @Override
     public String toString() {
         return "LinhaFatura{" +
                 "id=" + id +
-                ", fatura=" + fatura +
-                ", iva=" + iva +
-                ", produto=" + produto +
+                ", faturaId=" + faturaId +
+                ", ivaId=" + ivaId +
+                ", produtoId=" + produtoId +
                 ", precoVenda=" + precoVenda +
                 ", valorIva=" + valorIva +
                 ", subTotal=" + subTotal +
