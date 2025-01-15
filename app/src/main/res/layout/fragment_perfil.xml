@@ -38,15 +38,6 @@
             app:layout_constraintStart_toStartOf="@id/tvUsername"
             app:layout_constraintEnd_toEndOf="@id/tvUsername" />
 
-        <TextView
-            android:id="@+id/tvPassRegistar"
-            style="@style/TextView_Email"
-            android:text="@string/txt_PasswordHint"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvEmailRegistar"
-            app:layout_constraintStart_toStartOf="@id/tvEmailRegistar"
-            app:layout_constraintEnd_toEndOf="@id/tvEmailRegistar" />
 
         <TextView
             android:id="@+id/tvRua"
@@ -54,9 +45,9 @@
             android:text="@string/txt_morada"
             android:textColor="#000000"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvPassRegistar"
-            app:layout_constraintStart_toStartOf="@id/tvPassRegistar"
-            app:layout_constraintEnd_toEndOf="@id/tvPassRegistar" />
+            app:layout_constraintTop_toBottomOf="@id/tvEmailRegistar"
+            app:layout_constraintStart_toStartOf="@id/tvEmailRegistar"
+            app:layout_constraintEnd_toEndOf="@id/tvEmailRegistar" />
 
         <TextView
             android:id="@+id/tvCodPostal"

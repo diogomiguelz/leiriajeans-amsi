@@ -246,10 +246,14 @@ public class    SingletonProdutos {
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    String errorMessage = "Ocorreu um erro ao carregar os dados.";
+                    if (error != null && error.getMessage() != null) {
+                        errorMessage = error.getMessage();
                     }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+                }
                 });
             volleyQueue.add(req);
         }
@@ -518,24 +522,48 @@ public class    SingletonProdutos {
             int utilizadorID = getUserId(context); // Fetch user ID from SharedPreferences
             String username = getUsername(context); // Método fictício para obter o username
             String accessToken = getUserToken(context);
+
             if (username != null && accessToken != null) {
-                String url = "http://172.22.21.212/leiriajeans/backend/web/api/user/dados?username=" + username + "&access-token=" + accessToken;
+                String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" + username + "&access-token=" + accessToken;
 
                 JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            // Extrair o objeto "user" que contém os dados
                             JSONObject user = response.getJSONObject("user");
                             JSONObject userForm = response.getJSONObject("userForm");
 
-                            utilizadorData = LoginJsonParser.parserJsonGetUtilizadorData(userForm);
+                            String username = user.getString("username");
+                            String email = user.getString("email");
+                            String rua = userForm.getString("rua");  // Corrigido para pegar de "userForm"
+                            String codpostal = userForm.getString("codpostal");
+                            String localidade = userForm.getString("localidade");
+                            String nif = userForm.getString("nif");
+                            String telefone = userForm.getString("telefone");
+                            String nomeUtilizador = userForm.getString("nome");
 
+                            // Criar o objeto de dados do usuário com os valores recebidos
+                            Utilizador utilizadorData = new Utilizador();  // Agora funciona com o construtor sem parâmetros
+                            utilizadorData.setUsername(username);
+                            utilizadorData.setEmail(email);
+                            utilizadorData.setRua(rua);
+                            utilizadorData.setCodpostal(codpostal);
+                            utilizadorData.setLocalidade(localidade);
+                            utilizadorData.setNif(nif);
+                            utilizadorData.setTelefone(telefone);
+                            utilizadorData.setNome(nomeUtilizador);
+
+
+
+                            // Notificar o listener de que os dados do utilizador foram recebidos
                             if (listener != null) {
                                 listener.onGetUtilizadorData(utilizadorData);
                             }
 
                         } catch (JSONException e) {
                             Log.e("getUserDataAPI", "Erro ao fazer parse: " + e.getMessage());
+                            Toast.makeText(context, "Erro ao processar os dados do usuário", Toast.LENGTH_SHORT).show();
                             throw new RuntimeException(e);
                         }
                     }
@@ -546,12 +574,15 @@ public class    SingletonProdutos {
                         Toast.makeText(context, "Erro ao acessar o servidor: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+
+                // Adiciona a requisição à fila
                 volleyQueue.add(req);
             } else {
                 Toast.makeText(context, "Username ou Access Token não encontrados", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 
 
 
