@@ -265,31 +265,17 @@ public class    SingletonProdutos {
 
 
     public void getCarrinhoAPI(Context context) {
-        Log.d("CarrinhoDebug", "Verificando carrinho para usuário: " + getUserId(context));
-        Log.d("CarrinhoDebug", "URL: " + mUrlGetCarrinhoAPI(context));
+        carrinhoId = getLastCarrinhoId(context); // Recupera o carrinho guardado localmente
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, mUrlGetCarrinhoAPI(context), null,
-            response -> {
-                try {
-                    carrinhoId = response.getInt("id");
-                    Log.d("CarrinhoDebug", "Carrinho obtido com sucesso. ID: " + carrinhoId);
-                    if (produtoParaAdicionar != null) {
-                        adicionarLinhaCarrinhoAPI(context, produtoParaAdicionar, quantidadeParaAdicionar);
-                        produtoParaAdicionar = null;
-                        quantidadeParaAdicionar = 0;
-                    }
-                } catch (JSONException e) {
-                    Log.e("CarrinhoDebug", "Erro ao parser resposta do carrinho: " + e.getMessage());
-                    criarCarrinhoAPI(context);
-                }
-            },
-            error -> {
-                Log.e("CarrinhoDebug", "Erro ao verificar carrinho: " + error.getMessage());
-                criarCarrinhoAPI(context);
-            });
-
-        volleyQueue.add(request);
+        if (carrinhoId > 0) {
+            Log.d("CarrinhoDebug", "Carrinho já associado ao utilizador: " + carrinhoId);
+            getLinhasCarrinhoAPI(context); // Carrega as linhas do carrinho
+        } else {
+            Log.d("CarrinhoDebug", "Carrinho não encontrado. A criar novo carrinho...");
+            criarCarrinhoAPI(context); // Cria um novo carrinho se não houver nenhum associado
+        }
     }
+
 
     private void criarCarrinhoAPI(Context context) {
         int userId = getUserId(context);
@@ -298,24 +284,18 @@ public class    SingletonProdutos {
         Log.d("CarrinhoDebug", "Criando carrinho. URL: " + url);
 
         StringRequest request = new StringRequest(Request.Method.POST, url,
-            response -> {
-                try {
-                    JSONObject jsonResponse = new JSONObject(response);
-                    carrinhoId = jsonResponse.getInt("id");
-                    Log.d("CarrinhoDebug", "Novo carrinho criado. ID: " + carrinhoId);
-                    // Após criar o carrinho, tenta adicionar o produto
-                    if (produtoParaAdicionar != null) {
-                        adicionarLinhaCarrinhoAPI(context, produtoParaAdicionar, quantidadeParaAdicionar);
-                        produtoParaAdicionar = null;
-                        quantidadeParaAdicionar = 0;
+                response -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        carrinhoId = jsonResponse.getInt("id"); // Guarda o ID devolvido pelo backend
+                        Log.d("CarrinhoDebug", "Novo carrinho criado. ID: " + carrinhoId);
+                        saveLastCarrinhoId(context, carrinhoId); // Persiste o ID do carrinho
+                        getLinhasCarrinhoAPI(context); // Carrega as linhas do carrinho
+                    } catch (JSONException e) {
+                        Log.e("CarrinhoDebug", "Erro ao processar resposta de criação: " + e.getMessage());
                     }
-                } catch (JSONException e) {
-                    Log.e("CarrinhoDebug", "Erro ao parser resposta de criação: " + e.getMessage());
-                }
-            },
-            error -> {
-                Log.e("CarrinhoDebug", "Erro ao criar carrinho: " + error.getMessage());
-            }) {
+                },
+                error -> Log.e("CarrinhoDebug", "Erro ao criar carrinho: " + error.getMessage())) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
@@ -363,35 +343,40 @@ public class    SingletonProdutos {
     }
 
     public void getLinhasCarrinhoAPI(Context context) {
-        if (!ProdutoJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
+        if (carrinhoId <= 0) {
+            Log.e("CarrinhoDebug", "Carrinho não associado ao utilizador.");
             return;
         }
 
         String url = mUrlGetLinhasCarrinhoAPI(context, carrinhoId);
-        Log.d("CarrinhoDebug", "Obtendo linhas do carrinho. URL: " + url);
+        Log.d("CarrinhoDebug", "A obter as linhas do carrinho. URL: " + url);
 
-        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url, null,
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
-                    ArrayList<LinhaCarrinho> linhasCarrinho = LinhaCarrinhoJsonParser.parserJsonLinhaCarrinho(response, context);
-                    if (linhasCarrinhoListener != null) {
-                        linhasCarrinhoListener.onRefreshListaLinhasCarrinhos(linhasCarrinho);
+                    try {
+                        ArrayList<LinhaCarrinho> linhas = LinhaCarrinhoJsonParser.parserJsonLinhaCarrinho(response, context);
+                        linhaCarrinhos = linhas;
+
+                        if (linhasCarrinhoListener != null) {
+                            linhasCarrinhoListener.onRefreshListaLinhasCarrinhos(linhaCarrinhos);
+                        }
+                    } catch (Exception e) {
+                        Log.e("CarrinhoDebug", "Erro ao processar linhas do carrinho: " + e.getMessage());
                     }
                 },
-                error -> {
-                    Log.e("CarrinhoDebug", "Erro ao obter linhas: " + error.getMessage());
-                    Toast.makeText(context, "Erro ao obter linhas do carrinho", Toast.LENGTH_SHORT).show();
-                });
+                error -> Log.e("CarrinhoDebug", "Erro ao obter linhas do carrinho: " + error.getMessage()));
 
-        volleyQueue.add(req);
+        volleyQueue.add(request);
     }
+
+
 
     private String mUrlAPILinhasCarrinho(Context context) {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos";
     }
 
     public void atualizarLinhaCarrinhoAPI(Context context, LinhaCarrinho linha, LinhaCarrinhoListener listener) {
-        StringRequest req = new StringRequest(Request.Method.PUT, 
+        StringRequest req = new StringRequest(Request.Method.PUT,
                 mUrlUpdateLinha(linha.getId(), context), // Usando o endpoint correto
                 response -> {
                     try {
@@ -419,7 +404,7 @@ public class    SingletonProdutos {
     }
 
     public void removerLinhaCarrinhoAPI(Context context, int linhaId, LinhaCarrinhoListener listener) {
-        StringRequest req = new StringRequest(Request.Method.DELETE, 
+        StringRequest req = new StringRequest(Request.Method.DELETE,
                 urlDeleteLinha(linhaId, context), // Usando o endpoint correto
                 response -> {
                     try {
@@ -644,10 +629,10 @@ public class    SingletonProdutos {
                 public void onResponse(JSONObject response) {
                     utilizador = LoginJsonParser.parserJsonLogin(response);
 
-                    // Atualizar o usuário logado no SingletonProdutos
+                    // Atualizar o utilizador logado no SingletonProdutos
                     loggedInUser = utilizador;
 
-                    // Salvar ID e token do usuário no SharedPreferences
+                    // Guardar ID e token do utilizador no SharedPreferences
                     saveUserId(context, utilizador.getId());
                     saveUserToken(context, utilizador.getAuth_key(), utilizador.getUsername());
                     saveUsername(context, utilizador.getUsername());
@@ -840,7 +825,7 @@ public class    SingletonProdutos {
             }
         }
         Log.e("SingletonProdutos", "Produto com ID " + id + " não encontrado.");
-        return null; // Retorna null se o produto não for encontrado
+        return null; // Devolve null se o produto não for encontrado
     }
 
     // Método para adicionar um produto ao carrinho
@@ -866,8 +851,10 @@ public class    SingletonProdutos {
 
     // API Delete Linha
     private String urlDeleteLinha(int id, Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/" + id + "/delete?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhas-carrinhos/deletelinhacarrinho/"
+                + "?access-token=" + getUserToken(context) + "&id=" + id;
     }
+
 
     // API Dados do Utilizador
     private String mUrlAPIUserData(Context context) {
@@ -886,12 +873,14 @@ public class    SingletonProdutos {
 
     // API Update Linha
     private String mUrlUpdateLinha(int id, Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/" + id + "/update?access-token=" + getUserToken(context);
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhas-carrinhos/updatelinhacarrinho/"
+                + "?access-token=" + getUserToken(context) + "&id=" + id;
     }
+
 
     // API Carrinho Dados
     private String mUrlGetLinhasCarrinhoAPI(Context context, int carrinhoId) {
-        return getBaseUrl(context) + LINHAS_CARRINHO_API + "/dados?access-token=" 
+        return getBaseUrl(context) + LINHAS_CARRINHO_API + "/dados?access-token="
                + getUserToken(context) + "&carrinho_id=" + carrinhoId;
     }
 
@@ -926,14 +915,14 @@ public class    SingletonProdutos {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/atualizar";
     }
 
-    private String mUrlAPIDeleteLinhaCarrinho(Context context) {
+    public String mUrlAPIDeleteLinhaCarrinho(Context context) {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/linhascarrinhos/deletar";
     }
 
     //endregion
 
     public void verificarECriarCarrinho(Context context, Produto produto, int quantidade) {
-        Log.d("CarrinhoDebug", "Verificando carrinho para usuário: " + getUserId(context));
+        Log.d("CarrinhoDebug", "Verificando carrinho para utilizador: " + getUserId(context));
         Log.d("CarrinhoDebug", "URL: " + mUrlGetCarrinhoAPI(context));
 
         StringRequest req = new StringRequest(Request.Method.GET,
@@ -971,7 +960,7 @@ public class    SingletonProdutos {
                     try {
                         JSONObject resp = new JSONObject(response);
                         if (!resp.has("errors")) {
-                            // Salvar o ID do carrinho criado
+                            // Guardar o ID do carrinho criado
                             saveLastCarrinhoId(context, resp.getInt("id"));
                             Toast.makeText(context, "Carrinho criado com sucesso", Toast.LENGTH_SHORT).show();
                             adicionarLinhaCarrinhoAPI(context, produto, quantidade);
@@ -1023,15 +1012,15 @@ public class    SingletonProdutos {
     }
 
     // Método para guardar o ID do último carrinho criado
-    private void saveLastCarrinhoId(Context context, int id) {
+    private void saveLastCarrinhoId(Context context, int carrinhoId) {
         SharedPreferences prefs = context.getSharedPreferences("CarrinhoPrefs", Context.MODE_PRIVATE);
-        prefs.edit().putInt("last_carrinho_id", id).apply();
+        prefs.edit().putInt("last_carrinho_id", carrinhoId).apply();
     }
 
     // Método para obter o ID do último carrinho
     private int getLastCarrinhoId(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("CarrinhoPrefs", Context.MODE_PRIVATE);
-        return prefs.getInt("last_carrinho_id", 0);
+        return prefs.getInt("last_carrinho_id", -1);
     }
 
     private String getBaseUrl(Context context) {

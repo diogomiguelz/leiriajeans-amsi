@@ -40,7 +40,7 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
         LinhaCarrinho linhaCarrinho = linhasCarrinho.get(position);
 
         holder.tvNomeProdutoCarrinho.setText(linhaCarrinho.getProduto().getNome());
-        holder.tvPrecoProdutoCarrinho.setText(String.format("R$ %.2f", linhaCarrinho.getProduto().getPreco()));
+        holder.tvPrecoProdutoCarrinho.setText(String.format("%.2f €", linhaCarrinho.getProduto().getPreco()));
         holder.tvQuantidadeProdutoCarrinho.setText("Quantidade: " + linhaCarrinho.getQuantidade());
 
         holder.btnAumentaQtd.setOnClickListener(v -> {
@@ -70,9 +70,11 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
     }
 
     public void updateData(List<LinhaCarrinho> novasLinhas) {
-        this.linhasCarrinho = novasLinhas;
+        this.linhasCarrinho.clear();
+        this.linhasCarrinho.addAll(novasLinhas);
         notifyDataSetChanged();
     }
+
 
     public static class LinhaCarrinhoViewHolder extends RecyclerView.ViewHolder {
         TextView tvNomeProdutoCarrinho, tvPrecoProdutoCarrinho, tvQuantidadeProdutoCarrinho;

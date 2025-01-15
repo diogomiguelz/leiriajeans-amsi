@@ -37,6 +37,7 @@ public class CarrinhoFragment extends Fragment implements LinhaCarrinhoListener,
         SingletonProdutos.getInstance(getContext()).setLinhasCarrinhoListener(this);
         SingletonProdutos.getInstance(getContext()).getLinhasCarrinhoAPI(getContext());
 
+
         return view;
     }
 
@@ -62,10 +63,9 @@ public class CarrinhoFragment extends Fragment implements LinhaCarrinhoListener,
     @Override
     public void onResume() {
         super.onResume();
-        if (getContext() != null) {
-            SingletonProdutos.getInstance(getContext()).getLinhasCarrinhoAPI(getContext());
-        }
+        SingletonProdutos.getInstance(getContext()).getCarrinhoAPI(getContext());
     }
+
 
     @Override
     public void onDestroy() {

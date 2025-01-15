@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
             if (newUser.getAuth_key() != null && !newUser.getAuth_key().isEmpty()) {
                 // Cadastro realizado com sucesso
                 Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                // Aqui você pode redirecionar o usuário para outra tela (como a tela de login ou tela principal)
+                // Aqui você pode redirecionar o utilizador para outra tela (como a tela de login ou tela principal)
             } else {
                 // Falha no cadastro (sem auth_key)
                 Toast.makeText(this, "Falha no cadastro. Tente novamente.", Toast.LENGTH_SHORT).show();
