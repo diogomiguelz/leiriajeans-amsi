@@ -11,12 +11,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
+        <!-- ImageView para a logo no topo -->
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="300dp"
+            android:layout_height="150dp"
+            android:contentDescription="@string/logo_content"
+            android:src="@drawable/logo_preto"
+            android:layout_marginTop="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <View
             android:id="@+id/ContainerComponents_Registo"
             style="@style/ContainerComponents_Registar"
             android:layout_marginHorizontal="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logo" />
 
 
         <TextView

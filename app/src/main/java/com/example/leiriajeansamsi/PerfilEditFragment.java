@@ -38,6 +38,12 @@ public class PerfilEditFragment extends Fragment {
         etNif = view.findViewById(R.id.etNif);
         etTelefone = view.findViewById(R.id.etTelefone);
 
+        Button btnGuardarPerfil = view.findViewById(R.id.btnGuardarPerfil);
+        Button btnCancelarPerfil = view.findViewById(R.id.btnCancelarPerfil);
+        // Configurar listener do botão Cancelar
+        btnCancelarPerfil.setOnClickListener(v -> onClickCancelar());
+        btnGuardarPerfil.setOnClickListener(v -> onClickGuardar());
+
         singleton = SingletonProdutos.getInstance(getContext());
 
         // Usando o listener para aguardar os dados
@@ -76,7 +82,7 @@ public class PerfilEditFragment extends Fragment {
 
 
     // Método para salvar as alterações realizadas pelo usuário
-    public void onSaveButtonClick() {
+    public void onClickGuardar() {
         if (getContext() != null) {
             singleton.updateProfileAPI(
                     etRua.getText().toString(),
@@ -85,20 +91,29 @@ public class PerfilEditFragment extends Fragment {
                     etNif.getText().toString(),
                     etTelefone.getText().toString(),
                     etNomeUtilizador.getText().toString(),
-                    getContext()  // Use getContext() para obter o contexto
+                    getContext()
             );
-            // Passar o listener como segundo argumento
+
+            // Atualizar os dados do usuário
             singleton.getUserDataAPI(getContext(), new UtilizadorDataListener() {
                 @Override
                 public void onGetUtilizadorData(Utilizador utilizadorData) {
-                    // Aqui você pode fazer algo com os dados do utilizador, como atualizar a UI
-                    Log.d("PerfilEditFragment", "Dados do usuário recebidos: " + utilizadorData.getNome());
-                    // Atualize a UI ou faça o que for necessário com os dados do utilizador
+                    Log.d("PerfilEditFragment", "Dados do utilizador atualizados: " + utilizadorData.getNome());
+                    Log.d("PerfilEditFragment", "Dados a enviar para o servidor: " + etRua.getText().toString() + ", " + etCodPostal.getText().toString() + ", " + etLocalidade.getText().toString() + ", " + etNif.getText().toString() + ", " + etTelefone.getText().toString() + ", " + etNomeUtilizador.getText().toString() + ", " + getContext());
+
                 }
             });
 
-            getActivity().finish();  // Finaliza a activity associada ao fragmento
+
+            Toast.makeText(getContext(), "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Método para cancelar as alterações e voltar à tela anterior
+    public void onClickCancelar() {
+        if (getActivity() != null) {
+            // Fecha o fragmento e retorna para a tela anterior
+            getActivity().onBackPressed();
         }
     }
 }
-

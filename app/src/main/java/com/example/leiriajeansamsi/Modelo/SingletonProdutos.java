@@ -704,18 +704,20 @@ public class    SingletonProdutos {
     }
 
 
-    public void updateProfileAPI(final String rua, final String codPostal, final String localidade, final String nif, final String telefone, final String nomeUtilizador, final Context context) {
+    // Função para atualizar o perfil do usuário via API
+    public void updateProfileAPI(final String nome, final String codPostal, final String localidade, final String rua, final String nif, final String telefone, final Context context) {
+
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
         } else {
             JSONObject jsonParams = new JSONObject();
             try {
-                jsonParams.put("telefone", telefone);
-                jsonParams.put("nif", nif);
-                jsonParams.put("nome", nomeUtilizador);
-                jsonParams.put("rua", rua);
+                jsonParams.put("nome", nome);
+                jsonParams.put("codPostal", codPostal);
                 jsonParams.put("localidade", localidade);
-                jsonParams.put("codigopostal", codPostal);
+                jsonParams.put("rua", rua);
+                jsonParams.put("nif", nif);
+                jsonParams.put("telefone", telefone);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -724,25 +726,20 @@ public class    SingletonProdutos {
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, urlPostAPIPerfilDados(context), jsonParams, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    // Handle the response from the server after updating the profile
-                    // For example, you may parse the response JSON and update the UI or perform additional actions
+                    Log.d("PerfilEditFragment", "Sucesso | Resposta do servidor: " + response.toString());
 
-                    // Notify listeners or update UI as needed
-                    if (profileUpdateListener != null) {
-                        profileUpdateListener.onProfileUpdated(response.toString());
-                    }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    // Handle error response
-                    Toast.makeText(context, "Error durante a atualização do perfil", Toast.LENGTH_SHORT).show();
+                    Log.e("PerfilEditFragment", "Erro ao atualizar perfil: " + error.getMessage());
                 }
             });
 
             volleyQueue.add(req);
         }
     }
+
 
     public void adicionarFaturaAPI(final Context context) {
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
