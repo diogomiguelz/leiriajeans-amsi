@@ -49,7 +49,7 @@ dependencies {
     implementation ("com.android.volley:volley:1.2.1")
     implementation ("org.osmdroid:osmdroid-android:6.1.10")
     implementation ("com.google.android.material:material:1.9.0")
-
+    implementation ("androidx.cardview:cardview:1.0.0")
 
 
 
