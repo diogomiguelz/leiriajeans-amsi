@@ -59,17 +59,8 @@ public class DetalhesProdutoActivity extends AppCompatActivity implements Carrin
             btnAdicionarCarrinho.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Carrinho carrinho = SingletonProdutos.getInstance(getApplicationContext()).getCarrinho();
-                    if (carrinho == null) {
-                        // SingletonProdutos.getInstance(getApplicationContext()).adicionarCarrinhoAPI(getApplicationContext());
-                        SingletonProdutos.getInstance(getApplicationContext()).getCarrinhoAPI(getApplicationContext());
-                        carrinho = SingletonProdutos.getInstance(getApplicationContext()).getCarrinho();
-                    } else {
-                        SingletonProdutos.getInstance(getApplicationContext()).adicionarLinhaCarrinhoAPI(getApplicationContext(), produto, carrinho);
-                        Toast.makeText(getApplicationContext(), "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
-                    }
-
+                    SingletonProdutos.getInstance(getApplicationContext())
+                        .adicionarLinhaCarrinhoAPI(getApplicationContext(), produto, 1);
                 }
             });
         }

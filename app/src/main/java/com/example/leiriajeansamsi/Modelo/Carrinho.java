@@ -6,7 +6,7 @@ import java.util.List;
 public class Carrinho {
     private int id;
     private int userdataId;
-    private int produto;
+    private int produtoId;
     private float ivatotal;
     private float total;
     private List<LinhaCarrinho> linhas;
@@ -17,10 +17,10 @@ public class Carrinho {
     }
 
     // Construtor completo
-    public Carrinho(int id, int userdataId, int produto, float ivatotal, float total) {
+    public Carrinho(int id, int userdataId, int produtoId, float ivatotal, float total) {
         this.id = id;
         this.userdataId = userdataId;
-        this.produto = produto;
+        this.produtoId = produtoId;
         this.ivatotal = ivatotal;
         this.total = total;
     }
@@ -59,6 +59,14 @@ public class Carrinho {
         this.total = total;
     }
 
+    public float getProdutoId() {
+        return produtoId;
+    }
+
+    public void setProdutoId(int produtoId) {
+        this.produtoId = produtoId;
+    }
+
     public List<LinhaCarrinho> getLinhas() {
         return linhas;
     }
@@ -78,6 +86,7 @@ public class Carrinho {
         return "Carrinho{" +
                 "id=" + id +
                 ", userdataId=" + userdataId +
+                ", produtoId=" + produtoId +
                 ", ivatotal=" + ivatotal +
                 ", total=" + total +
                 ", linhas=" + linhas +
