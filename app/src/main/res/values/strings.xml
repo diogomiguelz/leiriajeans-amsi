@@ -75,4 +75,7 @@
     <string name="txt_perfil_nif">NIF:</string>
     <string name="txt_btn_editar_perfil">Editar Perfil</string>
     <string name="txt_editar">Editar Perfil</string>
+    <string name="txt_editar_perfil">Editar Perfil</string>
+    <string name="txt_guardar_perfil">Guardar Perfil</string>
+    <string name="txt_cancelar">Cancelar</string>
 </resources>
