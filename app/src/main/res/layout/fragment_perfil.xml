@@ -29,7 +29,7 @@
             app:layout_constraintEnd_toEndOf="@id/ContainerComponents_Registo" />
 
         <TextView
-            android:id="@+id/tvEmailRegistar"
+            android:id="@+id/tvEmail"
             style="@style/TextView_Email"
             android:text="@string/txt_EmailHint"
             android:textColor="#000000"
@@ -45,9 +45,9 @@
             android:text="@string/txt_morada"
             android:textColor="#000000"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvEmailRegistar"
-            app:layout_constraintStart_toStartOf="@id/tvEmailRegistar"
-            app:layout_constraintEnd_toEndOf="@id/tvEmailRegistar" />
+            app:layout_constraintTop_toBottomOf="@id/tvEmail"
+            app:layout_constraintStart_toStartOf="@id/tvEmail"
+            app:layout_constraintEnd_toEndOf="@id/tvEmail" />
 
         <TextView
             android:id="@+id/tvCodPostal"

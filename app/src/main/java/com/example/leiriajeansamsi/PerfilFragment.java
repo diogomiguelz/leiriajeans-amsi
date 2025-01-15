@@ -50,7 +50,7 @@ public class PerfilFragment extends Fragment {
 
         // Find TextView objects by their IDs
         tvUsername = view.findViewById(R.id.tvUsername);
-        tvNome = view.findViewById(R.id.tvNome);
+        tvNome = view.findViewById(R.id.tvNomeProprio);
         tvEmail = view.findViewById(R.id.tvEmail);
         tvTelefone = view.findViewById(R.id.tvTelefone);
         tvNIF = view.findViewById(R.id.tvNif);
@@ -74,6 +74,9 @@ public class PerfilFragment extends Fragment {
             localidade = utilizadorData.getLocalidade();
             codigoPostal = utilizadorData.getCodpostal();
         }
+
+        //logEmail
+        Log.d("O EMAIL DO GAJO É", email);
 
         // Atualize os TextViews
         if (tvUsername != null) {
