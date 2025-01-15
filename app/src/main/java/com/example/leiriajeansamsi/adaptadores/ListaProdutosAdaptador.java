@@ -50,7 +50,7 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Produto product = produtos.get(position);
         holder.tvNomeProduto.setText(product.getNome());
-        holder.tvPrecoProduto.setText(product.getPreco() + " €");
+        holder.tvPrecoProduto.setText(String.format("%.2f €", product.getPreco()));
         String imageUrl = "http://" + SingletonProdutos.getInstance(context).getApiIP(context)
                 + product.getImagem();
 
@@ -67,14 +67,10 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
             }
         });
 
-        holder.btnAddToCart.setOnClickListener(view -> {
-            Carrinho carrinho = SingletonProdutos.getInstance(context).getCarrinho();
-            if (carrinho == null) {
-                SingletonProdutos.getInstance(context).criarCarrinhoAPI(context);
-                Toast.makeText(context, "Criando novo carrinho...", Toast.LENGTH_SHORT).show();
-            } else {
-                SingletonProdutos.getInstance(context).adicionarLinhaCarrinhoAPI(context, product, carrinho);
-                Toast.makeText(context, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
+        holder.btnAddToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SingletonProdutos.getInstance(context).verificarECriarCarrinho(context, product, 1);
             }
         });
     }

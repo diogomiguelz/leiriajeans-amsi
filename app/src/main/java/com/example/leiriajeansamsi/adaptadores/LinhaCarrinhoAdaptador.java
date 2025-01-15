@@ -1,3 +1,4 @@
+
 package com.example.leiriajeansamsi.adaptadores;
 
 import android.content.Context;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
+import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.R;
 
 import java.util.List;
@@ -37,40 +39,28 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
     public void onBindViewHolder(@NonNull LinhaCarrinhoViewHolder holder, int position) {
         LinhaCarrinho linhaCarrinho = linhasCarrinho.get(position);
 
-        // Preenche os dados no layout do item
         holder.tvNomeProdutoCarrinho.setText(linhaCarrinho.getProduto().getNome());
-        holder.tvPrecoProdutoCarrinho.setText(String.format("R$ %.2f", linhaCarrinho.getProduto().getPreco()));
+        holder.tvPrecoProdutoCarrinho.setText(String.format("%.2f €", linhaCarrinho.getProduto().getPreco()));
         holder.tvQuantidadeProdutoCarrinho.setText("Quantidade: " + linhaCarrinho.getQuantidade());
 
-        // Carregar a imagem do produto se a imagem for local (se não, use recursos locais)
-        String imagemProduto = linhaCarrinho.getProduto().getImagem();
-        if (imagemProduto != null && !imagemProduto.isEmpty()) {
-            // Supondo que as imagens estão em drawable (você pode ajustar conforme necessário)
-            int imageRes = context.getResources().getIdentifier(imagemProduto, "drawable", context.getPackageName());
-            if (imageRes != 0) {
-                holder.imgProdutoCarrinho.setImageResource(imageRes);
-            }
-        }
-
-        // Configurações de botões (aumentar, diminuir, deletar)
         holder.btnAumentaQtd.setOnClickListener(v -> {
-            // Aumentar a quantidade
             linhaCarrinho.setQuantidade(linhaCarrinho.getQuantidade() + 1);
-            notifyItemChanged(position); // Atualiza a linha
+            SingletonProdutos.getInstance(context).atualizarLinhaCarrinhoAPI(context, linhaCarrinho, null);
+            notifyItemChanged(position);
         });
 
         holder.btnDiminuiQtd.setOnClickListener(v -> {
-            // Diminuir a quantidade
             if (linhaCarrinho.getQuantidade() > 1) {
                 linhaCarrinho.setQuantidade(linhaCarrinho.getQuantidade() - 1);
-                notifyItemChanged(position); // Atualiza a linha
+                SingletonProdutos.getInstance(context).atualizarLinhaCarrinhoAPI(context, linhaCarrinho, null);
+                notifyItemChanged(position);
             }
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            // Remover o item do carrinho
+            SingletonProdutos.getInstance(context).removerLinhaCarrinhoAPI(context, linhaCarrinho.getId(), null);
             linhasCarrinho.remove(position);
-            notifyItemRemoved(position); // Remove o item da lista
+            notifyItemRemoved(position);
         });
     }
 
@@ -80,21 +70,21 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
     }
 
     public void updateData(List<LinhaCarrinho> novasLinhas) {
-        this.linhasCarrinho = novasLinhas;
+        this.linhasCarrinho.clear();
+        this.linhasCarrinho.addAll(novasLinhas);
         notifyDataSetChanged();
     }
 
+
     public static class LinhaCarrinhoViewHolder extends RecyclerView.ViewHolder {
         TextView tvNomeProdutoCarrinho, tvPrecoProdutoCarrinho, tvQuantidadeProdutoCarrinho;
-        ImageView imgProdutoCarrinho;
         Button btnAumentaQtd, btnDiminuiQtd, btnDelete;
 
         public LinhaCarrinhoViewHolder(View itemView) {
             super(itemView);
-            tvNomeProdutoCarrinho = itemView.findViewById(R.id.tvNomeProdutoCarrinho);
-            tvPrecoProdutoCarrinho = itemView.findViewById(R.id.tvPrecoProdutoCarrinho);
-            tvQuantidadeProdutoCarrinho = itemView.findViewById(R.id.tvQuantidadeProdutoCarrinho);
-            imgProdutoCarrinho = itemView.findViewById(R.id.imgProdutoCarrinho);
+            tvNomeProdutoCarrinho = itemView.findViewById(R.id.tvNomeProduto);
+            tvPrecoProdutoCarrinho = itemView.findViewById(R.id.tvPreco);
+            tvQuantidadeProdutoCarrinho = itemView.findViewById(R.id.tvQuantidade);
             btnAumentaQtd = itemView.findViewById(R.id.btnAumentaQtd);
             btnDiminuiQtd = itemView.findViewById(R.id.btnDiminuiQtd);
             btnDelete = itemView.findViewById(R.id.btnDelete);

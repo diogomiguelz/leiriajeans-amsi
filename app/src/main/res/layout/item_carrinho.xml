@@ -3,47 +3,56 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvNomeProdutoCarrinho"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvNomeProduto"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Nome do Produto"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvPrecoProdutoCarrinho"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvQuantidade"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp" />
+        android:layout_marginTop="4dp"
+        android:text="Quantidade: 1" />
 
     <TextView
-        android:id="@+id/tvQuantidadeProdutoCarrinho"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvPreco"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp" />
+        android:layout_marginTop="4dp"
+        android:text="R$ 0.00" />
 
-    <ImageView
-        android:id="@+id/imgProdutoCarrinho"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/btnAumentaQtd"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Aumentar" />
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
 
-    <Button
-        android:id="@+id/btnDiminuiQtd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Diminuir" />
+        <Button
+            android:id="@+id/btnAumentaQtd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="+" />
 
-    <Button
-        android:id="@+id/btnDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Deletar" />
+        <Button
+            android:id="@+id/btnDiminuiQtd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="-" />
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Excluir" />
+    </LinearLayout>
+
 </LinearLayout>

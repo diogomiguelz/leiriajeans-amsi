@@ -72,14 +72,8 @@ public class DetalhesProdutosFragment extends Fragment {
         btnAdicionarCarrinho.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Carrinho carrinho = SingletonProdutos.getInstance(getContext()).getCarrinho();
-                if (carrinho == null) {
-                    SingletonProdutos.getInstance(getContext()).getCarrinhoAPI(getContext());
-                    carrinho = SingletonProdutos.getInstance(getContext()).getCarrinho();
-                } else {
-                    SingletonProdutos.getInstance(getContext()).adicionarLinhaCarrinhoAPI(getContext(), produto, carrinho);
-                    Toast.makeText(getContext(), "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
-                }
+                SingletonProdutos.getInstance(getContext())
+                    .adicionarLinhaCarrinhoAPI(getContext(), produto, 1);
             }
         });
 
