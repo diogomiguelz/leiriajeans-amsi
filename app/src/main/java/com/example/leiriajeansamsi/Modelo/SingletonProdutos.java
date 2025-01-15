@@ -704,21 +704,19 @@ public class    SingletonProdutos {
     }
 
 
-    public void updateProfileAPI(final String primeironome, final String apelido, final String telemovel, final String nif, final String genero, final String dtaNascimento, final String rua, final String localidade, final String codigoPostal, final Context context) {
+    public void updateProfileAPI(final String rua, final String codPostal, final String localidade, final String nif, final String telefone, final String nomeUtilizador, final Context context) {
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
         } else {
             JSONObject jsonParams = new JSONObject();
             try {
-                jsonParams.put("primeironome", primeironome);
-                jsonParams.put("apelido", apelido);
-                jsonParams.put("telefone", telemovel);
+                jsonParams.put("telefone", telefone);
                 jsonParams.put("nif", nif);
-                jsonParams.put("genero", genero);
-                jsonParams.put("dtanasc", dtaNascimento);
+                jsonParams.put("nome", nomeUtilizador);
                 jsonParams.put("rua", rua);
                 jsonParams.put("localidade", localidade);
-                jsonParams.put("codigopostal", codigoPostal);
+                jsonParams.put("codigopostal", codPostal);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

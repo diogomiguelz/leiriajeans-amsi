@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_login"
-    tools:context=".PerfilFragment">
+    tools:context=".PerfilEditFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,75 +18,75 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+ «
 
-        <TextView
-            android:id="@+id/tvRua"
+        <EditText
+            android:id="@+id/etRua"
             style="@style/TextView_Email"
-            android:text="@string/txt_morada"
+            android:hint="@string/txt_morada"
             android:textColor="#000000"
             android:textSize="16sp"
-            android:layout_marginTop="35dp"
             app:layout_constraintTop_toTopOf="@id/ContainerComponents_Registo"
             app:layout_constraintStart_toStartOf="@id/ContainerComponents_Registo"
             app:layout_constraintEnd_toEndOf="@id/ContainerComponents_Registo" />
 
-        <TextView
-            android:id="@+id/tvCodPostal"
+        <EditText
+            android:id="@+id/etCodPostal"
             style="@style/TextView_Email"
-            android:text="@string/txt_codpostal"
+            android:hint="@string/txt_codpostal"
             android:textColor="#000000"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvRua"
-            app:layout_constraintStart_toStartOf="@id/tvRua"
-            app:layout_constraintEnd_toEndOf="@id/tvRua" />
+            app:layout_constraintTop_toBottomOf="@id/etRua"
+            app:layout_constraintStart_toStartOf="@id/etRua"
+            app:layout_constraintEnd_toEndOf="@id/etRua" />
 
-        <TextView
-            android:id="@+id/tvLocalidade"
+        <EditText
+            android:id="@+id/etLocalidade"
             style="@style/TextView_Email"
-            android:text="@string/txt_localidade"
+            android:hint="@string/txt_localidade"
             android:textColor="#000000"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvCodPostal"
-            app:layout_constraintStart_toStartOf="@id/tvCodPostal"
-            app:layout_constraintEnd_toEndOf="@id/tvCodPostal" />
+            app:layout_constraintTop_toBottomOf="@id/etCodPostal"
+            app:layout_constraintStart_toStartOf="@id/etCodPostal"
+            app:layout_constraintEnd_toEndOf="@id/etCodPostal" />
 
-        <TextView
-            android:id="@+id/tvNif"
+        <EditText
+            android:id="@+id/etNif"
             style="@style/TextView_Email"
-            android:text="@string/txt_nif"
+            android:hint="@string/txt_nif"
             android:textColor="#000000"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvLocalidade"
-            app:layout_constraintStart_toStartOf="@id/tvLocalidade"
-            app:layout_constraintEnd_toEndOf="@id/tvLocalidade" />
+            app:layout_constraintTop_toBottomOf="@id/etLocalidade"
+            app:layout_constraintStart_toStartOf="@id/etLocalidade"
+            app:layout_constraintEnd_toEndOf="@id/etLocalidade" />
 
-        <TextView
-            android:id="@+id/tvTelefone"
+        <EditText
+            android:id="@+id/etTelefone"
             style="@style/TextView_Email"
-            android:text="@string/txt_telefone"
+            android:hint="@string/txt_telefone"
             android:textColor="#000000"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvNif"
-            app:layout_constraintStart_toStartOf="@id/tvNif"
-            app:layout_constraintEnd_toEndOf="@id/tvNif" />
+            app:layout_constraintTop_toBottomOf="@id/etNif"
+            app:layout_constraintStart_toStartOf="@id/etNif"
+            app:layout_constraintEnd_toEndOf="@id/etNif" />
 
-        <TextView
-            android:id="@+id/tvNomeProprio"
+        <EditText
+            android:id="@+id/etNomeProprio"
             style="@style/TextView_Email"
-            android:text="@string/txt_nomeproprio"
+            android:hint="@string/txt_nomeproprio"
             android:textColor="#000000"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvTelefone"
-            app:layout_constraintStart_toStartOf="@id/tvTelefone"
-            app:layout_constraintEnd_toEndOf="@id/tvTelefone" />
+            app:layout_constraintTop_toBottomOf="@id/etTelefone"
+            app:layout_constraintStart_toStartOf="@id/etTelefone"
+            app:layout_constraintEnd_toEndOf="@id/etTelefone" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnEditarPerfil"
+            android:id="@+id/btnGuardarPerfil"
             style="@style/Bt_login"
-            android:text="@string/txt_editar_perfil"
-            android:onClick="onClickEditar"
-            android:layout_marginTop="45dp"
-            app:layout_constraintTop_toBottomOf="@id/tvNomeProprio"
+            android:text="@string/txt_guardar_perfil"
+            android:onClick="onClickGuardar"
+            android:layout_marginTop="25dp"
+            app:layout_constraintTop_toBottomOf="@id/etNomeProprio"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,9 +50,9 @@ public class PerfilFragment extends Fragment {
         });
 
         // Find TextView objects by their IDs
-        tvUsername = view.findViewById(R.id.tvUsername);
+        //tvUsername = view.findViewById(R.id.tvUsername);
         tvNome = view.findViewById(R.id.tvNomeProprio);
-        tvEmail = view.findViewById(R.id.tvEmail);
+        //tvEmail = view.findViewById(R.id.tvEmail);
         tvTelefone = view.findViewById(R.id.tvTelefone);
         tvNIF = view.findViewById(R.id.tvNif);
         tvRua = view.findViewById(R.id.tvRua);
@@ -65,9 +66,9 @@ public class PerfilFragment extends Fragment {
     // Método para atualizar os dados na interface
     private void updateUI() {
         if (utilizadorData != null) {
-            username = utilizadorData.getUsername();
+            //username = utilizadorData.getUsername();
             nome = utilizadorData.getNome();
-            email = utilizadorData.getEmail();
+            //email = utilizadorData.getEmail();
             telefone = utilizadorData.getTelefone();
             nif = utilizadorData.getNif();
             rua = utilizadorData.getRua();
@@ -75,19 +76,23 @@ public class PerfilFragment extends Fragment {
             codigoPostal = utilizadorData.getCodpostal();
         }
 
-        //logEmail
-        Log.d("O EMAIL DO GAJO É", email);
+        Log.d("O TELEFONE DO UTILIZADOR É", telefone);
+        Log.d("O NIF DO UTILIZADOR É", nif);
+        Log.d("A RUA DO UTILIZADOR É", rua);
+        Log.d("A LOCALIDADE DO UTILIZADOR É", localidade);
+        Log.d("O CODIGO POSTAL DO UTILIZADOR É", codigoPostal);
+
 
         // Atualize os TextViews
-        if (tvUsername != null) {
-            tvUsername.setText(username != null ? username : "por definir");
-        }
+        //if (tvUsername != null) {
+        //    tvUsername.setText(username != null ? username : "por definir");
+        //}
         if (tvNome != null) {
             tvNome.setText(nome != null ? nome : "por definir");
         }
-        if (tvEmail != null) {
-            tvEmail.setText(email != null ? email : "por definir");
-        }
+        //if (tvEmail != null) {
+        //    tvEmail.setText(email != null ? email : "por definir");
+        //}
         if (tvTelefone != null) {
             tvTelefone.setText(telefone != null ? telefone : "por definir");
         }
@@ -106,8 +111,14 @@ public class PerfilFragment extends Fragment {
 
         // Configura o botão para editar o perfil
         btnEditarPerfil.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), PerfilFragment.class);
-            startActivity(intent);
+            // Inicia a transação para substituir o fragmento atual pelo PerfilEditFragment
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            // Substitui o fragmento atual pelo PerfilEditFragment
+            transaction.replace(R.id.fragment_container, new PerfilEditFragment()); // R.id.fragment_container é o ID do contêiner onde os fragments são adicionados
+            // Adiciona à pilha de fragmentos (opcional, caso você queira voltar para o PerfilFragment)
+            transaction.addToBackStack(null);
+            // Executa a transação
+            transaction.commit();
         });
     }
 }
