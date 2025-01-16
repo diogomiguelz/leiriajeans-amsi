@@ -60,7 +60,7 @@ public class SobreFragment extends Fragment {
 
         // Informações da empresa
         String informacoes =
-                "Fundada em 2024, a nossa loja nasceu com a missão de trazer estilo, conforto e qualidade para o guarda-roupa de todos os nossos clientes. Inspirados pelas últimas tendências da moda e comprometidos com a sustentabilidade, oferecemos uma seleção de roupas cuidadosamente escolhidas para refletir as necessidades e preferências de cada pessoa. \n"+
+                "Fundada em 2024, a nossa loja nasceu com a missão de trazer estilo, conforto e qualidade para todos os nossos clientes. Inspirados pelas últimas tendências da moda e comprometidos com a sustentabilidade, oferecemos uma seleção de roupas cuidadosamente escolhidas para refletir as necessidades e preferências de cada pessoa. \n\n\n"+
                 "Endereço: Politécnico de Leiria\n" +
                 "Telefone: +351 123 456 789\n" +
                 "Email: contato@leiriajeans.pt";

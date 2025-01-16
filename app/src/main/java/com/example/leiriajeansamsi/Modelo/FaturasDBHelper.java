@@ -95,26 +95,6 @@ public class FaturasDBHelper extends SQLiteOpenHelper {
         return faturasList;
     }
 
-    public boolean isFaturaExistente(int utilizadorId, int faturaId) {
-        SQLiteDatabase db = getReadableDatabase();
-
-        // Seleciona apenas o ID para verificar a existência
-        String[] columns = {ID};
-        String selection = USERDATA_ID + " = ? AND " + ID + " = ?";
-        String[] selectionArgs = {String.valueOf(utilizadorId), String.valueOf(faturaId)};
-
-        // Consulta a tabela
-        Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-
-        // Verifica se há resultados
-        boolean faturaExistente = cursor.getCount() > 0;
-
-        cursor.close();
-        db.close();
-
-        return faturaExistente;
-    }
-
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

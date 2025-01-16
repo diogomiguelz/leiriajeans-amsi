@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@drawable/background_login"
     tools:context=".SobreFragment">
 
     <!-- Contêiner principal -->
@@ -15,13 +16,25 @@
         android:padding="16dp"
         android:gravity="center_horizontal">
 
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Localização no Mapa"
+            android:textSize="20sp"
+            android:textColor="@color/blue"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
         <!-- CardView para o mapa -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="6dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
             app:cardBackgroundColor="@color/white">
 
             <!-- MapView configurado -->
@@ -33,13 +46,16 @@
 
         </androidx.cardview.widget.CardView>
 
-        <!-- TextView para as informações da empresa -->
+
+
+
+    <!-- TextView para as informações da empresa -->
         <TextView
             android:id="@+id/text_informacoes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Carregando informações..."
+            android:text="Carregar informações..."
             android:textSize="18sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="#333333"
