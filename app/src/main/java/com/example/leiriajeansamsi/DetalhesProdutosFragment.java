@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ public class DetalhesProdutosFragment extends Fragment {
 
     private TextView tvNomeProduto, tvPrecoProduto, tvDescricaoProduto, btnAdicionarCarrinho;
     private ImageView imgCapaProduto;
+    private ImageButton btnVoltar;
     private Produto produto;
 
     public static final String PRODUTO = "PRODUTO";
@@ -42,6 +44,17 @@ public class DetalhesProdutosFragment extends Fragment {
         tvDescricaoProduto = view.findViewById(R.id.tvDescricaoProduto);
         imgCapaProduto = view.findViewById(R.id.pic);
         btnAdicionarCarrinho = view.findViewById(R.id.btnAdicionarCarrinho);
+        btnVoltar = view.findViewById(R.id.btnVoltar);
+
+        // Configurar o botão voltar
+        btnVoltar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager().popBackStack();
+                }
+            }
+        });
 
         // Get product from arguments
         if (getArguments() != null && getArguments().containsKey(PRODUTO)) {
@@ -73,7 +86,8 @@ public class DetalhesProdutosFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 SingletonProdutos.getInstance(getContext())
-                    .adicionarLinhaCarrinhoAPI(getContext(), produto, 1);
+                        .adicionarLinhaCarrinhoAPI(getContext(), produto, 1);
+                Toast.makeText(getContext(), "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
             }
         });
 
