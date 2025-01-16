@@ -3,65 +3,67 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    app:cardCornerRadius="15dp"
-    app:cardElevation="3dp">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="8dp">
 
-        <Button
-            android:id="@+id/btnAddToCart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Adicionar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp" />
-
+        <!-- Imagem do Produto -->
         <ImageView
             android:id="@+id/pic"
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_margin="10dp"
+            android:layout_marginBottom="8dp"
             android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.842"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Price TextView -->
-
+        <!-- Nome do Produto -->
         <TextView
             android:id="@+id/nomeTxt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/txt_produtonome_title"
-            android:textColor="@color/blue"
+            android:text="Nome do Produto"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/precoTxt"
-            app:layout_constraintTop_toBottomOf="@+id/pic" />
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/pic"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0" />
 
+        <!-- Preço -->
         <TextView
             android:id="@+id/precoTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/txt_valorproduto"
-            android:textColor="@color/vermelho_claro"
-            android:textSize="17sp"
+            android:text="34.00 €"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/pic"
-            app:layout_constraintTop_toBottomOf="@+id/nomeTxt" />
+            android:textColor="@color/vermelho_claro"
+            app:layout_constraintTop_toBottomOf="@id/nomeTxt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.0" />
 
-        <!-- Star Icon -->
+        <!-- Botão Adicionar -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddToCart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/amarelo"
+            android:text="Adicionar"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            app:cornerRadius="16dp"
+            app:layout_constraintTop_toBottomOf="@id/precoTxt"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Rating TextView -->
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

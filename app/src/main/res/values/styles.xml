@@ -7,8 +7,9 @@
     </style>
 
     <style name="ContainerComponents_Registar">
+        //margintop
         <item name="android:layout_width">350dp</item>
-        <item name="android:layout_height">732dp</item>
+        <item name="android:layout_height">632dp</item>
         <item name="android:background">@drawable/container_components</item>
     </style>
 

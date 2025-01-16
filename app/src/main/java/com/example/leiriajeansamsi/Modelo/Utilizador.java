@@ -18,6 +18,10 @@ public class Utilizador {
     private String updated_at;
     private String verification_token;
 
+    public Utilizador() {
+
+    }
+
     public Utilizador(int id, String username, String nome, String email,
                       String codpostal, String rua, String localidade, String telefone, String nif,
                       String auth_key, String password_hash, String password_reset_token,
