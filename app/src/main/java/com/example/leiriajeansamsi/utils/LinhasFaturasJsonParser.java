@@ -23,7 +23,7 @@ public class LinhasFaturasJsonParser {
         return linha;
     }
 
-    // Método para parsear múltiplas linhas de faturas a partir de um JSONArray
+    // Metodo para parsear múltiplas linhas de faturas a partir de um JSONArray
     public static ArrayList<LinhaFatura> parserJsonLinhasFaturas(JSONArray response) {
         ArrayList<LinhaFatura> linhasFaturas = new ArrayList<>();
         try {

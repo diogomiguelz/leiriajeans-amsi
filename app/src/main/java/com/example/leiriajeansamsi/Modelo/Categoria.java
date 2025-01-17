@@ -56,7 +56,7 @@ public class Categoria {
         this.produto = produto;
     }
 
-    // Método toString para facilitar a visualização do objeto
+    // Metodo toString para facilitar a visualização do objeto
     @Override
     public String toString() {
         return "Carrinho{" +

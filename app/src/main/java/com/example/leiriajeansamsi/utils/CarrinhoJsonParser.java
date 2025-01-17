@@ -12,7 +12,7 @@ import com.example.leiriajeansamsi.Modelo.Carrinho;
 
 public class CarrinhoJsonParser {
 
-    // Método para parser de um único carrinho (JSON)
+    // Metodo para parser de um único carrinho (JSON)
     public static Carrinho parserJsonCarrinho(JSONObject response) {
         Carrinho carrinho = null;
         try {
@@ -33,7 +33,7 @@ public class CarrinhoJsonParser {
         return carrinho;
     }
 
-    // Método para parser de uma lista de carrinhos (JSONArray)
+    // Metodo para parser de uma lista de carrinhos (JSONArray)
     public static ArrayList<Carrinho> parserJsonCarrinhos(JSONArray response) {
         ArrayList<Carrinho> carrinhos = new ArrayList<>();
         try {

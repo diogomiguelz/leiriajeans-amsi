@@ -70,7 +70,7 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
         holder.btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SingletonProdutos.getInstance(context).verificarECriarCarrinho(context, product, 1);
+                SingletonProdutos.getInstance(context).verificarCarrinho(context, product, 1);
             }
         });
     }

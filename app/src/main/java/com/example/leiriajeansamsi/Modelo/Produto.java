@@ -123,7 +123,7 @@ public class Produto implements Parcelable {
         preco = in.readFloat();
     }
 
-    // Método obrigatório para escrever os dados no Parcel
+    // Metodo obrigatório para escrever os dados no Parcel
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
@@ -137,7 +137,7 @@ public class Produto implements Parcelable {
         dest.writeFloat(preco);
     }
 
-    // Método obrigatório para criar a instância a partir de um Parcel
+    // Metodo obrigatório para criar a instância a partir de um Parcel
     public static final Creator<Produto> CREATOR = new Creator<Produto>() {
         @Override
         public Produto createFromParcel(Parcel in) {

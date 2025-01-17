@@ -37,7 +37,7 @@ public class PerfilFragment extends Fragment {
 
         singleton = SingletonProdutos.getInstance(getContext());
 
-        // Usando o listener para aguardar os dados
+        // usar o listener para aguardar os dados
         singleton.getUserDataAPI(getContext(), new UtilizadorDataListener() {
             @Override
             public void onGetUtilizadorData(Utilizador utilizadorData) {
@@ -63,7 +63,7 @@ public class PerfilFragment extends Fragment {
         return view;
     }
 
-    // Método para atualizar os dados na interface
+    // Metodo para atualizar os dados na interface
     private void updateUI() {
         if (utilizadorData != null) {
             //username = utilizadorData.getUsername();

@@ -6,6 +6,7 @@ public class Fatura implements Serializable {
     private int id;
     private int metodoPagamentoId;
     private int metodoExpedicaoId;
+    private int userdata_id;
     private String data;
     private float valorTotal;
     private StatusPedido statusPedido;
@@ -18,7 +19,7 @@ public class Fatura implements Serializable {
 
         @Override
         public String toString() {
-            return name().toLowerCase(); // Garante que sempre retorne em minúsculas
+            return name().toLowerCase();
         }
     }
 
@@ -34,6 +35,7 @@ public class Fatura implements Serializable {
         this.id = id;
         this.metodoPagamentoId = metodoPagamentoId;
         this.metodoExpedicaoId = metodoExpedicaoId;
+        //this.userdata_id = userdata_id;
         this.data = data;
         this.valorTotal = valorTotal;
         this.statusPedido = statusPedido;
@@ -62,6 +64,14 @@ public class Fatura implements Serializable {
 
     public void setMetodoExpedicaoId(int metodoExpedicaoId) {
         this.metodoExpedicaoId = metodoExpedicaoId;
+    }
+
+    public int getUserdata_id() {
+        return userdata_id;
+    }
+
+    public void setUserdata_id(int userdata_id) {
+        this.userdata_id = userdata_id;
     }
 
     public String getData() {
@@ -103,6 +113,7 @@ public class Fatura implements Serializable {
                 "id=" + id +
                 ", metodoPagamentoId=" + metodoPagamentoId +
                 ", metodoExpedicaoId=" + metodoExpedicaoId +
+                ", userdata_id=" + userdata_id +
                 ", data='" + data + '\'' +
                 ", valorTotal=" + valorTotal +
                 ", statusPedido=" + statusPedido +

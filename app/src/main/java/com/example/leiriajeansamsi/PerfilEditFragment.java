@@ -46,7 +46,7 @@ public class PerfilEditFragment extends Fragment {
 
         singleton = SingletonProdutos.getInstance(getContext());
 
-        // Usando o listener para aguardar os dados
+        // usar o listener para aguardar os dados
         singleton.getUserDataAPI(getContext(), new UtilizadorDataListener() {
             @Override
             public void onGetUtilizadorData(Utilizador utilizadorData) {
@@ -81,7 +81,7 @@ public class PerfilEditFragment extends Fragment {
     }
 
 
-    // Método para salvar as alterações realizadas pelo usuário
+    // Metodo para guardar as alterações realizadas pelo utilizador
     public void onClickGuardar() {
         if (getContext() != null) {
             singleton.updateProfileAPI(
@@ -94,7 +94,7 @@ public class PerfilEditFragment extends Fragment {
                     getContext()
             );
 
-            // Atualizar os dados do usuário
+            // Atualizar os dados do utilizador
             singleton.getUserDataAPI(getContext(), new UtilizadorDataListener() {
                 @Override
                 public void onGetUtilizadorData(Utilizador utilizadorData) {
@@ -109,7 +109,7 @@ public class PerfilEditFragment extends Fragment {
         }
     }
 
-    // Método para cancelar as alterações e voltar à tela anterior
+    // Metodo para cancelar as alterações e voltar à tela anterior
     public void onClickCancelar() {
         if (getActivity() != null) {
             // Fecha o fragmento e retorna para a tela anterior
