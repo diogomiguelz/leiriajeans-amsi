@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import com.example.leiriajeansamsi.LoginActivity;
@@ -43,9 +44,7 @@ import com.example.leiriajeansamsi.listeners.LoginListener;
 import com.example.leiriajeansamsi.listeners.ProdutoListener;
 import com.example.leiriajeansamsi.listeners.ProdutosListener;
 import com.example.leiriajeansamsi.listeners.ProfileUpdateListener;
-import com.example.leiriajeansamsi.utils.CarrinhoJsonParser;
 import com.example.leiriajeansamsi.utils.FaturasJsonParser;
-import com.example.leiriajeansamsi.utils.LinhaCarrinhoJsonParser;
 import com.example.leiriajeansamsi.listeners.SignupListener;
 import com.example.leiriajeansamsi.listeners.UtilizadorDataListener;
 import com.example.leiriajeansamsi.utils.LinhasFaturasJsonParser;
@@ -56,29 +55,17 @@ public class SingletonProdutos {
 
     //region DECLARAÇOES
 
-    private Produto produtoParaAdicionar;
-    private int quantidadeParaAdicionar;
     private int carrinhoId = -1;
-
     public ArrayList<Produto> produtos = new ArrayList<>();
-
-
     public ArrayList<Fatura> faturas = new ArrayList<>();
     public ArrayList<LinhaFatura> linhasFaturas = new ArrayList<>();
     public ArrayList<LinhaCarrinho> linhaCarrinhos = new ArrayList<>();
     public Carrinho carrinho;
-    public LinhaCarrinho linhaCarrinho;
     public Utilizador utilizador, utilizadorData;
-
     private static volatile SingletonProdutos instance = null;
-    private static int user_id;
-    private static int carrinho_id;
-
-    /*private ProdutoBDHelper produtosBD=null;*/
 
     private static RequestQueue volleyQueue = null;
     private LoginListener loginListener;
-    private ProfileUpdateListener profileUpdateListener;
     private UtilizadorDataListener utilizadorDataListener;
     private SignupListener signupListener;
     private ProdutosListener produtosListener;
@@ -89,8 +76,6 @@ public class SingletonProdutos {
     private FaturasListener faturasListener;
     private FaturaListener faturaListener;
     private LinhasFaturasListener linhasFaturasListener;
-    private Utilizador loggedInUser;
-
     private List<LinhaCarrinho> linhasCarrinho; // Lista de produtos no carrinho
     //endregion
 
@@ -121,7 +106,6 @@ public class SingletonProdutos {
         return preferences.getString("API", null);
     }
     public ArrayList<Produto> getProdutos() {
-
         return produtos;
     }
 
@@ -579,24 +563,21 @@ public class SingletonProdutos {
 
     public void adicionarLinhaCarrinhoAPI(Context context, Produto produto, int quantidade) {
         if (carrinhoId == -1) {
-            // Armazena o produto para adicionar depois que o carrinho for criado
-            produtoParaAdicionar = produto;
-            quantidadeParaAdicionar = quantidade;
-            getCarrinhoAPI(context);
+            // Se não existe carrinho, cria um e depois adiciona o produto
+            verificarCarrinho(context, produto, quantidade);
             return;
         }
 
         String url = mUrlAPIPostLinhaCarrinho(context);
-
         Log.d("CarrinhoDebug", "A adicionar linha ao carrinho. URL: " + url);
 
         StringRequest request = new StringRequest(Request.Method.POST, url,
-            response -> {
-                Log.d("CarrinhoDebug", "Linha adicionada com sucesso: " + response);
-            },
-            error -> {
-                Log.e("CarrinhoDebug", "Erro ao adicionar linha: " + error.getMessage());
-            }) {
+                response -> {
+                    Log.d("CarrinhoDebug", "Linha adicionada com sucesso: " + response);
+                },
+                error -> {
+                    Log.e("CarrinhoDebug", "Erro ao adicionar linha: " + error.getMessage());
+                }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
@@ -735,14 +716,10 @@ public class SingletonProdutos {
         this.carrinho = novoCarrinho;
     }
 
-    // Metodo para adicionar um produto ao carrinho
-    public void adicionarProdutoAoCarrinho(LinhaCarrinho linhaCarrinho) {
-        linhasCarrinho.add(linhaCarrinho);
-    }
-
     public void verificarCarrinho(Context context, Produto produto, int quantidade) {
         Log.d("CarrinhoDebug", "A iniciar verificação de carrinho");
-        String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" + getUsername(context) + "&access-token=" + getUserToken(context);
+        String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" +
+                getUsername(context) + "&access-token=" + getUserToken(context);
 
         JsonObjectRequest userDataRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -754,8 +731,9 @@ public class SingletonProdutos {
                             int userdataId = userForm.getInt("id");
                             Log.d("CarrinhoDebug", "UserData ID obtido: " + userdataId);
 
-                            // Verificar carrinho existente
-                            String carrinhoUrl = getBaseUrl(context) + "carrinho/" + userdataId + "/carrinho?access-token=" + getUserToken(context);
+                            // Endpoint correto para verificar carrinho
+                            String carrinhoUrl = getBaseUrl(context) + "carrinho/carrinho?user_id=" +
+                                    userdataId + "&access-token=" + getUserToken(context);
 
                             StringRequest carrinhoRequest = new StringRequest(Request.Method.GET, carrinhoUrl,
                                     carrinhoResponse -> {
@@ -763,7 +741,8 @@ public class SingletonProdutos {
                                             JSONObject jsonCarrinho = new JSONObject(carrinhoResponse);
                                             carrinhoId = jsonCarrinho.getInt("id");
                                             saveLastCarrinhoId(context, carrinhoId);
-                                            Log.d("CarrinhoDebug", "Carrinho encontrado. ID: " + carrinhoId);
+                                            Log.d("CarrinhoDebug", "Carrinho existente encontrado. ID: " + carrinhoId);
+
                                             if (produto != null) {
                                                 adicionarLinhaCarrinhoAPI(context, produto, quantidade);
                                             } else {
@@ -777,12 +756,14 @@ public class SingletonProdutos {
                                         if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
                                             criarCarrinho(context, userdataId, produto, quantidade);
                                         } else {
-                                            Toast.makeText(context, "Erro ao verificar carrinho", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Erro ao verificar carrinho",
+                                                    Toast.LENGTH_SHORT).show();
                                         }
                                     });
                             volleyQueue.add(carrinhoRequest);
                         } else {
-                            Toast.makeText(context, "Erro: Dados do utilizador não encontrados", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Erro: Dados do utilizador não encontrados",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         Log.e("CarrinhoDebug", "Erro ao processar dados do utilizador: " + e.getMessage());
@@ -863,7 +844,8 @@ public class SingletonProdutos {
 
     // Metodo para criar uma fatura
     public void criarFaturaAPI(Context context, int userId, int metodoPagamentoId, int metodoExpedicaoId, FaturasListener listener) {
-        String urlUserData = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" + getUsername(context) + "&access-token=" + getUserToken(context);
+        String urlUserData = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" +
+                getUsername(context) + "&access-token=" + getUserToken(context);
 
         JsonObjectRequest userDataRequest = new JsonObjectRequest(Request.Method.GET, urlUserData, null,
                 response -> {
@@ -875,7 +857,8 @@ public class SingletonProdutos {
                         }
 
                         int userdataId = userForm.getInt("id");
-                        String carrinhoUrl = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/carrinho/carrinho?access-token=" + getUserToken(context) + "&user_id=" + userdataId;
+                        String carrinhoUrl = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/carrinho/carrinho?access-token=" +
+                                getUserToken(context) + "&user_id=" + userdataId;
 
                         JsonObjectRequest carrinhoRequest = new JsonObjectRequest(Request.Method.GET, carrinhoUrl, null,
                                 carrinhoResponse -> {
@@ -906,6 +889,26 @@ public class SingletonProdutos {
                                                             faturaCriada.setValorTotal(Float.parseFloat(data.getString("valorTotal")));
                                                             faturaCriada.setStatusPedido(Fatura.StatusPedido.valueOf(data.getString("statuspedido")));
 
+                                                            // Após criar a fatura, criar as linhas da fatura
+                                                            List<LinhaFatura> linhasFatura = convertCarrinhoParaLinhasFaturas();
+                                                            for (LinhaFatura linha : linhasFatura) {
+                                                                linha.setFaturaId(faturaCriada.getId());
+                                                                criarLinhaFaturaAPI(context, linha, new LinhasFaturasListener() {
+                                                                    @Override
+                                                                    public void onLinhaFaturaCriada(LinhaFatura linhaFatura) {
+                                                                        // Linha criada com sucesso
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onRefreshListaLinhasFaturas(int faturaId, ArrayList<LinhaFatura> linhasFaturas) {
+                                                                        // Atualização da lista não necessária aqui
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            // Limpar o carrinho após criar todas as linhas
+                                                            limparCarrinhoAposFatura(context);
+
                                                             if (listener != null) {
                                                                 listener.onFaturaCriada(faturaCriada);
                                                             }
@@ -913,6 +916,7 @@ public class SingletonProdutos {
                                                         }
                                                     } catch (JSONException e) {
                                                         Log.e("FaturaAPI", "Erro ao processar resposta da fatura: " + e.getMessage());
+                                                        handleError(context, new VolleyError(e.getMessage()), "Erro ao processar fatura");
                                                     }
                                                 },
                                                 error -> handleError(context, error, "Erro ao criar fatura"));
@@ -921,6 +925,7 @@ public class SingletonProdutos {
 
                                     } catch (JSONException e) {
                                         Log.e("FaturaAPI", "Erro ao processar dados do carrinho: " + e.getMessage());
+                                        handleError(context, new VolleyError(e.getMessage()), "Erro ao processar carrinho");
                                     }
                                 },
                                 error -> handleError(context, error, "Carrinho não encontrado"));
@@ -929,12 +934,74 @@ public class SingletonProdutos {
 
                     } catch (JSONException e) {
                         Log.e("FaturaAPI", "Erro ao processar dados do utilizador: " + e.getMessage());
+                        handleError(context, new VolleyError(e.getMessage()), "Erro ao processar dados do utilizador");
                     }
                 },
                 error -> handleError(context, error, "Erro ao buscar dados do utilizador"));
 
         volleyQueue.add(userDataRequest);
     }
+
+    private void limparCarrinhoAposFatura(Context context) {
+        if (carrinhoId <= 0 || linhaCarrinhos.isEmpty()) {
+            return;
+        }
+
+        // Cria uma cópia da lista para evitar ConcurrentModificationException
+        ArrayList<LinhaCarrinho> linhasParaDeletar = new ArrayList<>(linhaCarrinhos);
+        final int totalLinhas = linhasParaDeletar.size();
+        final AtomicInteger linhasDeletadas = new AtomicInteger(0);
+
+        for (LinhaCarrinho linha : linhasParaDeletar) {
+            String url = urlDeleteLinhaCarrinho(linha.getId(), context);
+
+            StringRequest request = new StringRequest(Request.Method.DELETE, url,
+                    response -> {
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            if (jsonResponse.optBoolean("success", false)) {
+                                int deletadas = linhasDeletadas.incrementAndGet();
+
+                                // Se todas as linhas foram deletadas
+                                if (deletadas == totalLinhas) {
+                                    // Limpa as listas locais
+                                    linhaCarrinhos.clear();
+                                    carrinho = null;
+                                    carrinhoId = -1;
+
+                                    // Limpa o ID do carrinho nas SharedPreferences
+                                    SharedPreferences prefs = context.getSharedPreferences("CarrinhoPrefs", Context.MODE_PRIVATE);
+                                    prefs.edit().remove("last_carrinho_id").apply();
+
+                                    // Notifica os listeners
+                                    if (linhasCarrinhoListener != null) {
+                                        linhasCarrinhoListener.onRefreshListaLinhasCarrinhos(new ArrayList<>());
+                                    }
+                                    if (carrinhoListener != null) {
+                                        carrinhoListener.onCarrinhoUpdated(null);
+                                    }
+
+                                    Toast.makeText(context, "Carrinho limpo com sucesso", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            Log.e("LimparCarrinho", "Erro ao processar resposta: " + e.getMessage());
+                        }
+                    },
+                    error -> {
+                        Log.e("LimparCarrinho", "Erro ao deletar linha: " + error.getMessage());
+                        Toast.makeText(context, "Erro ao limpar carrinho", Toast.LENGTH_SHORT).show();
+                    });
+
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    30000,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            volleyQueue.add(request);
+        }
+    }
+
 
     private void handleError(Context context, VolleyError error, String defaultMessage) {
         if (error.networkResponse != null && error.networkResponse.data != null) {
@@ -1161,9 +1228,11 @@ public class SingletonProdutos {
 
     //region URLS API
 
+    //region WEBSITE URL
     private String getBaseUrl(Context context) {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/";
     }
+    //endregion
 
     //region API PRODUTOS
 

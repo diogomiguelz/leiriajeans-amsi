@@ -24,7 +24,7 @@ public class FaturasJsonParser {
 
         // Tratamento do status
         String statusStr = jsonResponse.optString("statuspedido", "pendente").toLowerCase();
-        fatura.setStatusPedidoFromString(statusStr); // Usa o método que você já tem na classe Fatura
+        fatura.setStatusPedidoFromString(statusStr); // Usa o metodo que você já tem na classe Fatura
 
         Log.d("FaturasJsonParser", "Fatura parseada com sucesso: " + fatura);
         return fatura;
