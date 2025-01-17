@@ -76,11 +76,7 @@ public class PerfilFragment extends Fragment {
             codigoPostal = utilizadorData.getCodpostal();
         }
 
-        Log.d("O TELEFONE DO UTILIZADOR É", telefone);
-        Log.d("O NIF DO UTILIZADOR É", nif);
-        Log.d("A RUA DO UTILIZADOR É", rua);
-        Log.d("A LOCALIDADE DO UTILIZADOR É", localidade);
-        Log.d("O CODIGO POSTAL DO UTILIZADOR É", codigoPostal);
+
 
 
         // Atualize os TextViews

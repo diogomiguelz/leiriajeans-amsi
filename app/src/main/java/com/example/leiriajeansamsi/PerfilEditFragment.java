@@ -1,6 +1,7 @@
 package com.example.leiriajeansamsi;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,28 +85,37 @@ public class PerfilEditFragment extends Fragment {
     // Metodo para guardar as alterações realizadas pelo utilizador
     public void onClickGuardar() {
         if (getContext() != null) {
+            String nomeValue = etNomeUtilizador.getText().toString().trim();
+            String ruaValue = etRua.getText().toString().trim();
+            String codPostalValue = etCodPostal.getText().toString().trim();
+            String localidadeValue = etLocalidade.getText().toString().trim();
+            String nifValue = etNif.getText().toString().trim();
+            String telefoneValue = etTelefone.getText().toString().trim();
+
+            Log.d("DEBUG_EDIT", "Tentando atualizar com os dados:" +
+                    "\nNome: " + nomeValue +
+                    "\nRua: " + ruaValue +
+                    "\nCódigo Postal: " + codPostalValue +
+                    "\nLocalidade: " + localidadeValue +
+                    "\nNIF: " + nifValue +
+                    "\nTelefone: " + telefoneValue);
+
             singleton.updateProfileAPI(
-                    etRua.getText().toString(),
-                    etCodPostal.getText().toString(),
-                    etLocalidade.getText().toString(),
-                    etNif.getText().toString(),
-                    etTelefone.getText().toString(),
-                    etNomeUtilizador.getText().toString(),
+                    nomeValue,
+                    codPostalValue,
+                    localidadeValue,
+                    ruaValue,
+                    nifValue,
+                    telefoneValue,
                     getContext()
             );
 
-            // Atualizar os dados do utilizador
-            singleton.getUserDataAPI(getContext(), new UtilizadorDataListener() {
-                @Override
-                public void onGetUtilizadorData(Utilizador utilizadorData) {
-                    Log.d("PerfilEditFragment", "Dados do utilizador atualizados: " + utilizadorData.getNome());
-                    Log.d("PerfilEditFragment", "Dados a enviar para o servidor: " + etRua.getText().toString() + ", " + etCodPostal.getText().toString() + ", " + etLocalidade.getText().toString() + ", " + etNif.getText().toString() + ", " + etTelefone.getText().toString() + ", " + etNomeUtilizador.getText().toString() + ", " + getContext());
-
+            // Aguardar a atualização antes de voltar
+            new Handler().postDelayed(() -> {
+                if (getActivity() != null) {
+                    getActivity().onBackPressed();
                 }
-            });
-
-
-            Toast.makeText(getContext(), "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show();
+            }, 1500); // Aguarda 1.5 segundos antes de voltar
         }
     }
 

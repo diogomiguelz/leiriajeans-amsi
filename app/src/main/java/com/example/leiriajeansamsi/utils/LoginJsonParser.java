@@ -38,25 +38,46 @@ public class LoginJsonParser {
         return utilizador;
     }
 
-    public static Utilizador parserJsonGetUtilizadorData(JSONObject response) {
-        Utilizador utilizador = null;
+    public static Utilizador parserJsonGetUtilizadorData(JSONObject userForm) {
         try {
-            JSONObject loginJSON = new JSONObject(response.toString());
-            int id = loginJSON.getInt("id");
-            String nome = loginJSON.getString("nome");
-            String codpostal = loginJSON.getString("codpostal");
-            String localidade = loginJSON.getString("localidade");
-            String rua = loginJSON.getString("rua");
-            String nif = loginJSON.getString("nif");
-            String telefone = loginJSON.getString("telefone");
+            Log.d("DEBUG_PARSER", "Iniciando parsing do userForm: " + userForm.toString());
 
-            utilizador = new Utilizador(id, "", nome, codpostal, rua,
-                    localidade, telefone, nif,"",
-                    "", "", "");
+            Utilizador utilizador = new Utilizador();
+
+            // Os nomes das chaves devem corresponder exatamente aos do JSON recebido
+            if (!userForm.isNull("nome")) {
+                utilizador.setNome(userForm.getString("nome"));
+            }
+            if (!userForm.isNull("telefone")) {
+                utilizador.setTelefone(userForm.getString("telefone"));
+            }
+            if (!userForm.isNull("nif")) {
+                utilizador.setNif(userForm.getString("nif"));
+            }
+            if (!userForm.isNull("rua")) {
+                utilizador.setRua(userForm.getString("rua"));
+            }
+            if (!userForm.isNull("localidade")) {
+                utilizador.setLocalidade(userForm.getString("localidade"));
+            }
+            if (!userForm.isNull("codpostal")) {
+                utilizador.setCodpostal(userForm.getString("codpostal"));
+            }
+
+            Log.d("DEBUG_PARSER", "Parsing concluído com sucesso:" +
+                    "\nNome: " + utilizador.getNome() +
+                    "\nTelefone: " + utilizador.getTelefone() +
+                    "\nNIF: " + utilizador.getNif() +
+                    "\nRua: " + utilizador.getRua() +
+                    "\nLocalidade: " + utilizador.getLocalidade() +
+                    "\nCódigo Postal: " + utilizador.getCodpostal());
+
+            return utilizador;
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            Log.e("DEBUG_PARSER", "Erro no parsing: " + e.getMessage());
+            Log.e("DEBUG_PARSER", "Stack trace: ", e);
+            return null;
         }
-        return utilizador;
     }
 }
 

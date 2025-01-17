@@ -313,44 +313,98 @@ public class SingletonProdutos {
     public void getUserDataAPI(Context context, final UtilizadorDataListener listener) {
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-        } else {
-            int utilizadorID = getUserId(context); // Fetch user ID from SharedPreferences
-            String username = getUsername(context); // Metodo fictício para obter o username
-            String accessToken = getUserToken(context);
-            if (username != null && accessToken != null) {
-                String url = "http://172.22.21.212/leiriajeans/backend/web/api/user/dados?username=" + username + "&access-token=" + accessToken;
+            return;
+        }
 
-                JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject user = response.getJSONObject("user");
-                            JSONObject userForm = response.getJSONObject("userForm");
+        String username = getUsername(context);
+        String accessToken = getUserToken(context);
 
-                            utilizadorData = LoginJsonParser.parserJsonGetUtilizadorData(userForm);
+        // Log dos dados de autenticação
+        Log.d("DEBUG_API", "Username: " + username);
+        Log.d("DEBUG_API", "Token: " + accessToken);
 
-                            if (listener != null) {
-                                listener.onGetUtilizadorData(utilizadorData);
+        if (username != null && accessToken != null) {
+            String url = "http://172.22.21.212/leiriajeans/backend/web/api/user/dados?username=" + username + "&access-token=" + accessToken;
+            Log.d("DEBUG_API", "URL da requisição: " + url);
+
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                // Log da resposta completa
+                                Log.d("DEBUG_API", "Resposta completa: " + response.toString());
+
+                                JSONObject user = response.getJSONObject("user");
+                                JSONObject userForm = response.getJSONObject("userForm");
+
+                                // Log do userForm antes do parsing
+                                Log.d("DEBUG_API", "UserForm recebido: " + userForm.toString());
+
+                                utilizadorData = LoginJsonParser.parserJsonGetUtilizadorData(userForm);
+
+                                // Log após o parsing
+                                if (utilizadorData != null) {
+                                    Log.d("DEBUG_API", "Dados após parsing:" +
+                                            "\nNome: " + utilizadorData.getNome() +
+                                            "\nTelefone: " + utilizadorData.getTelefone() +
+                                            "\nNIF: " + utilizadorData.getNif() +
+                                            "\nRua: " + utilizadorData.getRua() +
+                                            "\nLocalidade: " + utilizadorData.getLocalidade() +
+                                            "\nCódigo Postal: " + utilizadorData.getCodpostal());
+
+                                    if (listener != null) {
+                                        listener.onGetUtilizadorData(utilizadorData);
+                                    }
+                                } else {
+                                    Log.e("DEBUG_API", "utilizadorData é nulo após parsing");
+                                    Toast.makeText(context, "Erro ao processar dados do utilizador", Toast.LENGTH_SHORT).show();
+                                }
+
+                            } catch (JSONException e) {
+                                Log.e("DEBUG_API", "Erro no parsing JSON: " + e.getMessage());
+                                Log.e("DEBUG_API", "Stack trace: ", e);
+                                Toast.makeText(context, "Erro ao processar dados do servidor", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // Melhor tratamento de erro
+                            String errorMsg = "";
+                            if (error.networkResponse != null && error.networkResponse.data != null) {
+                                try {
+                                    String errorStr = new String(error.networkResponse.data, "UTF-8");
+                                    Log.e("DEBUG_API", "Erro detalhado: " + errorStr);
+                                    errorMsg = errorStr;
+                                } catch (Exception e) {
+                                    Log.e("DEBUG_API", "Erro ao ler resposta de erro", e);
+                                    errorMsg = "Erro desconhecido";
+                                }
+                            } else {
+                                errorMsg = error.getMessage() != null ? error.getMessage() : "Erro na conexão";
                             }
 
-                        } catch (JSONException e) {
-                            Log.e("getUserDataAPI", "Erro ao fazer parse: " + e.getMessage());
-                            throw new RuntimeException(e);
+                            Log.e("DEBUG_API", "Erro ao acessar o servidor: " + errorMsg);
+                            Toast.makeText(context, "Erro ao acessar o servidor: " + errorMsg, Toast.LENGTH_SHORT).show();
                         }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("getUserDataAPI", "Erro ao acessar o servidor: " + error.getMessage());
-                        Toast.makeText(context, "Erro ao acessar o servidor: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-                volleyQueue.add(req);
-            } else {
-                Toast.makeText(context, "Username ou Access Token não encontrados", Toast.LENGTH_SHORT).show();
-            }
+                    });
+
+            // Adicionar timeout maior
+            req.setRetryPolicy(new DefaultRetryPolicy(
+                    30000, // 30 segundos de timeout
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+
+            volleyQueue.add(req);
+        } else {
+            Log.e("DEBUG_API", "Username ou token nulos. Username: " + username + ", Token: " + accessToken);
+            Toast.makeText(context, "Username ou Access Token não encontrados", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
 
@@ -451,40 +505,73 @@ public class SingletonProdutos {
 
 
     // Função para atualizar o perfil do utilizador via API
-    public void updateProfileAPI(final String nome, final String codPostal, final String localidade, final String rua, final String nif, final String telefone, final Context context) {
-
+    public void updateProfileAPI(final String nome, final String codPostal, final String localidade,
+                                 final String rua, final String nif, final String telefone,
+                                 final Context context) {
         if (!ProdutoJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à internet", Toast.LENGTH_SHORT).show();
-        } else {
-            JSONObject jsonParams = new JSONObject();
-            try {
-                jsonParams.put("nome", nome);
-                jsonParams.put("codPostal", codPostal);
-                jsonParams.put("localidade", localidade);
-                jsonParams.put("rua", rua);
-                jsonParams.put("nif", nif);
-                jsonParams.put("telefone", telefone);
+            return;
+        }
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+        String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/update-dados?access-token=" + getUserToken(context);
+        Log.d("DEBUG_UPDATE", "URL de atualização: " + url);
+
+        StringRequest req = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    Log.d("DEBUG_UPDATE", "Resposta do servidor: " + response);
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        if (jsonResponse.getBoolean("success")) {
+                            Toast.makeText(context, "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show();
+                            // Recarregar dados
+                            getUserDataAPI(context, utilizadorDataListener);
+                        } else {
+                            Toast.makeText(context, jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Erro ao processar resposta do servidor", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    String errorMsg = "";
+                    if (error.networkResponse != null && error.networkResponse.data != null) {
+                        try {
+                            errorMsg = new String(error.networkResponse.data, "UTF-8");
+                            Log.e("DEBUG_UPDATE", "Erro detalhado: " + errorMsg);
+                        } catch (Exception e) {
+                            errorMsg = error.getMessage();
+                        }
+                    }
+                    Log.e("DEBUG_UPDATE", "Erro na atualização: " + errorMsg);
+                    Toast.makeText(context, "Erro ao atualizar perfil: " + errorMsg, Toast.LENGTH_SHORT).show();
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", String.valueOf(getUserId(context)));
+                params.put("nome", nome);
+                params.put("codpostal", codPostal);
+                params.put("localidade", localidade);
+                params.put("rua", rua);
+                params.put("nif", nif);
+                params.put("telefone", telefone);
+
+                Log.d("DEBUG_UPDATE", "Parâmetros enviados: " + params.toString());
+                return params;
             }
 
-            JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, urlPostAPIPerfilDados(context), jsonParams, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d("PerfilEditFragment", "Sucesso | Resposta do servidor: " + response.toString());
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded";
+            }
+        };
 
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("PerfilEditFragment", "Erro ao atualizar perfil: " + error.getMessage());
-                }
-            });
-
-            volleyQueue.add(req);
-        }
+        volleyQueue.add(req);
     }
+
+
+
     //endregion
 
     //region produtos
@@ -508,7 +595,7 @@ public class SingletonProdutos {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "ErroGetAllProdutos: ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "GetAllProdutos", Toast.LENGTH_SHORT).show();
                 }
             });
             volleyQueue.add(req);
