@@ -57,11 +57,11 @@ public class ListaFaturasAdaptador extends RecyclerView.Adapter<ListaFaturasAdap
 
     @Override
     public int getItemCount() {
-        return faturas.size();
+        return faturas != null ? faturas.size() : 0;
     }
 
     public void updateFaturas(ArrayList<Fatura> novasFaturas) {
-        this.faturas = novasFaturas;
+        this.faturas = novasFaturas != null ? novasFaturas : new ArrayList<>();
         notifyDataSetChanged();
     }
 

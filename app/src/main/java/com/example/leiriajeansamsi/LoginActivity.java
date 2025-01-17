@@ -2,7 +2,10 @@ package com.example.leiriajeansamsi;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -10,10 +13,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.leiriajeansamsi.Modelo.Fatura;
+import com.example.leiriajeansamsi.Modelo.FaturasDBHelper;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.Modelo.Utilizador;
+import com.example.leiriajeansamsi.listeners.FaturasListener;
 import com.example.leiriajeansamsi.listeners.LoginListener;
 import com.example.leiriajeansamsi.listeners.SignupListener;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity implements LoginListener, SignupListener {
 
@@ -37,6 +45,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
         SingletonProdutos.getInstance(this).setLoginListener(this); // A configurar o LoginListener
         SingletonProdutos.getInstance(this).setSignupListener(this); // A configurar o SignupListener
     }
+
 
     private boolean isEmailValido(String email) {
         if (email == null) return false;
@@ -83,17 +92,68 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
     public void onUpdateLogin(Utilizador utilizador) {
         isLoggingIn = false;
         if (utilizador != null && utilizador.getAuth_key() != null) {
-            Log.d("LoginActivity", "Login bem sucedido, a navegar para MenuMainActivity");
-            Intent intent = new Intent(this, MenuMainActivity.class);
-            intent.putExtra(TOKEN, utilizador.getAuth_key());
-            intent.putExtra(USERNAME, utilizador.getUsername());
-            startActivity(intent);
-            finish();
+            sincronizarFaturas(utilizador);
         } else {
-            Log.e("LoginActivity", "Login falhou - utilizador ou token nulo");
-            Toast.makeText(this, "Falha no login: Credenciais inválidas", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "Falha no login: Credenciais inválidas",
+                    Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void sincronizarFaturas(Utilizador utilizador) {
+        try {
+            int userId = utilizador.getId();
+
+            if (isConnectedToInternet()) {
+                Log.d("LoginActivity", "Sincronizando faturas online para utilizador: " + userId);
+
+                SingletonProdutos.getInstance(this).getFaturasAPI(this, userId,
+                        new FaturasListener() {
+                            @Override
+                            public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
+                                if (faturas == null) {
+                                    faturas = new ArrayList<>();
+                                }
+                                // Continua mesmo sem faturas
+                                goParaMenuPrincipal(utilizador);
+                            }
+
+                            @Override
+                            public void onFaturaCriada(Fatura fatura) {
+                                // Não necessário implementar
+                            }
+                        });
+
+                // Importante: Adicionar este código para garantir que o usuário entre mesmo com erro
+                goParaMenuPrincipal(utilizador);
+            } else {
+                Log.d("LoginActivity", "Modo offline");
+                goParaMenuPrincipal(utilizador);
+            }
+        } catch (Exception e) {
+            Log.e("LoginActivity", "Erro na sincronização: " + e.getMessage());
+            // Mesmo com erro, permite entrar
+            goParaMenuPrincipal(utilizador);
+        }
+    }
+
+    private boolean isConnectedToInternet() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+
+        NetworkCapabilities capabilities = cm.getNetworkCapabilities(cm.getActiveNetwork());
+        return capabilities != null &&
+                capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+    }
+
+    private void goParaMenuPrincipal(Utilizador utilizador) {
+        Intent intent = new Intent(this, MenuMainActivity.class);
+        intent.putExtra(TOKEN, utilizador.getAuth_key());
+        intent.putExtra(USERNAME, utilizador.getUsername());
+        startActivity(intent);
+        finish();
+    }
+
 
     public void onClickRegistar(View view) {
         Intent intent = new Intent(getApplicationContext(), RegistarActivity.class);
@@ -108,18 +168,17 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
     @Override
     public void onUpdateSignup(Utilizador newUser) {
         if (newUser != null) {
-            // Verifica se o campo auth_key existe, o que pode indicar que o registro foi bem-sucedido
+            // Verifica se o campo auth_key existe e não está vazio
             if (newUser.getAuth_key() != null && !newUser.getAuth_key().isEmpty()) {
-                // Cadastro realizado com sucesso
-                Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                // Aqui você pode redirecionar o utilizador para outra tela (como a tela de login ou tela principal)
+                // Login realizado com sucesso
+                Toast.makeText(this, "Registo realizado com sucesso!", Toast.LENGTH_SHORT).show();
             } else {
-                // Falha no cadastro (sem auth_key)
-                Toast.makeText(this, "Falha no cadastro. Tente novamente.", Toast.LENGTH_SHORT).show();
+                // Falha no Login (sem auth_key)
+                Toast.makeText(this, "Falha no registo. Tente novamente.", Toast.LENGTH_SHORT).show();
             }
         } else {
             // Caso o newUser seja nulo (o que pode ocorrer em caso de erro)
-            Toast.makeText(this, "Erro no cadastro. Tente novamente.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro no registo. Tente novamente.", Toast.LENGTH_SHORT).show();
         }
     }
 }
