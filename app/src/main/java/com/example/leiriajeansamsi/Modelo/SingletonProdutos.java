@@ -508,7 +508,7 @@ public class SingletonProdutos {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "ErroGetAllProdutos: ", Toast.LENGTH_SHORT).show();
                 }
             });
             volleyQueue.add(req);

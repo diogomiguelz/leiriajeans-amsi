@@ -80,4 +80,17 @@
     <string name="txt_cancelar">Cancelar</string>
     <string name="selecione_metodo_pagamento">Selecione o método de pagamento</string>
     <string name="selecione_metodo_expedicao">Selecione o método de expedição</string>
+    <string name="txt_total_fatura">Total:</string>
+    <string name="txt_itens_fatura">Itens da Fatura</string>
+    <string name="txt_detalhes_da_fatura">Detalhes da Fatura</string>
+    <string name="txt_historico_de_faturas">Histórico de Faturas</string>
+    <string name="txt_pagas">Pagas</string>
+    <string name="txt_pendentes">Pendentes</string>
+    <string name="txt_total_faturas">Total Faturas</string>
+    <string name="txt_minhas_faturas">Minhas Faturas</string>
+    <string name="txt_pendente">Pendente</string>
+    <string name="txt_valorTotal">€ 99,99</string>
+    <string name="txt_fatura_123">Fatura #123</string>
+    <string name="txt_data_01">Data: 01/01/2025</string>
+    <string name="txt_icone_da_fatura">Ícone da fatura</string>
 </resources>

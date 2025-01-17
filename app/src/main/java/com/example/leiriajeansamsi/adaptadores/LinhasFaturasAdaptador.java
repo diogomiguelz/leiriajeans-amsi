@@ -19,6 +19,9 @@ public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAd
 
     private final List<LinhaFatura> linhasFaturas;
     private final Context context;
+    TextView tvData, tvId, tvUserId, tvValorTotal, tvStatus;
+
+
 
     public LinhasFaturasAdaptador(Context context, List<LinhaFatura> linhasFaturas) {
         this.context = context;
@@ -63,7 +66,9 @@ public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAd
     }
 
     public static class LinhaFaturaViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNomeProduto, tvQuantidade, tvPreco;
+        final TextView tvNomeProduto;
+        final TextView tvQuantidade;
+        final TextView tvPreco;
 
         public LinhaFaturaViewHolder(@NonNull View itemView) {
             super(itemView);

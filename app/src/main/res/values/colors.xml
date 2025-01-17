@@ -17,5 +17,7 @@
     <color name="secondary_text_color">#555555</color>
     <color name="bottom_bar_color">#EEEEEE</color>
     <color name="button_color">#FF6F00</color>
+    <color name="status_pago_text">#FFFFFF</color>
+    <color name="status_pendente_text">#FFFFFF</color>
 
 </resources>
