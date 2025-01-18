@@ -44,4 +44,14 @@
                 android:icon="@drawable/icons8_administrator_male_96"/>
         </menu>
     </item>
+
+    <item
+        android:title="Logout">
+        <menu>
+            <item
+                android:id="@+id/navLogout"
+                android:title="Logout"
+                android:icon="@drawable/ic_logout"/>
+        </menu>
+    </item>
 </menu>

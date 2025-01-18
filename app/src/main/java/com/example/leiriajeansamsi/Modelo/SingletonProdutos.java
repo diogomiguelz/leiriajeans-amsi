@@ -1108,7 +1108,6 @@ public class SingletonProdutos {
 
 
     public void getFaturasAPI(Context context, int userId, FaturasListener listener) {
-        // Primeiro buscar o userdata_id
         String urlUserData = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" + getUsername(context) + "&access-token=" + getUserToken(context);
 
         JsonObjectRequest userDataRequest = new JsonObjectRequest(Request.Method.GET, urlUserData, null,
@@ -1119,7 +1118,6 @@ public class SingletonProdutos {
 
                         if (userForm != null && !userForm.isNull("id")) {
                             int userdataId = userForm.getInt("id");
-                            // Agora buscar as faturas com o userdata_id correto
                             String url = getBaseUrl(context) + "faturas/" + userdataId + "/faturas?access-token=" + getUserToken(context);
 
                             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -1130,20 +1128,31 @@ public class SingletonProdutos {
                                         }
                                     },
                                     error -> {
-                                        Log.e("FaturaAPI", "Erro ao obter faturas: " + error.getMessage());
-                                        Toast.makeText(context, "Erro ao carregar faturas", Toast.LENGTH_SHORT).show();
+                                        if (listener != null) {
+                                            listener.onRefreshListaFatura(new ArrayList<>()); // Retorna lista vazia em caso de erro
+                                        }
                                     });
 
                             volleyQueue.add(request);
                         } else {
                             Log.e("FaturaAPI", "UserForm não encontrado");
-                            Toast.makeText(context, "Erro: Dados do utilizador não encontrados", Toast.LENGTH_SHORT).show();
+                            if (listener != null) {
+                                listener.onRefreshListaFatura(new ArrayList<>()); // Retorna lista vazia
+                            }
                         }
                     } catch (JSONException e) {
                         Log.e("FaturaAPI", "Erro ao processar dados do utilizador: " + e.getMessage());
+                        if (listener != null) {
+                            listener.onRefreshListaFatura(new ArrayList<>()); // Retorna lista vazia em caso de erro
+                        }
                     }
                 },
-                error -> Log.e("FaturaAPI", "Erro ao buscar dados do utilizador: " + error.getMessage()));
+                error -> {
+                    Log.e("FaturaAPI", "Erro ao buscar dados do utilizador: " + error.getMessage());
+                    if (listener != null) {
+                        listener.onRefreshListaFatura(new ArrayList<>()); // Retorna lista vazia em caso de erro
+                    }
+                });
 
         volleyQueue.add(userDataRequest);
     }

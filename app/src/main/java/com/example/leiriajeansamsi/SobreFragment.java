@@ -24,6 +24,8 @@ public class SobreFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        org.osmdroid.config.Configuration.getInstance().setUserAgentValue(getActivity().getPackageName());
+
         View view = inflater.inflate(R.layout.fragment_sobre, container, false);
         super.onViewCreated(view, savedInstanceState);
         // Altera o título da ActionBar
@@ -39,12 +41,8 @@ public class SobreFragment extends Fragment {
         mapView.setMultiTouchControls(true);   // Permite zoom multi-toque
 
         // Configurar o mapa com o estilo CartoDB positron (estilo claro)
-        mapView.setTileSource(new XYTileSource(
-                        "CartoDB Positron",
-                        0, 18, 256, ".png", new String[]{
-                        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
-                })
-        );
+        mapView.setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK);
+
 
         // Configurar o zoom e o centro do mapa
         IMapController mapController = mapView.getController();

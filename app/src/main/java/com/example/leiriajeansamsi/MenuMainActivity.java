@@ -97,7 +97,11 @@ public class MenuMainActivity extends AppCompatActivity implements
             //setTitle(item.getTitle());
         } else if (item.getItemId() == R.id.navEmail) {
             enviarEmail();
-        }
+        } else if (item.getItemId() == R.id.navLogout) {
+        realizarLogout();
+        return true;
+    }
+
 
         if (fragment != null) fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
 
@@ -122,5 +126,37 @@ public class MenuMainActivity extends AppCompatActivity implements
             startActivity(intent);
         else
             Toast.makeText(this,"Não tem email configurado!", Toast.LENGTH_LONG).show();
+    }
+
+    private void realizarLogout() {
+        // Criar um AlertDialog
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Tem certeza que deseja sair?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    // Limpar as SharedPreferences
+                    getSharedPreferences("user_prefs", MODE_PRIVATE)
+                            .edit()
+                            .clear()
+                            .apply();
+
+                    // Criar intent para voltar à tela de login
+                    Intent intent = new Intent(this, LoginActivity.class);
+
+                    // Limpar a pilha de activities
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                    // Iniciar a LoginActivity
+                    startActivity(intent);
+
+                    // Finalizar a activity atual
+                    finish();
+                })
+                .setNegativeButton("Não", (dialog, which) -> {
+                    // Usuário cancelou o logout
+                    dialog.dismiss();
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }
