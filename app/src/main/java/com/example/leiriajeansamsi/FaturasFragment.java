@@ -1,10 +1,8 @@
 package com.example.leiriajeansamsi;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.leiriajeansamsi.Modelo.Fatura;
 import com.example.leiriajeansamsi.Modelo.FaturasDBHelper;
-import com.example.leiriajeansamsi.Modelo.Produto;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.adaptadores.ListaFaturasAdaptador;
 import com.example.leiriajeansamsi.listeners.FaturaListener;
@@ -60,36 +57,16 @@ public class FaturasFragment extends Fragment implements FaturasListener, Fatura
 
     private void carregarFaturas() {
         try {
-            int userId = SingletonProdutos.getInstance(getContext()).getUserId(getContext());
-
             if (isConnectedToInternet()) {
                 Log.d("TAG", "A carregar faturas online");
-                SingletonProdutos.getInstance(getContext()).getFaturasAPI(getContext(), userId, new FaturasListener() {
-                    @Override
-                    public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
-                        if (faturas == null) {
-                            faturas = new ArrayList<>();
-                        }
-                        adaptador.updateFaturas(faturas);
-                        // Adicionar contagem aqui
-                        contarFaturas(faturas);
-
-                        if (faturas.isEmpty()) {
-                            Toast.makeText(getContext(), "Nenhuma fatura disponível", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFaturaCriada(Fatura fatura) {
-                        // Não necessário implementar
-                    }
-                });
+                SingletonProdutos.getInstance(getContext()).setFaturasListener(this);
+                SingletonProdutos.getInstance(getContext()).getFaturasAPI(getContext());
             } else {
                 Log.d("TAG", "Modo offline");
+                int userId = SingletonProdutos.getInstance(getContext()).getUserId(getContext());
                 List<Fatura> faturasOffline = dbHelper.getAllFaturas(userId);
                 ArrayList<Fatura> faturas = new ArrayList<>(faturasOffline);
                 onRefreshListaFatura(faturas);
-
                 contarFaturas(faturas);
 
                 String mensagem = faturasOffline.isEmpty() ? "Sem faturas disponíveis" : "Mostrar dados offline";

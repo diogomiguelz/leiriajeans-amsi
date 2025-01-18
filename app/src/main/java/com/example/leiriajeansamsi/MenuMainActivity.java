@@ -153,7 +153,7 @@ public class MenuMainActivity extends AppCompatActivity implements
                     finish();
                 })
                 .setNegativeButton("Não", (dialog, which) -> {
-                    // Usuário cancelou o logout
+                    // Utilizador cancelou o logout
                     dialog.dismiss();
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)

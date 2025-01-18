@@ -14,6 +14,7 @@ import com.example.leiriajeansamsi.R;
 import com.example.leiriajeansamsi.listeners.FaturaListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class ListaFaturasAdaptador extends RecyclerView.Adapter<ListaFaturasAdaptador.ViewHolder> {
 
@@ -39,12 +40,11 @@ public class ListaFaturasAdaptador extends RecyclerView.Adapter<ListaFaturasAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Fatura fatura = faturas.get(position);
 
-        // Define os valores dos TextViews com os dados do modelo Fatura
         holder.tvDataFatura.setText("Data: " + fatura.getData());
         holder.tvEstadoFatura.setText("Estado: " + fatura.getStatusPedido());
-        holder.tvTotalFatura.setText("Total: " + String.format("%.2f €", fatura.getValorTotal()));
+        holder.tvTotalFatura.setText(String.format(Locale.getDefault(),
+                "Total: %.2f €", fatura.getValorTotal()));
 
-        // Configura o clique no item
         holder.itemView.setOnClickListener(view -> {
             if (faturaListener != null) {
                 int currentPosition = holder.getAdapterPosition();
@@ -54,6 +54,7 @@ public class ListaFaturasAdaptador extends RecyclerView.Adapter<ListaFaturasAdap
             }
         });
     }
+
 
     @Override
     public int getItemCount() {

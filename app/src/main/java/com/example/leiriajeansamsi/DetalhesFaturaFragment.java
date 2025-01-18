@@ -16,16 +16,19 @@ import android.widget.TextView;
 
 import com.example.leiriajeansamsi.Modelo.Fatura;
 import com.example.leiriajeansamsi.Modelo.LinhaFatura;
+import com.example.leiriajeansamsi.Modelo.Produto;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.adaptadores.LinhasFaturasAdaptador;
 import com.example.leiriajeansamsi.listeners.FaturaListener;
 import com.example.leiriajeansamsi.listeners.FaturasListener;
 import com.example.leiriajeansamsi.listeners.LinhasFaturasListener;
+import com.example.leiriajeansamsi.Modelo.MetodoExpedicao;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -39,6 +42,8 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
     private TextView tvDataFatura, tvEstadoFatura, tvTotalFatura;
     private int faturaId;
     private ImageButton btnVoltar;
+    private List<MetodoExpedicao> metodosExpedicao = new ArrayList<>();
+    private int metodoExpedicaoId; // Para armazenar o ID do método selecionado
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,13 +90,13 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
             if (tvTotalFatura == null) throw new IllegalStateException("tvTotalFatura não encontrado");
 
             // Definir textos iniciais
-            tvDataFatura.setText("Carregando data...");
-            tvEstadoFatura.setText("Carregando estado...");
-            tvTotalFatura.setText("Carregando total...");
+            tvDataFatura.setText("A carregar data...");
+            tvEstadoFatura.setText("A carregar estado...");
+            tvTotalFatura.setText("A carregar total...");
 
-            Log.d("DetalhesFatura", "tvDataFatura inicializado: " + (tvDataFatura != null));
-            Log.d("DetalhesFatura", "tvEstadoFatura inicializado: " + (tvEstadoFatura != null));
-            Log.d("DetalhesFatura", "tvTotalFatura inicializado: " + (tvTotalFatura != null));
+            Log.d("DetalhesFatura", "tvDataFatura inicializar: " + (tvDataFatura != null));
+            Log.d("DetalhesFatura", "tvEstadoFatura inicializar: " + (tvEstadoFatura != null));
+            Log.d("DetalhesFatura", "tvTotalFatura inicializar: " + (tvTotalFatura != null));
 
             recyclerLinhasCheckout.setLayoutManager(new LinearLayoutManager(getContext()));
         } catch (Exception e) {
@@ -102,65 +107,151 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
 
 
     private void carregarDetalhesFatura() {
+        Log.d("DetalhesFatura", "Carregar detalhes da fatura ID: " + faturaId);
+
         if (faturaId != -1) {
-            SingletonProdutos.getInstance(getContext()).setLinhasFaturasListener(this);
+            // Carregar as linhas da fatura
             SingletonProdutos.getInstance(getContext()).getLinhasFaturasAPI(getContext(), faturaId, this);
 
-            SingletonProdutos.getInstance(getContext()).getFaturaByIdAPI(getContext(), faturaId,
-                    new FaturasListener() {
-                        @Override
-                        public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
-                            if (faturas != null && !faturas.isEmpty() && isAdded()) {
-                                atualizarInterfaceFatura(faturas.get(0));
+            // Carregar os detalhes da fatura
+            SingletonProdutos.getInstance(getContext()).getFaturasAPI(getContext());
+
+            // Atualizar o listener para receber as faturas
+            SingletonProdutos.getInstance(getContext()).setFaturasListener(new FaturasListener() {
+                @Override
+                public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
+                    if (faturas != null && !faturas.isEmpty() && isAdded()) {
+                        // Procurar a fatura específica pelo ID
+                        for (Fatura fatura : faturas) {
+                            if (fatura.getId() == faturaId) {
+                                Log.d("DetalhesFatura", "Fatura encontrada: " + fatura.toString());
+                                atualizarInterfaceFatura(fatura);
+                                break;
                             }
                         }
+                    } else {
+                        Log.e("DetalhesFatura", "Lista de faturas vazia ou null");
+                    }
+                }
 
-                        @Override
-                        public void onFaturaCriada(Fatura fatura) {
-                        }
-                    });
+                @Override
+                public void onFaturaCriada(Fatura fatura) {
+                    // Não necessário implementar
+                }
+            });
+        } else {
+            Log.e("DetalhesFatura", "ID da fatura inválido");
         }
     }
 
     private void atualizarInterfaceFatura(Fatura fatura) {
+        if (!isAdded() || getContext() == null) return;
+
         Log.d("DetalhesFatura", "Atualizando interface com fatura: " + fatura.toString());
 
-        try {
-            // Formatação da data
-            if (fatura.getData() != null) {
-                String dataFormatada = formatarData(fatura.getData());
-                if (tvDataFatura != null) {
-                    tvDataFatura.setText(dataFormatada);
-                    Log.d("DetalhesFatura", "Data atualizada: " + dataFormatada);
-                } else {
-                    Log.e("DetalhesFatura", "tvDataFatura é null");
+        // Formatação da data
+        if (fatura.getData() != null) {
+            String dataFormatada = formatarData(fatura.getData());
+            if (tvDataFatura != null) {
+                tvDataFatura.setText(dataFormatada);
+            }
+        }
+
+        // Formatação do estado
+        if (fatura.getStatusPedido() != null) {
+            String estadoFormatado = formatarEstado(fatura.getStatusPedido());
+            if (tvEstadoFatura != null) {
+                tvEstadoFatura.setText(estadoFormatado);
+            }
+        }
+
+        metodoExpedicaoId = fatura.getMetodoExpedicaoId();
+        atualizarTotais();
+    }
+
+    private void atualizarTotais() {
+        if (tvTotalFatura == null || !isAdded()) return;
+
+        if (adapter == null || adapter.getLinhasFaturas() == null || adapter.getLinhasFaturas().isEmpty()) {
+            Log.d("DetalhesFatura", "Adapter ou linhas não disponíveis ainda");
+            return;
+        }
+
+        // Declarar as variáveis como final para usar no lambda
+        final float[] subtotal = {0};
+        final float[] ivaTotal = {0};
+        final float[] custoExpedicao = {0};
+
+        // Calcular subtotal e IVA primeiro
+        for (LinhaFatura linha : adapter.getLinhasFaturas()) {
+            if (linha != null) {
+                float precoUnitario = linha.getPrecoVenda();
+                int quantidade = linha.getQuantidade();
+                float valorIva = precoUnitario * (linha.getValorIva() / 100f) * quantidade;
+
+                subtotal[0] += precoUnitario * quantidade;
+                ivaTotal[0] += valorIva;
+            }
+        }
+
+        // Carregar custo de expedição
+        SingletonProdutos.getInstance(getContext()).getMetodosExpedicaoAPI(getContext(), metodos -> {
+            if (metodos != null) {
+                for (MetodoExpedicao metodo : metodos) {
+                    if (metodo.getId() == metodoExpedicaoId) {
+                        custoExpedicao[0] = metodo.getCusto();
+                        break;
+                    }
                 }
             }
 
-            // Formatação do estado
-            if (fatura.getStatusPedido() != null) {
-                String estadoFormatado = formatarEstado(fatura.getStatusPedido());
-                if (tvEstadoFatura != null) {
-                    tvEstadoFatura.setText(estadoFormatado);
-                    Log.d("DetalhesFatura", "Estado atualizado: " + estadoFormatado);
-                } else {
-                    Log.e("DetalhesFatura", "tvEstadoFatura é null");
+            float total = subtotal[0] + ivaTotal[0] + custoExpedicao[0];
+
+            // Atualizar a interface na thread principal
+            if (isAdded()) {
+                requireActivity().runOnUiThread(() -> {
+                    tvTotalFatura.setText(String.format(Locale.getDefault(),
+                            "Preço unitário: %.2f€\n" +
+                                    "IVA: %.2f€\n" +
+                                    "Expedição: %.2f€\n" +
+                                    "Total: %.2f€",
+                            subtotal[0], ivaTotal[0], custoExpedicao[0], total));
+                });
+            }
+        });
+    }
+
+    @Override
+    public void onRefreshListaLinhasFaturas(int faturaId, ArrayList<LinhaFatura> linhasFatura) {
+        if (faturaId == this.faturaId && linhasFatura != null && isAdded()) {
+            Log.d("DetalhesFatura", "Recebidas " + linhasFatura.size() + " linhas para fatura " + faturaId);
+
+            ArrayList<LinhaFatura> linhasUnicas = new ArrayList<>();
+            for (LinhaFatura linha : linhasFatura) {
+                boolean existe = false;
+                for (LinhaFatura linhaUnica : linhasUnicas) {
+                    if (linhaUnica.getProdutoId() == linha.getProdutoId()) {
+                        existe = true;
+                        break;
+                    }
+                }
+                if (!existe) {
+                    linhasUnicas.add(linha);
                 }
             }
 
-            // Formatação do total
-            if (tvTotalFatura != null) {
-                tvTotalFatura.setText(String.format(Locale.getDefault(), "Total: %.2f EUR", fatura.getValorTotal()));
-                Log.d("DetalhesFatura", "Total atualizado: " + String.format(Locale.getDefault(), "%.2f EUR", fatura.getValorTotal()));
-            } else {
-                Log.e("DetalhesFatura", "tvTotalFatura é null");
+            if (adapter != null) {
+                adapter.clear();
             }
 
-        } catch (Exception e) {
-            Log.e("DetalhesFatura", "Erro ao atualizar interface: " + e.getMessage());
-            e.printStackTrace();
+            adapter = new LinhasFaturasAdaptador(getContext(), linhasUnicas);
+            recyclerLinhasCheckout.setAdapter(adapter);
+
+            // Atualiza os totais depois que as linhas foram carregadas
+            atualizarTotais();
         }
     }
+
 
     private String formatarData(String data) {
         try {
@@ -219,51 +310,7 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
         return "Estado: " + estadoFormatado;
     }
 
-    @Override
-    public void onRefreshListaLinhasFaturas(int faturaId, ArrayList<LinhaFatura> linhasFatura) {
-        if (faturaId == this.faturaId && linhasFatura != null && isAdded()) {
-            Log.d("DetalhesFatura", "Recebidas " + linhasFatura.size() + " linhas para fatura " + faturaId);
 
-            // Criar uma lista de linhas únicas
-            ArrayList<LinhaFatura> linhasUnicas = new ArrayList<>();
-            for (LinhaFatura linha : linhasFatura) {
-                // Verifica se já existe uma linha com o mesmo produto
-                boolean existe = false;
-                for (LinhaFatura linhaUnica : linhasUnicas) {
-                    if (linhaUnica.getProdutoId() == linha.getProdutoId()) {
-                        existe = true;
-                        break;
-                    }
-                }
-
-                // Se não existe, adiciona à lista de linhas únicas
-                if (!existe) {
-                    linhasUnicas.add(linha);
-                    Log.d("DetalhesFatura", "Adicionando linha única - Produto ID: " +
-                            linha.getProdutoId() + ", Quantidade: " + linha.getQuantidade());
-                }
-            }
-
-            // Limpar adaptador existente se houver
-            if (adapter != null) {
-                adapter.clear();
-            }
-
-            // Criar novo adaptador com as linhas únicas
-            adapter = new LinhasFaturasAdaptador(getContext(), linhasUnicas);
-            recyclerLinhasCheckout.setAdapter(adapter);
-
-            // Log para debug das linhas únicas
-            Log.d("DetalhesFatura", "Total de linhas únicas: " + linhasUnicas.size());
-            for (LinhaFatura linha : linhasUnicas) {
-                Log.d("DetalhesFatura", "Linha única processada - Fatura ID=" + linha.getFaturaId() +
-                        ", Produto ID=" + linha.getProdutoId() +
-                        ", Quantidade=" + linha.getQuantidade() +
-                        ", Preço=" + linha.getPrecoVenda() +
-                        ", Subtotal=" + linha.getSubTotal());
-            }
-        }
-    }
 
 
 

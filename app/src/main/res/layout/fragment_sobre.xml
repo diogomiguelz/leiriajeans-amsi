@@ -1,68 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_login"
-    tools:context=".SobreFragment">
+    android:background="@drawable/background_login">
 
-    <!-- Contêiner principal -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center_horizontal">
+        android:padding="16dp">
+
+        <!-- Logo da empresa -->
+        <ImageView
+            android:id="@+id/imgLogo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:src="@drawable/logo_preto" />
 
         <!-- Título -->
         <TextView
-            android:id="@+id/tvTitulo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Localização no Mapa"
-            android:textSize="20sp"
-            android:textColor="@color/blue"
-            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
             android:gravity="center"
-            android:layout_marginBottom="16dp" />
+            android:text="Leiria Jeans"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-        <!-- CardView para o mapa -->
+        <!-- Card com informações da empresa -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="@color/white">
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp">
 
-            <!-- MapView configurado -->
-            <org.osmdroid.views.MapView
-                android:id="@+id/mapa"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Sobre Nós"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="A Leiria Jeans é uma empresa especializada em vestuário jeans, oferecendo produtos de alta qualidade e design moderno. Nossa missão é proporcionar conforto e estilo aos nossos clientes."
+                    android:textColor="@color/black" />
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-
-
-
-    <!-- TextView para as informações da empresa -->
-        <TextView
-            android:id="@+id/text_informacoes"
+        <!-- Card com informações de contato -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Carregar informações..."
-            android:textSize="18sp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="#333333"
-            android:background="@drawable/text_background"
-            android:lineSpacingExtra="4dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Contatos"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <!-- Email -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@android:drawable/ic_dialog_email"
+                        app:tint="@color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="contato@leiriajeans.pt"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <!-- Telefone -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@android:drawable/ic_menu_call"
+                        app:tint="@color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+351 244 123 456"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <!-- Endereço -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@android:drawable/ic_dialog_map"
+                        app:tint="@color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rua Principal, 123\nLeiria, Portugal"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card com versão do app -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Informações do Aplicativo"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Versão 1.0.0"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="© 2024 Leiria Jeans. Todos os direitos reservados."
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

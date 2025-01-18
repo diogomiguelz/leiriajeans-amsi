@@ -1,5 +1,7 @@
 package com.example.leiriajeansamsi.utils;
 
+import android.util.Log;
+
 import com.example.leiriajeansamsi.Modelo.LinhaFatura;
 
 import org.json.JSONArray;
@@ -9,41 +11,40 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class LinhasFaturasJsonParser {
+    private static final String TAG = "LinhasFaturasJsonParser";
 
-    // Metodo para parsear uma única linha de fatura
-    public static LinhaFatura parseLinhaFatura(JSONObject jsonLinhaFatura) throws JSONException {
+    public static LinhaFatura parseLinhaFatura(JSONObject jsonLinhaFatura, int faturaId) throws JSONException {
         LinhaFatura linha = new LinhaFatura();
-        linha.setId(jsonLinhaFatura.getInt("id"));
-        linha.setFaturaId(jsonLinhaFatura.optInt("fatura_id"));
+        linha.setId(jsonLinhaFatura.optInt("id"));
+        linha.setFaturaId(faturaId);
         linha.setProdutoId(jsonLinhaFatura.optInt("produto_id"));
         linha.setQuantidade(jsonLinhaFatura.optInt("quantidade"));
-        linha.setPrecoVenda((float) jsonLinhaFatura.optDouble("precoVenda"));
-        linha.setValorIva((float) jsonLinhaFatura.optDouble("valorIva"));
-        linha.setSubTotal((float) jsonLinhaFatura.optDouble("subTotal"));
+
+        // Usando os nomes corretos dos campos
+        linha.setPrecoVenda((float) jsonLinhaFatura.optDouble("precoVenda", 0.0));
+        linha.setValorIva((float) jsonLinhaFatura.optDouble("valorIva", 0.0));
+        linha.setSubTotal((float) jsonLinhaFatura.optDouble("subTotal", 0.0));
+
+        Log.d(TAG, "Linha parseada: " + linha.toString());
         return linha;
     }
 
-    // Metodo para parsear múltiplas linhas de faturas a partir de um JSONArray
-    public static ArrayList<LinhaFatura> parserJsonLinhasFaturas(JSONArray response) {
+
+    public static ArrayList<LinhaFatura> parserJsonLinhasFaturas(JSONArray response, int faturaId) {
         ArrayList<LinhaFatura> linhasFaturas = new ArrayList<>();
         try {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject linhaJson = response.getJSONObject(i);
-                LinhaFatura linha = new LinhaFatura(
-                        linhaJson.getInt("id"),
-                        linhaJson.getInt("fatura_id"),
-                        linhaJson.optInt("iva_id", 0),
-                        linhaJson.getInt("produto_id"),
-                        (float) linhaJson.getDouble("precoVenda"),
-                        (float) linhaJson.getDouble("valorIva"),
-                        (float) linhaJson.getDouble("subTotal"),
-                        linhaJson.getInt("quantidade")
-                );
+                LinhaFatura linha = parseLinhaFatura(linhaJson, faturaId);
                 linhasFaturas.add(linha);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Erro ao fazer parse das linhas da fatura: " + e.getMessage());
         }
         return linhasFaturas;
+    }
+
+    public static LinhaFatura criarLinhaFatura(JSONObject response) throws JSONException {
+        return parseLinhaFatura(response, 0); // Ou passe o faturaId apropriado
     }
 }

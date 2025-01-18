@@ -1,10 +1,11 @@
 package com.example.leiriajeansamsi.utils;
 
 import android.util.Log;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.example.leiriajeansamsi.Modelo.Utilizador;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LoginJsonParser {
 

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.leiriajeansamsi.DetalhesProdutosFragment;
+import com.example.leiriajeansamsi.Modelo.Carrinho;
 import com.example.leiriajeansamsi.Modelo.Produto;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.R;
@@ -65,12 +67,19 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
             }
         });
 
-        holder.btnAddToCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SingletonProdutos.getInstance(context).verificarCarrinho(context, product, 1);
-            }
+        holder.btnAddToCart.setOnClickListener(v -> {
+            SingletonProdutos singleton = SingletonProdutos.getInstance(context);
+
+            // Primeiro verifica se já existe um carrinho
+            singleton.getCarrinhoAPI(context);
+
+            // O método getCarrinhoAPI já inclui a lógica de criar o carrinho se não existir
+            // e depois adicionar o produto como uma linha do carrinho
+            singleton.criarLinhaCarrinhoAPI(context, product, 1);
+            Toast.makeText(context, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
         });
+
+
     }
 
     @Override

@@ -1,19 +1,21 @@
 package com.example.leiriajeansamsi;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -26,6 +28,8 @@ import com.example.leiriajeansamsi.listeners.ProdutoListener;
 import com.example.leiriajeansamsi.listeners.ProdutosListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ListaProdutosFragment extends Fragment implements ProdutosListener, ProdutoListener {
 
@@ -34,6 +38,9 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
     private RecyclerView rvProdutos;
     private ListaProdutosAdaptador adapter;
     private ProgressBar progressBar;
+    private SearchView searchView;
+    private ArrayList<Produto> produtosOriginais;
+    private boolean ordenacaoCrescente = true;
 
     @Nullable
     @Override
@@ -55,23 +62,63 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
         SingletonProdutos.getInstance(getContext()).setProdutosListener(this);
         SingletonProdutos.getInstance(getContext()).getAllProdutosAPI(getContext());
 
+        // Inicializar SearchView
+        searchView = view.findViewById(R.id.searchView);
+        setupSearchView();
+
         return view;
+    }
+
+    private void setupSearchView() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filtrarProdutos(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filtrarProdutos(newText);
+                return true;
+            }
+        });
+    }
+
+    private void filtrarProdutos(String query) {
+        if (produtosOriginais != null) {
+            ArrayList<Produto> produtosFiltrados = new ArrayList<>();
+
+            for (Produto produto : produtosOriginais) {
+                if (produto.getNome().toLowerCase().contains(query.toLowerCase())) {
+                    produtosFiltrados.add(produto);
+                }
+            }
+
+            adapter = new ListaProdutosAdaptador(this, getContext(), produtosFiltrados);
+            rvProdutos.setAdapter(adapter);
+        }
     }
 
     @Override
     public void onRefreshListaProdutos(ArrayList<Produto> listaProdutos) {
-        // Retrieve query from arguments (if any)
-        Bundle args = getArguments();
-        if (args != null) {
-            String query = args.getString("query");
+        this.produtosOriginais = new ArrayList<>(listaProdutos);
 
-            if (query != null && listaProdutos.size() > 0) {
-                listaProdutos = SingletonProdutos.getInstance(getContext()).getFilteredProdutos(query);
+        // Aplicar ordenação atual aos produtos
+        ArrayList<Produto> produtosOrdenados = new ArrayList<>(listaProdutos);
+        Collections.sort(produtosOrdenados, new Comparator<Produto>() {
+            @Override
+            public int compare(Produto p1, Produto p2) {
+                if (ordenacaoCrescente) {
+                    return Float.compare(p1.getPreco(), p2.getPreco());
+                } else {
+                    return Float.compare(p2.getPreco(), p1.getPreco());
+                }
             }
-        }
+        });
 
         // Update RecyclerView adapter
-        adapter = new ListaProdutosAdaptador(this, getContext(), listaProdutos);
+        adapter = new ListaProdutosAdaptador(this, getContext(), produtosOrdenados);
         rvProdutos.setAdapter(adapter);
 
         // Hide the progress bar
@@ -105,5 +152,50 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
         }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true); // Habilita o menu de opções
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_produtos, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_sort) {
+            ordenacaoCrescente = !ordenacaoCrescente;
+            ordenarProdutos();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void ordenarProdutos() {
+        if (produtosOriginais != null) {
+            ArrayList<Produto> produtosOrdenados = new ArrayList<>(produtosOriginais);
+
+            Collections.sort(produtosOrdenados, new Comparator<Produto>() {
+                @Override
+                public int compare(Produto p1, Produto p2) {
+                    if (ordenacaoCrescente) {
+                        return Float.compare(p1.getPreco(), p2.getPreco());
+                    } else {
+                        return Float.compare(p2.getPreco(), p1.getPreco());
+                    }
+                }
+            });
+
+            adapter = new ListaProdutosAdaptador(this, getContext(), produtosOrdenados);
+            rvProdutos.setAdapter(adapter);
+
+            // Mostrar mensagem de ordenação
+            String mensagem = ordenacaoCrescente ? "Preço: Menor para Maior" : "Preço: Maior para Menor";
+            Toast.makeText(getContext(), mensagem, Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }

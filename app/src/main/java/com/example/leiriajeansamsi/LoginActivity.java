@@ -1,9 +1,8 @@
 package com.example.leiriajeansamsi;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.os.Bundle;
@@ -12,6 +11,8 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.leiriajeansamsi.Modelo.Fatura;
 import com.example.leiriajeansamsi.Modelo.FaturasDBHelper;
@@ -23,7 +24,7 @@ import com.example.leiriajeansamsi.listeners.SignupListener;
 
 import java.util.ArrayList;
 
-public class LoginActivity extends AppCompatActivity implements LoginListener, SignupListener {
+public class LoginActivity extends AppCompatActivity implements LoginListener, SignupListener, FaturasListener {
 
     public static final String EMAIL = "email";
     public static final String USERNAME = "username";
@@ -32,6 +33,9 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
     private EditText etUsername, etPassword;
     private final int MIN_PASS = 4;
     private boolean isLoggingIn = false;
+    private Utilizador utilizadorAtual;
+    private SingletonProdutos singletonProdutos;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +43,23 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
         setContentView(R.layout.activity_login);
         setTitle("Login");
 
+        if (HasUserToken(this)) {
+            Intent intent = new Intent(this, MenuMainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
 
-        SingletonProdutos.getInstance(this).setLoginListener(this); // A configurar o LoginListener
-        SingletonProdutos.getInstance(this).setSignupListener(this); // A configurar o SignupListener
+        SingletonProdutos.getInstance(this).setLoginListener(this);
+        SingletonProdutos.getInstance(this).setSignupListener(this);
     }
 
+    public boolean HasUserToken(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        return preferences.getString("user_token", null) != null;
+    }
 
     private boolean isEmailValido(String email) {
         if (email == null) return false;
@@ -92,7 +106,9 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
     public void onUpdateLogin(Utilizador utilizador) {
         isLoggingIn = false;
         if (utilizador != null && utilizador.getAuth_key() != null) {
-            sincronizarFaturas(utilizador);
+            utilizadorAtual = utilizador;
+            // Sincroniza as faturas antes de ir para o menu principal
+            sincronizarFaturas();
         } else {
             Toast.makeText(this,
                     "Falha no login: Credenciais inválidas",
@@ -100,41 +116,37 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
         }
     }
 
-    private void sincronizarFaturas(Utilizador utilizador) {
+    private void sincronizarFaturas() {
         try {
-            int userId = utilizador.getId();
-
             if (isConnectedToInternet()) {
-                Log.d("LoginActivity", "Sincronizando faturas online para utilizador: " + userId);
-
-                SingletonProdutos.getInstance(this).getFaturasAPI(this, userId,
-                        new FaturasListener() {
-                            @Override
-                            public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
-                                if (faturas == null) {
-                                    faturas = new ArrayList<>();
-                                }
-                                // Continua mesmo sem faturas
-                                goParaMenuPrincipal(utilizador);
-                            }
-
-                            @Override
-                            public void onFaturaCriada(Fatura fatura) {
-                                // Não necessário implementar
-                            }
-                        });
-
-                // Importante: Adicionar este código para garantir que o usuário entre mesmo com erro
-                goParaMenuPrincipal(utilizador);
+                Log.d("LoginActivity", "Sincronizando faturas online");
+                SingletonProdutos.getInstance(this).setFaturasListener(this);
+                SingletonProdutos.getInstance(this).getFaturasAPI(this);
             } else {
                 Log.d("LoginActivity", "Modo offline");
-                goParaMenuPrincipal(utilizador);
+                goParaMenuPrincipal(utilizadorAtual);
             }
         } catch (Exception e) {
             Log.e("LoginActivity", "Erro na sincronização: " + e.getMessage());
-            // Mesmo com erro, permite entrar
-            goParaMenuPrincipal(utilizador);
+            goParaMenuPrincipal(utilizadorAtual);
         }
+    }
+
+    @Override
+    public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
+        // Guardar as faturas na base dados local se houver
+        if (faturas != null) {
+            FaturasDBHelper dbHelper = new FaturasDBHelper(this);
+            dbHelper.atualizarFaturas(faturas, utilizadorAtual.getId());
+        }
+        
+        // Continua para o menu principal independentemente do resultado
+        goParaMenuPrincipal(utilizadorAtual);
+    }
+
+    @Override
+    public void onFaturaCriada(Fatura fatura) {
+        // Não necessário implementar
     }
 
     private boolean isConnectedToInternet() {
@@ -154,7 +166,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
         finish();
     }
 
-
     public void onClickRegistar(View view) {
         Intent intent = new Intent(getApplicationContext(), RegistarActivity.class);
         startActivity(intent);
@@ -168,16 +179,12 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
     @Override
     public void onUpdateSignup(Utilizador newUser) {
         if (newUser != null) {
-            // Verifica se o campo auth_key existe e não está vazio
             if (newUser.getAuth_key() != null && !newUser.getAuth_key().isEmpty()) {
-                // Login realizado com sucesso
                 Toast.makeText(this, "Registo realizado com sucesso!", Toast.LENGTH_SHORT).show();
             } else {
-                // Falha no Login (sem auth_key)
                 Toast.makeText(this, "Falha no registo. Tente novamente.", Toast.LENGTH_SHORT).show();
             }
         } else {
-            // Caso o newUser seja nulo (o que pode ocorrer em caso de erro)
             Toast.makeText(this, "Erro no registo. Tente novamente.", Toast.LENGTH_SHORT).show();
         }
     }

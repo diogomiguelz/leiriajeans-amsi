@@ -46,40 +46,18 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
         holder.tvQuantidadeProdutoCarrinho.setText("Quantidade: " + linhaCarrinho.getQuantidade());
 
         holder.btnAumentaQtd.setOnClickListener(v -> {
-            linhaCarrinho.setQuantidade(linhaCarrinho.getQuantidade() + 1);
-            linhaCarrinho.calcularSubTotal();
-
-            SingletonProdutos.getInstance(context).atualizarLinhaCarrinhoAPI(context, linhaCarrinho, new LinhaCarrinhoListener() {
-                @Override
-                public void onItemUpdate() {
-                    notifyItemChanged(position);
-                }
-
-                @Override
-                public void atualizarCarrinho(List<LinhaCarrinho> linhas) {
-                    linhasCarrinho.clear();
-                    linhasCarrinho.addAll(linhas);
-                    notifyDataSetChanged();
+            SingletonProdutos.getInstance(context).aumentarQuantidade(context, linhaCarrinho, linhasAtualizadas -> {
+                if (linhasAtualizadas != null) {
+                    updateData(linhasAtualizadas);
                 }
             });
         });
 
         holder.btnDiminuiQtd.setOnClickListener(v -> {
             if (linhaCarrinho.getQuantidade() > 1) {
-                linhaCarrinho.setQuantidade(linhaCarrinho.getQuantidade() - 1);
-                linhaCarrinho.calcularSubTotal();
-
-                SingletonProdutos.getInstance(context).atualizarLinhaCarrinhoAPI(context, linhaCarrinho, new LinhaCarrinhoListener() {
-                    @Override
-                    public void onItemUpdate() {
-                        notifyItemChanged(position);
-                    }
-
-                    @Override
-                    public void atualizarCarrinho(List<LinhaCarrinho> linhas) {
-                        linhasCarrinho.clear();
-                        linhasCarrinho.addAll(linhas);
-                        notifyDataSetChanged();
+                SingletonProdutos.getInstance(context).diminuirQuantidade(context, linhaCarrinho, linhasAtualizadas -> {
+                    if (linhasAtualizadas != null) {
+                        updateData(linhasAtualizadas);
                     }
                 });
             } else {
@@ -88,10 +66,10 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            SingletonProdutos.getInstance(context).removerLinhaCarrinhoAPI(context, linhaCarrinho.getId(), listaAtualizada -> {
-                linhasCarrinho.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, linhasCarrinho.size());
+            SingletonProdutos.getInstance(context).removerLinhaCarrinhoAPI(context, linhaCarrinho.getId(), linhasAtualizadas -> {
+                if (linhasAtualizadas != null) {
+                    updateData(linhasAtualizadas);
+                }
             });
         });
     }
@@ -102,9 +80,9 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
     }
 
     public void updateData(List<LinhaCarrinho> novasLinhas) {
-        this.linhasCarrinho.clear(); // Limpa os dados atuais
-        this.linhasCarrinho.addAll(novasLinhas); // Adiciona os novos dados
-        notifyDataSetChanged(); // Notifica o RecyclerView para atualizar a interface
+        this.linhasCarrinho.clear();
+        this.linhasCarrinho.addAll(novasLinhas);
+        notifyDataSetChanged();
     }
 
     public static class LinhaCarrinhoViewHolder extends RecyclerView.ViewHolder {

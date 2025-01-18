@@ -34,7 +34,8 @@ public class CheckoutAdaptador extends RecyclerView.Adapter<CheckoutAdaptador.Ch
     @Override
     public void onBindViewHolder(@NonNull CheckoutViewHolder holder, int position) {
         LinhaCarrinho linha = linhasCarrinho.get(position);
-        holder.tvNomeProduto.setText(linha.getProduto().getNome());
+
+        holder.tvNomeProduto.setText("Produto #" + linha.getProduto().getId() + " - " + linha.getProduto().getNome());
         holder.tvQuantidade.setText("Quantidade: " + linha.getQuantidade());
         holder.tvPreco.setText(String.format("%.2f €", linha.getSubTotal()));
     }
@@ -55,3 +56,4 @@ public class CheckoutAdaptador extends RecyclerView.Adapter<CheckoutAdaptador.Ch
         }
     }
 }
+

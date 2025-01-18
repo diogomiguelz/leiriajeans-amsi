@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,6 +24,7 @@ public class CarrinhoFragment extends Fragment implements LinhaCarrinhoListener 
 
     private RecyclerView recyclerLinhasCarrinho;
     private LinhaCarrinhoAdaptador adapter;
+    private Button btnProceder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +36,9 @@ public class CarrinhoFragment extends Fragment implements LinhaCarrinhoListener 
         adapter = new LinhaCarrinhoAdaptador(getContext(), new ArrayList<>(), this);
         recyclerLinhasCarrinho.setAdapter(adapter);
 
+        btnProceder = view.findViewById(R.id.btnProceder);
+        btnProceder.setEnabled(false);
+
         // Chama o metodo para associar ou criar o carrinho ao inicializar o fragmento
         SingletonProdutos.getInstance(getContext()).getCarrinhoAPI(getContext());
 
@@ -41,6 +46,13 @@ public class CarrinhoFragment extends Fragment implements LinhaCarrinhoListener 
         SingletonProdutos.getInstance(getContext()).setLinhasCarrinhoListener(linhas -> {
             if (adapter != null) {
                 adapter.updateData(linhas);
+                btnProceder.setEnabled(linhas.size() > 0);
+                if(linhas.size() > 0){
+                    btnProceder.setText("Proceder para o checkout");
+                } else {
+                    btnProceder.setText("Carrinho vazio");
+                    Toast.makeText(getContext(), "Carrinho vazio", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -55,10 +67,12 @@ public class CarrinhoFragment extends Fragment implements LinhaCarrinhoListener 
     }
 
 
+
+
     @Override
     public void onItemUpdate() {
-        // Atualiza a lista de linhas do carrinho sempre que uma linha for atualizada
-        SingletonProdutos.getInstance(getContext()).getLinhasCarrinhoAPI(getContext());
+        SingletonProdutos singleton = SingletonProdutos.getInstance(getContext());
+        singleton.getLinhasCarrinhoAPI(getContext());
     }
 
     @Override
