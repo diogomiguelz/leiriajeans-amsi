@@ -740,7 +740,7 @@ public class Singleton {
                                 listener.onFaturaCriada(fatura);
                             }
                             
-                            Toast.makeText(context, "Fatura criada com sucesso!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "FaturaS criada com sucesso!", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(context, "Erro ao criar fatura", Toast.LENGTH_SHORT).show();
                         }
