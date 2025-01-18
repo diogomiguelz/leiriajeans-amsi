@@ -403,7 +403,7 @@ public class SingletonProdutos {
             return;
         }
 
-        String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/update-dados?access-token=" + getUserToken(context);
+        String url = mUrlPostDadosAPI(context);
         Log.d("DEBUG_UPDATE", "URL de atualização: " + url);
 
         StringRequest req = new StringRequest(Request.Method.POST, url,
@@ -743,7 +743,7 @@ public class SingletonProdutos {
                                 listener.onFaturaCriada(fatura);
                             }
                             
-                            Toast.makeText(context, "Fatura criada com sucesso!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "FaturaS criada com sucesso!", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(context, "Erro ao criar fatura", Toast.LENGTH_SHORT).show();
                         }
@@ -884,6 +884,9 @@ public class SingletonProdutos {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/carrinho/criar?access-token=" + getUserToken(context);
     }
 
+    private String mUrlPostDadosAPI(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/update-dados?access-token=" + getUserToken(context);
+    }
 
     // A URL segue o padrão: /carrinho/{id}/carrinho
     private String mUrlGetCarrinhoAPI(Context context) {
