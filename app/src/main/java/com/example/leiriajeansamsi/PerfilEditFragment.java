@@ -92,14 +92,6 @@ public class PerfilEditFragment extends Fragment {
             String nifValue = etNif.getText().toString().trim();
             String telefoneValue = etTelefone.getText().toString().trim();
 
-            Log.d("DEBUG_EDIT", "Tentando atualizar com os dados:" +
-                    "\nNome: " + nomeValue +
-                    "\nRua: " + ruaValue +
-                    "\nCódigo Postal: " + codPostalValue +
-                    "\nLocalidade: " + localidadeValue +
-                    "\nNIF: " + nifValue +
-                    "\nTelefone: " + telefoneValue);
-
             singleton.updateProfileAPI(
                     nomeValue,
                     codPostalValue,
@@ -110,14 +102,29 @@ public class PerfilEditFragment extends Fragment {
                     getContext()
             );
 
-            // Aguardar a atualização antes de voltar
+            // wait for 1 second before going back
             new Handler().postDelayed(() -> {
                 if (getActivity() != null) {
-                    getActivity().onBackPressed();
+
+                    PerfilFragment perfilFragment = new PerfilFragment();
+
+                    // start the transaction
+                    FragmentTransaction transaction = getActivity()
+                            .getSupportFragmentManager()
+                            .beginTransaction();
+
+                    // Replace the current fragment with the PerfilFragment
+                    transaction.replace(R.id.fragment_container, perfilFragment);
+
+                    // Remover o PerfilEditFragment
+                    transaction.commit();
+
+                    getActivity().getSupportFragmentManager().popBackStack();
                 }
-            }, 1500); // Aguarda 1.5 segundos antes de voltar
+            }, 1000); // 1 second
         }
     }
+
 
     // Metodo para cancelar as alterações e voltar à tela anterior
     public void onClickCancelar() {
