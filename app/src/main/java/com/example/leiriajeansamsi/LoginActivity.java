@@ -43,11 +43,11 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
         setContentView(R.layout.activity_login);
         setTitle("Login");
 
-        if (HasUserToken(this)) {
-            Intent intent = new Intent(this, MenuMainActivity.class);
-            startActivity(intent);
-            finish();
-        }
+//        if (HasUserToken(this)) {
+//            Intent intent = new Intent(this, MenuMainActivity.class);
+//            startActivity(intent);
+//            finish();
+//        }
 
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
@@ -57,10 +57,10 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
         Singleton.getInstance(this).setSignupListener(this);
     }
 
-    public boolean HasUserToken(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
-        return preferences.getString("user_token", null) != null;
-    }
+//    public boolean HasUserToken(Context context) {
+//        SharedPreferences preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+//        return preferences.getString("user_token", null) != null;
+//    }
 
     private boolean isEmailValido(String email) {
         if (email == null) return false;

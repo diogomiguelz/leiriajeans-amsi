@@ -804,6 +804,7 @@ public class Singleton {
 //endregion
 
     //endregion
+
     //region Métodos Pagamento e Expedição
     public void getMetodosPagamentoAPI(Context context, Consumer<List<MetodoPagamento>> callback) {
         String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/metodos-pagamentos?access-token=" + getUserToken(context);
@@ -851,12 +852,8 @@ public class Singleton {
 
     //region API USER
 
-    private String urlPostAPIPerfilDados(Context context) {
-
-        String username = getUsername(context);
-        String accessToken = getUserToken(context);
-
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/dados?username=" + username + "&access-token=" + accessToken;
+    private String mUrlPostDadosAPI(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/update-dados?access-token=" + getUserToken(context);
     }
 
     // API Dados do Utilizador
@@ -880,10 +877,6 @@ public class Singleton {
 
     private String mUrlPostCarrinhoAPI(Context context) {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/carrinho/criar?access-token=" + getUserToken(context);
-    }
-
-    private String mUrlPostDadosAPI(Context context) {
-        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/update-dados?access-token=" + getUserToken(context);
     }
 
     // A URL segue o padrão: /carrinho/{id}/carrinho
