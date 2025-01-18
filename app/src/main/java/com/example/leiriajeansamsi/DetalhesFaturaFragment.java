@@ -16,10 +16,8 @@ import android.widget.TextView;
 
 import com.example.leiriajeansamsi.Modelo.Fatura;
 import com.example.leiriajeansamsi.Modelo.LinhaFatura;
-import com.example.leiriajeansamsi.Modelo.Produto;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.adaptadores.LinhasFaturasAdaptador;
-import com.example.leiriajeansamsi.listeners.FaturaListener;
 import com.example.leiriajeansamsi.listeners.FaturasListener;
 import com.example.leiriajeansamsi.listeners.LinhasFaturasListener;
 import com.example.leiriajeansamsi.Modelo.MetodoExpedicao;
@@ -111,13 +109,13 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
 
         if (faturaId != -1) {
             // Carregar as linhas da fatura
-            SingletonProdutos.getInstance(getContext()).getLinhasFaturasAPI(getContext(), faturaId, this);
+            Singleton.getInstance(getContext()).getLinhasFaturasAPI(getContext(), faturaId, this);
 
             // Carregar os detalhes da fatura
-            SingletonProdutos.getInstance(getContext()).getFaturasAPI(getContext());
+            Singleton.getInstance(getContext()).getFaturasAPI(getContext());
 
             // Atualizar o listener para receber as faturas
-            SingletonProdutos.getInstance(getContext()).setFaturasListener(new FaturasListener() {
+            Singleton.getInstance(getContext()).setFaturasListener(new FaturasListener() {
                 @Override
                 public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
                     if (faturas != null && !faturas.isEmpty() && isAdded()) {
@@ -195,7 +193,7 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
         }
 
         // Carregar custo de expedição
-        SingletonProdutos.getInstance(getContext()).getMetodosExpedicaoAPI(getContext(), metodos -> {
+        Singleton.getInstance(getContext()).getMetodosExpedicaoAPI(getContext(), metodos -> {
             if (metodos != null) {
                 for (MetodoExpedicao metodo : metodos) {
                     if (metodo.getId() == metodoExpedicaoId) {

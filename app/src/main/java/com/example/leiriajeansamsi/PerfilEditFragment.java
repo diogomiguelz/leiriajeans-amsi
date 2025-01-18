@@ -12,7 +12,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.Modelo.Utilizador;
 import com.example.leiriajeansamsi.listeners.UtilizadorDataListener;
 
@@ -23,7 +23,7 @@ public class PerfilEditFragment extends Fragment {
     private Button btnGuardarPerfil;
     private String username, email, rua, codpostal, localidade, nif, telefone, nomeUtilizador;
     private Utilizador utilizador, utilizadorData;
-    private SingletonProdutos singleton;
+    private Singleton singleton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class PerfilEditFragment extends Fragment {
         btnCancelarPerfil.setOnClickListener(v -> onClickCancelar());
         btnGuardarPerfil.setOnClickListener(v -> onClickGuardar());
 
-        singleton = SingletonProdutos.getInstance(getContext());
+        singleton = Singleton.getInstance(getContext());
 
         // usar o listener para aguardar os dados
         singleton.getUserDataAPI(getContext(), new UtilizadorDataListener() {

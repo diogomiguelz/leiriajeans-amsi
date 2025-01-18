@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import com.example.leiriajeansamsi.LoginActivity;
@@ -43,7 +41,6 @@ import com.example.leiriajeansamsi.listeners.LinhasFaturasListener;
 import com.example.leiriajeansamsi.listeners.LoginListener;
 import com.example.leiriajeansamsi.listeners.ProdutoListener;
 import com.example.leiriajeansamsi.listeners.ProdutosListener;
-import com.example.leiriajeansamsi.listeners.ProfileUpdateListener;
 import com.example.leiriajeansamsi.utils.CarrinhoJsonParser;
 import com.example.leiriajeansamsi.utils.FaturasJsonParser;
 import com.example.leiriajeansamsi.listeners.SignupListener;
@@ -55,7 +52,7 @@ import com.example.leiriajeansamsi.utils.MetodosExpedicaoJsonParser;
 import com.example.leiriajeansamsi.utils.MetodosPagamentoJsonParser;
 import com.example.leiriajeansamsi.utils.ProdutoJsonParser;
 
-public class SingletonProdutos {
+public class Singleton {
 
     //region DECLARAÇOES
 
@@ -66,7 +63,7 @@ public class SingletonProdutos {
     public ArrayList<LinhaCarrinho> linhaCarrinhos = new ArrayList<>();
     public Carrinho carrinho;
     public Utilizador utilizador, utilizadorData;
-    private static volatile SingletonProdutos instance = null;
+    private static volatile Singleton instance = null;
 
     private static RequestQueue volleyQueue = null;
     private LoginListener loginListener;
@@ -86,11 +83,11 @@ public class SingletonProdutos {
     //endregion
 
     //region singleton
-    public static synchronized SingletonProdutos getInstance(Context context) {
+    public static synchronized Singleton getInstance(Context context) {
         if (instance == null) {
-            synchronized (SingletonProdutos.class) {
+            synchronized (Singleton.class) {
                 if (instance == null) {
-                    instance = new SingletonProdutos(context);
+                    instance = new Singleton(context);
                     volleyQueue = Volley.newRequestQueue(context);
                 }
             }
@@ -98,7 +95,7 @@ public class SingletonProdutos {
         return instance;
     }
 
-    private SingletonProdutos(Context context) {
+    private Singleton(Context context) {
         produtos = new ArrayList<>();
         volleyQueue = Volley.newRequestQueue(context); // Inicializa a RequestQueue aqui
         getAllProdutosAPI(context); // Chama o metodo para buscar produtos
@@ -194,13 +191,13 @@ public class SingletonProdutos {
     }
 
     public Produto getProdutoById(int id) {
-        Log.d("SingletonProdutos", "A procurar o produto com ID: " + id);
+        Log.d("Singleton", "A procurar o produto com ID: " + id);
         for (Produto produto : produtos) {
             if (produto.getId() == id) {
                 return produto;
             }
         }
-        Log.e("SingletonProdutos", "Produto com ID " + id + " não encontrado.");
+        Log.e("Singleton", "Produto com ID " + id + " não encontrado.");
         return null;
     }
 
@@ -403,7 +400,7 @@ public class SingletonProdutos {
             return;
         }
 
-        String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/update-dados?access-token=" + getUserToken(context);
+        String url = mUrlPostDadosAPI(context);
         Log.d("DEBUG_UPDATE", "URL de atualização: " + url);
 
         StringRequest req = new StringRequest(Request.Method.POST, url,
@@ -661,7 +658,7 @@ public class SingletonProdutos {
             atualizarLinhaCarrinhoAPI(context, linha.getId(), linha.getQuantidade() - 1, callback);
         }
     }
-//endregion
+    //endregion
 
     //region Faturas
     public void getFaturasAPI(Context context) {
@@ -806,6 +803,7 @@ public class SingletonProdutos {
     }
 //endregion
 
+    //endregion
     //region Métodos Pagamento e Expedição
     public void getMetodosPagamentoAPI(Context context, Consumer<List<MetodoPagamento>> callback) {
         String url = "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/metodos-pagamentos?access-token=" + getUserToken(context);
@@ -884,6 +882,9 @@ public class SingletonProdutos {
         return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/carrinho/criar?access-token=" + getUserToken(context);
     }
 
+    private String mUrlPostDadosAPI(Context context) {
+        return "http://" + getApiIP(context) + "/leiriajeans/backend/web/api/user/update-dados?access-token=" + getUserToken(context);
+    }
 
     // A URL segue o padrão: /carrinho/{id}/carrinho
     private String mUrlGetCarrinhoAPI(Context context) {

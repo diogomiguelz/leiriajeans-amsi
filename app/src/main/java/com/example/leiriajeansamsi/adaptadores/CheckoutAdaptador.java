@@ -38,6 +38,8 @@ public class CheckoutAdaptador extends RecyclerView.Adapter<CheckoutAdaptador.Ch
         holder.tvNomeProduto.setText("Produto #" + linha.getProduto().getId() + " - " + linha.getProduto().getNome());
         holder.tvQuantidade.setText("Quantidade: " + linha.getQuantidade());
         holder.tvPreco.setText(String.format("%.2f €", linha.getSubTotal()));
+        String categoria = linha.getProduto().getCategoria();
+        holder.tvCategoria.setText(categoria);
     }
 
     @Override
@@ -46,13 +48,14 @@ public class CheckoutAdaptador extends RecyclerView.Adapter<CheckoutAdaptador.Ch
     }
 
     public static class CheckoutViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNomeProduto, tvQuantidade, tvPreco;
+        TextView tvNomeProduto, tvQuantidade, tvPreco, tvCategoria;
 
         public CheckoutViewHolder(View itemView) {
             super(itemView);
             tvNomeProduto = itemView.findViewById(R.id.tvNomeProduto);
             tvQuantidade = itemView.findViewById(R.id.tvQuantidade);
             tvPreco = itemView.findViewById(R.id.tvPreco);
+            tvCategoria = itemView.findViewById(R.id.tvCategoria);
         }
     }
 }

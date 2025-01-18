@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.R;
 import com.example.leiriajeansamsi.listeners.LinhaCarrinhoListener;
 
@@ -44,9 +44,10 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
         holder.tvNomeProdutoCarrinho.setText(linhaCarrinho.getProduto().getNome());
         holder.tvPrecoProdutoCarrinho.setText(String.format("%.2f €", linhaCarrinho.getProduto().getPreco()));
         holder.tvQuantidadeProdutoCarrinho.setText("Quantidade: " + linhaCarrinho.getQuantidade());
-
+        String categoria = linhaCarrinho.getProduto().getCategoria();
+        holder.tvCategoria.setText(categoria);
         holder.btnAumentaQtd.setOnClickListener(v -> {
-            SingletonProdutos.getInstance(context).aumentarQuantidade(context, linhaCarrinho, linhasAtualizadas -> {
+            Singleton.getInstance(context).aumentarQuantidade(context, linhaCarrinho, linhasAtualizadas -> {
                 if (linhasAtualizadas != null) {
                     updateData(linhasAtualizadas);
                 }
@@ -55,7 +56,7 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
 
         holder.btnDiminuiQtd.setOnClickListener(v -> {
             if (linhaCarrinho.getQuantidade() > 1) {
-                SingletonProdutos.getInstance(context).diminuirQuantidade(context, linhaCarrinho, linhasAtualizadas -> {
+                Singleton.getInstance(context).diminuirQuantidade(context, linhaCarrinho, linhasAtualizadas -> {
                     if (linhasAtualizadas != null) {
                         updateData(linhasAtualizadas);
                     }
@@ -66,7 +67,7 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            SingletonProdutos.getInstance(context).removerLinhaCarrinhoAPI(context, linhaCarrinho.getId(), linhasAtualizadas -> {
+            Singleton.getInstance(context).removerLinhaCarrinhoAPI(context, linhaCarrinho.getId(), linhasAtualizadas -> {
                 if (linhasAtualizadas != null) {
                     updateData(linhasAtualizadas);
                 }
@@ -86,7 +87,7 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
     }
 
     public static class LinhaCarrinhoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNomeProdutoCarrinho, tvPrecoProdutoCarrinho, tvQuantidadeProdutoCarrinho;
+        TextView tvNomeProdutoCarrinho, tvPrecoProdutoCarrinho, tvCategoria, tvQuantidadeProdutoCarrinho;
         Button btnAumentaQtd, btnDiminuiQtd, btnDelete;
 
         public LinhaCarrinhoViewHolder(View itemView) {
@@ -97,6 +98,7 @@ public class LinhaCarrinhoAdaptador extends RecyclerView.Adapter<LinhaCarrinhoAd
             btnAumentaQtd = itemView.findViewById(R.id.btnAumentaQtd);
             btnDiminuiQtd = itemView.findViewById(R.id.btnDiminuiQtd);
             btnDelete = itemView.findViewById(R.id.btnDelete);
+            tvCategoria = itemView.findViewById(R.id.tvCategoria);
         }
     }
 }

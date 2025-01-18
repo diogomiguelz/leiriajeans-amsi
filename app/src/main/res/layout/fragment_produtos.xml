@@ -7,7 +7,6 @@
     android:background="@drawable/background_login"
     tools:context=".ListaProdutosFragment">
 
-<!-- TODO: Update blank fragment layout -->
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
@@ -15,16 +14,33 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:background="@android:color/white"
-                android:elevation="4dp" />
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/white"
+                    android:elevation="4dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerCategoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@android:color/white"
+                    android:elevation="4dp"
+                    android:minWidth="120dp"
+                    android:padding="8dp" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listProdutos"
@@ -46,6 +62,5 @@
         app:layout_constraintEnd_toEndOf="@+id/scrollView2"
         app:layout_constraintStart_toStartOf="@+id/scrollView2"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

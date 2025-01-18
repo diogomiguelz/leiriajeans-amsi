@@ -14,7 +14,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,9 +85,9 @@ public class RegistarActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        SingletonProdutos.getInstance(RegistarActivity.this).signupAPI(username, password, email, rua, codpostal, localidade, nif, telefone, nome, RegistarActivity.this);
+        Singleton.getInstance(RegistarActivity.this).signupAPI(username, password, email, rua, codpostal, localidade, nif, telefone, nome, RegistarActivity.this);
         // Criar uma requisição POST com JsonObjectRequest
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, SingletonProdutos.getInstance(this).mUrlAPISignup(this),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Singleton.getInstance(this).mUrlAPISignup(this),
 
                 signupData,
                 new Response.Listener<JSONObject>() {

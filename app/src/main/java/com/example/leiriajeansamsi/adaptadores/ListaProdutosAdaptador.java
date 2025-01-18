@@ -19,9 +19,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.leiriajeansamsi.DetalhesProdutosFragment;
-import com.example.leiriajeansamsi.Modelo.Carrinho;
 import com.example.leiriajeansamsi.Modelo.Produto;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.R;
 import com.example.leiriajeansamsi.listeners.ProdutoListener;
 
@@ -51,7 +50,8 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
         Produto product = produtos.get(position);
         holder.tvNomeProduto.setText(product.getNome());
         holder.tvPrecoProduto.setText(String.format("%.2f €", product.getPreco()));
-        String imageUrl = "http://" + SingletonProdutos.getInstance(context).getApiIP(context)
+        holder.tvCategoria.setText(product.getCategoria());
+        String imageUrl = "http://" + Singleton.getInstance(context).getApiIP(context)
                 + product.getImagem();
 
         imageUrl = imageUrl.replace("images/produtos/", "public/imagens/produtos/");
@@ -68,7 +68,7 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
         });
 
         holder.btnAddToCart.setOnClickListener(v -> {
-            SingletonProdutos singleton = SingletonProdutos.getInstance(context);
+            Singleton singleton = Singleton.getInstance(context);
 
             // Primeiro verifica se já existe um carrinho
             singleton.getCarrinhoAPI(context);
@@ -104,6 +104,7 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNomeProduto;
         TextView tvPrecoProduto;
+        TextView tvCategoria;
         ImageView imgProduto;
         Button btnAddToCart;
 
@@ -111,8 +112,10 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
             super(itemView);
             tvNomeProduto = itemView.findViewById(R.id.nomeTxt);
             tvPrecoProduto = itemView.findViewById(R.id.precoTxt);
+            tvCategoria = itemView.findViewById(R.id.tvCategoria);
             imgProduto = itemView.findViewById(R.id.pic);
             btnAddToCart = itemView.findViewById(R.id.btnAddToCart);
         }
     }
+
 }

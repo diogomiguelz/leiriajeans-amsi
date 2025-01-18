@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.leiriajeansamsi.Modelo.Fatura;
 import com.example.leiriajeansamsi.Modelo.FaturasDBHelper;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.Modelo.Utilizador;
 import com.example.leiriajeansamsi.listeners.FaturasListener;
 import com.example.leiriajeansamsi.listeners.LoginListener;
@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
     private final int MIN_PASS = 4;
     private boolean isLoggingIn = false;
     private Utilizador utilizadorAtual;
-    private SingletonProdutos singletonProdutos;
+    private Singleton singleton;
 
 
     @Override
@@ -52,8 +52,9 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
 
-        SingletonProdutos.getInstance(this).setLoginListener(this);
-        SingletonProdutos.getInstance(this).setSignupListener(this);
+        Singleton.getInstance(this).getUserDataAPI(this, null);
+        Singleton.getInstance(this).setLoginListener(this);
+        Singleton.getInstance(this).setSignupListener(this);
     }
 
     public boolean HasUserToken(Context context) {
@@ -99,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
             return;
         }
 
-        SingletonProdutos.getInstance(this).loginAPI(username, pass, this);
+        Singleton.getInstance(this).loginAPI(username, pass, this);
     }
 
     @Override
@@ -120,8 +121,8 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
         try {
             if (isConnectedToInternet()) {
                 Log.d("LoginActivity", "Sincronizando faturas online");
-                SingletonProdutos.getInstance(this).setFaturasListener(this);
-                SingletonProdutos.getInstance(this).getFaturasAPI(this);
+                Singleton.getInstance(this).setFaturasListener(this);
+                Singleton.getInstance(this).getFaturasAPI(this);
             } else {
                 Log.d("LoginActivity", "Modo offline");
                 goParaMenuPrincipal(utilizadorAtual);

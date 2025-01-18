@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.Modelo.Utilizador;
 import com.example.leiriajeansamsi.listeners.UtilizadorDataListener;
 
@@ -23,13 +23,13 @@ public class PerfilFragment extends Fragment {
     private String username, nome, email, telefone, nif, rua, localidade, codigoPostal;
     private Utilizador utilizador, utilizadorData;
 
-    private SingletonProdutos singleton;
+    private Singleton singleton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.view = inflater.inflate(R.layout.fragment_perfil, container, false);
 
-        singleton = SingletonProdutos.getInstance(getContext());
+        singleton = Singleton.getInstance(getContext());
 
         // usar o listener para aguardar os dados
         singleton.getUserDataAPI(getContext(), new UtilizadorDataListener() {

@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
 import com.example.leiriajeansamsi.Modelo.Produto;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +24,7 @@ public class LinhaCarrinhoJsonParser {
         float precoVenda = (float) jsonLinhaCarrinho.getDouble("precoVenda");
         float valorIva = (float) jsonLinhaCarrinho.getDouble("valorIva");
 
-        Produto produto = SingletonProdutos.getInstance(context).getProdutoById(produtoId);
+        Produto produto = Singleton.getInstance(context).getProdutoById(produtoId);
         if (produto == null) {
             throw new JSONException("Produto não encontrado: " + produtoId);
         }

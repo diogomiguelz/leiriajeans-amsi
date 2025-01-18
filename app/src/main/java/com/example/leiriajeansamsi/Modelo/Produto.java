@@ -6,10 +6,11 @@ import android.os.Parcelable;  // Certifique-se de importar Parcelable
 public class Produto implements Parcelable {
 
     private int id, iva, stock;
-    private String nome, descricao, categoria, imagem, cor;
+    private String nome, descricao, categoria, imagem, cor, sexo; // Adicionado sexo
     private float preco;
 
-    public Produto(int id, int iva, int stock, String nome, String descricao, String categoria, String imagem, String cor, float preco) {
+    public Produto(int id, int iva, int stock, String nome, String descricao,
+                   String categoria, String imagem, String cor, String sexo, float preco) {
         this.id = id;
         this.iva = iva;
         this.stock = stock;
@@ -18,6 +19,7 @@ public class Produto implements Parcelable {
         this.categoria = categoria;
         this.imagem = imagem;
         this.cor = cor;
+        this.sexo = sexo;
         this.preco = preco;
     }
 
@@ -87,6 +89,14 @@ public class Produto implements Parcelable {
         this.cor = cor;
     }
 
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
     public float getPreco() {
         return preco;
     }
@@ -106,6 +116,7 @@ public class Produto implements Parcelable {
                 ", cor='" + cor + '\'' +
                 ", categoria='" + categoria + '\'' +
                 ", imagem='" + imagem + '\'' +
+                ", sexo='" + sexo + '\'' +
                 ", preco=" + preco +
                 '}';
     }
@@ -120,6 +131,7 @@ public class Produto implements Parcelable {
         cor = in.readString();
         categoria = in.readString();
         imagem = in.readString();
+        sexo = in.readString();
         preco = in.readFloat();
     }
 
@@ -134,6 +146,7 @@ public class Produto implements Parcelable {
         dest.writeString(cor);
         dest.writeString(categoria);
         dest.writeString(imagem);
+        dest.writeString(sexo);
         dest.writeFloat(preco);
     }
 

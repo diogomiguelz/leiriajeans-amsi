@@ -14,7 +14,7 @@ import com.example.leiriajeansamsi.Modelo.LinhaFatura;
 import com.example.leiriajeansamsi.Modelo.MetodoExpedicao;
 import com.example.leiriajeansamsi.Modelo.MetodoPagamento;
 import com.example.leiriajeansamsi.Modelo.Produto;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.R;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAd
     @Override
     public void onBindViewHolder(@NonNull LinhaFaturaViewHolder holder, int position) {
         LinhaFatura linhaFatura = linhasFaturas.get(position);
-        Produto produto = SingletonProdutos.getInstance(context).getProdutoById(linhaFatura.getProdutoId());
+        Produto produto = Singleton.getInstance(context).getProdutoById(linhaFatura.getProdutoId());
 
         // Formatação dos valores monetários
         float precoUnitario = linhaFatura.getPrecoVenda();
@@ -58,7 +58,8 @@ public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAd
         } else {
             holder.tvNomeProduto.setText("Produto não encontrado");
         }
-
+        String categoria = produto.getCategoria();
+        holder.tvCategoria.setText(categoria);
         holder.tvQuantidade.setText(String.format("Quantidade: %d", linhaFatura.getQuantidade()));
         holder.tvPreco.setText(String.format(Locale.getDefault(),
                 "Preço unitário: %.2f €\n" +
@@ -90,12 +91,15 @@ public class LinhasFaturasAdaptador extends RecyclerView.Adapter<LinhasFaturasAd
         final TextView tvNomeProduto;
         final TextView tvQuantidade;
         final TextView tvPreco;
+        final TextView tvCategoria;
 
         public LinhaFaturaViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNomeProduto = itemView.findViewById(R.id.tvNomeProduto);
             tvQuantidade = itemView.findViewById(R.id.tvQuantidade);
             tvPreco = itemView.findViewById(R.id.tvPreco);
+            tvCategoria = itemView.findViewById(R.id.tvCategoria);
+
         }
     }
 

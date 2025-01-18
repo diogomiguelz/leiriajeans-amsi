@@ -21,7 +21,7 @@ import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
 import com.example.leiriajeansamsi.Modelo.LinhaFatura;
 import com.example.leiriajeansamsi.Modelo.MetodoExpedicao;
 import com.example.leiriajeansamsi.Modelo.MetodoPagamento;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.adaptadores.LinhasFaturasAdaptador;
 import com.example.leiriajeansamsi.listeners.FaturasListener;
 import com.example.leiriajeansamsi.listeners.LinhasFaturasListener;
@@ -216,7 +216,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private void carregarLinhasFaturas() {
         linhasFaturas.clear();
         // Converte LinhaCarrinho para LinhaFatura
-        for (LinhaCarrinho linhaCarrinho : SingletonProdutos.getInstance(this).getLinhaCarrinhos()) {
+        for (LinhaCarrinho linhaCarrinho : Singleton.getInstance(this).getLinhaCarrinhos()) {
             // Calcular o valor do IVA corretamente
             float precoVenda = linhaCarrinho.getProduto().getPreco();
             float taxaIva = linhaCarrinho.getProduto().getIva() / 100f; // Converte percentagem para decimal
@@ -239,7 +239,7 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void carregarMetodosPagamento(Spinner spinner) {
-        SingletonProdutos.getInstance(this).getMetodosPagamentoAPI(this, metodos -> {
+        Singleton.getInstance(this).getMetodosPagamentoAPI(this, metodos -> {
             if (metodos != null) {
                 metodosPagamento.clear();
                 metodosPagamento.addAll(metodos);
@@ -254,7 +254,7 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void carregarMetodosExpedicao(Spinner spinner) {
-        SingletonProdutos.getInstance(this).getMetodosExpedicaoAPI(this, metodos -> {
+        Singleton.getInstance(this).getMetodosExpedicaoAPI(this, metodos -> {
             if (metodos != null) {
                 metodosExpedicao.clear();
                 metodosExpedicao.addAll(metodos);
@@ -281,7 +281,7 @@ public class CheckoutActivity extends AppCompatActivity {
         Log.d("CheckoutActivity", "MetodoPagamentoID: " + metodoPagamentoId);
         Log.d("CheckoutActivity", "MetodoExpedicaoID: " + metodoExpedicaoId);
 
-        SingletonProdutos.getInstance(this).criarFaturaAPI(this, metodoPagamentoId, metodoExpedicaoId,
+        Singleton.getInstance(this).criarFaturaAPI(this, metodoPagamentoId, metodoExpedicaoId,
                 new FaturasListener() {
                     @Override
                     public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
@@ -312,7 +312,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         linhasFaturas.clear();
         // Converte LinhaCarrinho para LinhaFatura
-        for (LinhaCarrinho linhaCarrinho : SingletonProdutos.getInstance(this).getLinhaCarrinhos()) {
+        for (LinhaCarrinho linhaCarrinho : Singleton.getInstance(this).getLinhaCarrinhos()) {
             LinhaFatura linhaFatura = new LinhaFatura(
                     0,                                     // id
                     fatura.getId(),                        // faturaId
@@ -335,7 +335,7 @@ public class CheckoutActivity extends AppCompatActivity {
         for (LinhaFatura linha : linhasFaturas) {
             Log.d("CheckoutActivity", "Criando linha com fatura_id: " + linha.getFaturaId());
 
-            SingletonProdutos.getInstance(this).criarLinhaFaturaAPI(this, linha,
+            Singleton.getInstance(this).criarLinhaFaturaAPI(this, linha,
                     new LinhasFaturasListener() {
                         @Override
                         public void onLinhaFaturaCriada(LinhaFatura linhaCriada) {

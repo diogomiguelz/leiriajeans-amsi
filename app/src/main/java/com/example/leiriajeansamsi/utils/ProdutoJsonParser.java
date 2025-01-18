@@ -21,23 +21,22 @@ public class ProdutoJsonParser {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject produtoJSON = (JSONObject) response.get(i);
 
-                // Adaptação para o modelo com os novos campos
                 int id = produtoJSON.getInt("id");
                 String nome = produtoJSON.getString("nome");
                 String descricao = produtoJSON.getString("descricao");
-                String cor = produtoJSON.getString("cor"); // Novo campo 'cor'
-                int stock = produtoJSON.getInt("stock"); // Novo campo 'stock'
-                float preco = (float) produtoJSON.getDouble("preco");
-                int iva = produtoJSON.getInt("iva");
-                String categoria = produtoJSON.getString("categoria");
-                String imagem = produtoJSON.getString("imagens");
+                String cor = produtoJSON.optString("cor", "");
+                int stock = produtoJSON.optInt("stock", 0);
+                float preco = (float) produtoJSON.optDouble("preco", 0.0);
+                int iva = produtoJSON.optInt("iva", 0);
+                String categoria = produtoJSON.optString("categoria", "");
+                String imagem = produtoJSON.optString("imagens", "");
+                String sexo = produtoJSON.optString("sexo", "U"); // U para Unissex como padrão
 
-                // criar o Produto com os campos
-                Produto produto = new Produto(id, iva, stock, nome, descricao, categoria, imagem, cor, preco);
+                Produto produto = new Produto(id, iva, stock, nome, descricao, categoria, imagem, cor, sexo, preco);
                 produtos.add(produto);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            Log.e("ProdutoJsonParser", "Erro ao fazer parse: " + e.getMessage());
         }
         return produtos;
     }
@@ -47,26 +46,25 @@ public class ProdutoJsonParser {
         try {
             JSONObject produtoJSON = new JSONObject(response);
 
-            // Adaptação para o modelo com os novos campos
             int id = produtoJSON.getInt("id");
             String nome = produtoJSON.getString("nome");
             String descricao = produtoJSON.getString("descricao");
-            String cor = produtoJSON.getString("cor"); // Novo campo 'cor'
-            int stock = produtoJSON.getInt("stock"); // Novo campo 'stock'
-            float preco = (float) produtoJSON.getDouble("preco");
-            int iva = produtoJSON.getInt("iva");
-            String categoria = produtoJSON.getString("categoria");
-            String imagem = produtoJSON.getString("imagens");
+            String cor = produtoJSON.optString("cor", "");
+            int stock = produtoJSON.optInt("stock", 0);
+            float preco = (float) produtoJSON.optDouble("preco", 0.0);
+            int iva = produtoJSON.optInt("iva", 0);
+            String categoria = produtoJSON.optString("categoria", "");
+            String imagem = produtoJSON.optString("imagens", "");
+            String sexo = produtoJSON.optString("sexo", "U"); // U para Unissex como padrão
 
-            // Criar o Produto
-            produto = new Produto(id, iva, stock, nome, descricao, categoria, imagem, cor, preco);
+            produto = new Produto(id, iva, stock, nome, descricao, categoria, imagem, cor, sexo, preco);
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            Log.e("ProdutoJsonParser", "Erro ao fazer parse: " + e.getMessage());
         }
 
-        Log.d("ProdutosJsonParser", "parserJsonProduto: " + produto);
         return produto;
     }
+
 
     public static boolean isConnectionInternet(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

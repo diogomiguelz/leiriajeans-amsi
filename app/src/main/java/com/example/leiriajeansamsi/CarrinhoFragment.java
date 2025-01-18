@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.leiriajeansamsi.Modelo.LinhaCarrinho;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.adaptadores.LinhaCarrinhoAdaptador;
 import com.example.leiriajeansamsi.listeners.LinhaCarrinhoListener;
 
@@ -40,10 +40,10 @@ public class CarrinhoFragment extends Fragment implements LinhaCarrinhoListener 
         btnProceder.setEnabled(false);
 
         // Chama o metodo para associar ou criar o carrinho ao inicializar o fragmento
-        SingletonProdutos.getInstance(getContext()).getCarrinhoAPI(getContext());
+        Singleton.getInstance(getContext()).getCarrinhoAPI(getContext());
 
         // Define o listener para atualizar a lista de linhas do carrinho
-        SingletonProdutos.getInstance(getContext()).setLinhasCarrinhoListener(linhas -> {
+        Singleton.getInstance(getContext()).setLinhasCarrinhoListener(linhas -> {
             if (adapter != null) {
                 adapter.updateData(linhas);
                 btnProceder.setEnabled(linhas.size() > 0);
@@ -71,7 +71,7 @@ public class CarrinhoFragment extends Fragment implements LinhaCarrinhoListener 
 
     @Override
     public void onItemUpdate() {
-        SingletonProdutos singleton = SingletonProdutos.getInstance(getContext());
+        Singleton singleton = Singleton.getInstance(getContext());
         singleton.getLinhasCarrinhoAPI(getContext());
     }
 

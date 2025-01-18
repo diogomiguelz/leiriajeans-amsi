@@ -8,7 +8,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +25,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.leiriajeansamsi.Modelo.Produto;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.adaptadores.ListaProdutosAdaptador;
 import com.example.leiriajeansamsi.listeners.ProdutoListener;
 import com.example.leiriajeansamsi.listeners.ProdutosListener;
@@ -30,6 +33,8 @@ import com.example.leiriajeansamsi.listeners.ProdutosListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ListaProdutosFragment extends Fragment implements ProdutosListener, ProdutoListener {
 
@@ -41,6 +46,7 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
     private SearchView searchView;
     private ArrayList<Produto> produtosOriginais;
     private boolean ordenacaoCrescente = true;
+    private Spinner spinnerCategoria;
 
     @Nullable
     @Override
@@ -51,6 +57,8 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
         // Set the title for the fragment
         getActivity().setTitle("Produtos");
 
+        spinnerCategoria = view.findViewById(R.id.spinnerCategoria); // Adicione junto às outras inicializações
+
         // Initialize UI components
         rvProdutos = view.findViewById(R.id.listProdutos);
         progressBar = view.findViewById(R.id.progressBarProdutos);
@@ -59,8 +67,8 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
         rvProdutos.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         // Set up Singleton listener
-        SingletonProdutos.getInstance(getContext()).setProdutosListener(this);
-        SingletonProdutos.getInstance(getContext()).getAllProdutosAPI(getContext());
+        Singleton.getInstance(getContext()).setProdutosListener(this);
+        Singleton.getInstance(getContext()).getAllProdutosAPI(getContext());
 
         // Inicializar SearchView
         searchView = view.findViewById(R.id.searchView);
@@ -85,6 +93,67 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
         });
     }
 
+    private void setupSpinnerCategoria() {
+        ArrayList<String> categorias = new ArrayList<>();
+        categorias.add("Todas");
+
+        // Adicionar categorias únicas dos produtos
+        if (produtosOriginais != null) {
+            Set<String> categoriasUnicas = new HashSet<>();
+            for (Produto produto : produtosOriginais) {
+                if (produto.getCategoria() != null && !produto.getCategoria().isEmpty()) {
+                    categoriasUnicas.add(produto.getCategoria());
+                }
+            }
+            categorias.addAll(categoriasUnicas);
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_spinner_item,
+                categorias
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategoria.setAdapter(adapter);
+
+        spinnerCategoria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String categoriaSelecionada = categorias.get(position);
+                if (categoriaSelecionada.equals("Todas")) {
+                    filtrarPorCategoria(null);
+                } else {
+                    filtrarPorCategoria(categoriaSelecionada);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filtrarPorCategoria(null);
+            }
+        });
+    }
+
+    private void filtrarPorCategoria(String categoria) {
+        if (produtosOriginais != null) {
+            ArrayList<Produto> produtosFiltrados;
+
+            if (categoria == null) {
+                produtosFiltrados = new ArrayList<>(produtosOriginais);
+            } else {
+                produtosFiltrados = new ArrayList<>();
+                for (Produto produto : produtosOriginais) {
+                    if (produto.getCategoria().equalsIgnoreCase(categoria)) {
+                        produtosFiltrados.add(produto);
+                    }
+                }
+            }
+
+            adapter = new ListaProdutosAdaptador(this, getContext(), produtosFiltrados);
+            rvProdutos.setAdapter(adapter);
+        }
+    }
+
     private void filtrarProdutos(String query) {
         if (produtosOriginais != null) {
             ArrayList<Produto> produtosFiltrados = new ArrayList<>();
@@ -103,6 +172,7 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
     @Override
     public void onRefreshListaProdutos(ArrayList<Produto> listaProdutos) {
         this.produtosOriginais = new ArrayList<>(listaProdutos);
+        setupSpinnerCategoria();
 
         // Aplicar ordenação atual aos produtos
         ArrayList<Produto> produtosOrdenados = new ArrayList<>(listaProdutos);

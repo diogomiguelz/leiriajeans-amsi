@@ -16,11 +16,11 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.leiriajeansamsi.Modelo.Produto;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 
 public class DetalhesProdutosFragment extends Fragment {
 
-    private TextView tvNomeProduto, tvPrecoProduto, tvDescricaoProduto, btnAdicionarCarrinho;
+    private TextView tvNomeProduto, tvPrecoProduto, tvDescricaoProduto, btnAdicionarCarrinho, tvCategoria;
     private ImageView imgCapaProduto;
     private ImageButton btnVoltar;
     private Produto produto;
@@ -50,14 +50,17 @@ public class DetalhesProdutosFragment extends Fragment {
             }
         });
 
+        tvCategoria = view.findViewById(R.id.tvCategoria);
+
         if (getArguments() != null && getArguments().containsKey(PRODUTO)) {
             produto = getArguments().getParcelable(PRODUTO);
 
             tvNomeProduto.setText(produto.getNome());
             tvPrecoProduto.setText(produto.getPreco() + " €");
             tvDescricaoProduto.setText(produto.getDescricao());
+            tvCategoria.setText("Categoria: " + produto.getCategoria());
 
-            String imageUrl = "http://" + SingletonProdutos.getInstance(getContext()).getApiIP(getContext())
+            String imageUrl = "http://" + Singleton.getInstance(getContext()).getApiIP(getContext())
                     + produto.getImagem();
 
             imageUrl = imageUrl.replace("images/produtos/", "public/imagens/produtos/");
@@ -73,7 +76,7 @@ public class DetalhesProdutosFragment extends Fragment {
         btnAdicionarCarrinho.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SingletonProdutos singleton = SingletonProdutos.getInstance(getContext());
+                Singleton singleton = Singleton.getInstance(getContext());
 
                 // Verifica/cria o carrinho primeiro
                 singleton.getCarrinhoAPI(getContext());

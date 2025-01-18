@@ -12,45 +12,48 @@
         android:layout_height="wrap_content"
         android:padding="8dp">
 
-        <!-- Imagem do Produto -->
         <ImageView
             android:id="@+id/pic"
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_marginBottom="8dp"
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Nome do Produto -->
         <TextView
             android:id="@+id/nomeTxt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Nome do Produto"
+            android:layout_marginTop="8dp"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/pic"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Preço -->
+        <TextView
+            android:id="@+id/tvCategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/nomeTxt"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <TextView
             android:id="@+id/precoTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="34.00 €"
+            android:layout_marginTop="4dp"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/vermelho_claro"
-            app:layout_constraintTop_toBottomOf="@id/nomeTxt"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintHorizontal_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@id/tvCategoria"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Botão Adicionar -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddToCart"
             android:layout_width="wrap_content"
@@ -64,6 +67,6 @@
             app:layout_constraintTop_toBottomOf="@id/precoTxt"
             app:layout_constraintEnd_toEndOf="parent" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>

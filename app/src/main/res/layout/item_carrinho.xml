@@ -22,6 +22,14 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/tvCategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,20 +38,20 @@
 
             <TextView
                 android:id="@+id/tvQuantidade"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Quantidade: 1"
                 android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvPreco"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="€0.00"
                 android:textColor="@color/vermelho_claro"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:gravity="end" />
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout

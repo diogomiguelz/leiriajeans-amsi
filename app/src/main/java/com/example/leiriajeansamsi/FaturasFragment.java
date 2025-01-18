@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.leiriajeansamsi.Modelo.Fatura;
 import com.example.leiriajeansamsi.Modelo.FaturasDBHelper;
-import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
+import com.example.leiriajeansamsi.Modelo.Singleton;
 import com.example.leiriajeansamsi.adaptadores.ListaFaturasAdaptador;
 import com.example.leiriajeansamsi.listeners.FaturaListener;
 import com.example.leiriajeansamsi.listeners.FaturasListener;
@@ -59,11 +59,11 @@ public class FaturasFragment extends Fragment implements FaturasListener, Fatura
         try {
             if (isConnectedToInternet()) {
                 Log.d("TAG", "A carregar faturas online");
-                SingletonProdutos.getInstance(getContext()).setFaturasListener(this);
-                SingletonProdutos.getInstance(getContext()).getFaturasAPI(getContext());
+                Singleton.getInstance(getContext()).setFaturasListener(this);
+                Singleton.getInstance(getContext()).getFaturasAPI(getContext());
             } else {
                 Log.d("TAG", "Modo offline");
-                int userId = SingletonProdutos.getInstance(getContext()).getUserId(getContext());
+                int userId = Singleton.getInstance(getContext()).getUserId(getContext());
                 List<Fatura> faturasOffline = dbHelper.getAllFaturas(userId);
                 ArrayList<Fatura> faturas = new ArrayList<>(faturasOffline);
                 onRefreshListaFatura(faturas);
