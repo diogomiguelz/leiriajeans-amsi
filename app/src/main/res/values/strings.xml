@@ -93,4 +93,20 @@
     <string name="txt_fatura_123">Fatura #123</string>
     <string name="txt_data_01">Data: 01/01/2025</string>
     <string name="txt_icone_da_fatura">Ícone da fatura</string>
+    <string name="txtnome_de_utilizador">Nome de Utilizador</string>
+    <string name="txt_email">Email</string>
+    <string name="txtpassword">Password</string>
+    <string name="txtrua">Rua</string>
+    <string name="txtendereço">Morada</string>
+    <string name="txt_codigo_postal">Código Postal</string>
+    <string name="localidade">Localidade</string>
+    <string name="txt_dados_pessoais">Dados Pessoais</string>
+    <string name="txtnif">NIF</string>
+    <string name="txttelefone">Telefone</string>
+    <string name="txtnomeproprio">Nome Próprio</string>
+    <string name="txtregistar">Registar</string>
+    <string name="txt_preencha_os_dados_para_se_registar">Preencha os dados para se registar</string>
+    <string name="txt_Criarconta">Criar Conta</string>
+    <string name="txt_configurar_o_url_da_api">Configurar o URL da API</string>
+    <string name="txt_ex_172_22_21_212">Exemplo: 172.22.21.212</string>
 </resources>

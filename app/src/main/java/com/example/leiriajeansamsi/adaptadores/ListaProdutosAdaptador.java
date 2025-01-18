@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,8 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.example.leiriajeansamsi.DetalhesProdutoActivity;
-import com.example.leiriajeansamsi.Modelo.Carrinho;
+import com.example.leiriajeansamsi.DetalhesProdutosFragment;
 import com.example.leiriajeansamsi.Modelo.Produto;
 import com.example.leiriajeansamsi.Modelo.SingletonProdutos;
 import com.example.leiriajeansamsi.R;
@@ -87,9 +85,9 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
     @Override
     public void onItemClick(int position, Produto product) {
         // Cria uma intent para abrir a DetalhesProdutoActivity
-        Intent intent = new Intent(context, DetalhesProdutoActivity.class);
+        Intent intent = new Intent(context, DetalhesProdutosFragment.class);
         // Passa o produto selecionado para a próxima activity
-        intent.putExtra(DetalhesProdutoActivity.PRODUTO, product);
+        intent.putExtra(DetalhesProdutosFragment.PRODUTO, product);
         // Inicia a activity
         startActivity(context, intent, null);
     }

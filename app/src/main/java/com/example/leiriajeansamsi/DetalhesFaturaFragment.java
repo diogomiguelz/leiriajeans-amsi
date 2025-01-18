@@ -102,35 +102,23 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
 
 
     private void carregarDetalhesFatura() {
-        Log.d("DetalhesFatura", "Carregando detalhes da fatura ID: " + faturaId);
-
         if (faturaId != -1) {
-            // Primeiro, carregar as linhas da fatura
             SingletonProdutos.getInstance(getContext()).setLinhasFaturasListener(this);
             SingletonProdutos.getInstance(getContext()).getLinhasFaturasAPI(getContext(), faturaId, this);
 
-            // Criar o listener para os detalhes da fatura
-            FaturasListener faturasListener = new FaturasListener() {
-                @Override
-                public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
-                    if (faturas != null && !faturas.isEmpty() && isAdded()) {
-                        Log.d("DetalhesFatura", "Fatura recebida: " + faturas.get(0).toString());
-                        atualizarInterfaceFatura(faturas.get(0));
-                    } else {
-                        Log.e("DetalhesFatura", "Lista de faturas vazia ou null");
-                    }
-                }
+            SingletonProdutos.getInstance(getContext()).getFaturaByIdAPI(getContext(), faturaId,
+                    new FaturasListener() {
+                        @Override
+                        public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
+                            if (faturas != null && !faturas.isEmpty() && isAdded()) {
+                                atualizarInterfaceFatura(faturas.get(0));
+                            }
+                        }
 
-                @Override
-                public void onFaturaCriada(Fatura fatura) {
-                    // Não necessário implementar
-                }
-            };
-
-            // Depois, carregar os detalhes da fatura
-            SingletonProdutos.getInstance(getContext()).getFaturasAPI(getContext(), faturaId, faturasListener);
-        } else {
-            Log.e("DetalhesFatura", "ID da fatura inválido");
+                        @Override
+                        public void onFaturaCriada(Fatura fatura) {
+                        }
+                    });
         }
     }
 
@@ -233,12 +221,51 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
 
     @Override
     public void onRefreshListaLinhasFaturas(int faturaId, ArrayList<LinhaFatura> linhasFatura) {
-        if (linhasFatura != null && isAdded()) {
-            Log.d("DetalhesFatura", "Linhas da fatura carregadas: " + linhasFatura.size());
-            adapter = new LinhasFaturasAdaptador(getContext(), linhasFatura);
+        if (faturaId == this.faturaId && linhasFatura != null && isAdded()) {
+            Log.d("DetalhesFatura", "Recebidas " + linhasFatura.size() + " linhas para fatura " + faturaId);
+
+            // Criar uma lista de linhas únicas
+            ArrayList<LinhaFatura> linhasUnicas = new ArrayList<>();
+            for (LinhaFatura linha : linhasFatura) {
+                // Verifica se já existe uma linha com o mesmo produto
+                boolean existe = false;
+                for (LinhaFatura linhaUnica : linhasUnicas) {
+                    if (linhaUnica.getProdutoId() == linha.getProdutoId()) {
+                        existe = true;
+                        break;
+                    }
+                }
+
+                // Se não existe, adiciona à lista de linhas únicas
+                if (!existe) {
+                    linhasUnicas.add(linha);
+                    Log.d("DetalhesFatura", "Adicionando linha única - Produto ID: " +
+                            linha.getProdutoId() + ", Quantidade: " + linha.getQuantidade());
+                }
+            }
+
+            // Limpar adaptador existente se houver
+            if (adapter != null) {
+                adapter.clear();
+            }
+
+            // Criar novo adaptador com as linhas únicas
+            adapter = new LinhasFaturasAdaptador(getContext(), linhasUnicas);
             recyclerLinhasCheckout.setAdapter(adapter);
+
+            // Log para debug das linhas únicas
+            Log.d("DetalhesFatura", "Total de linhas únicas: " + linhasUnicas.size());
+            for (LinhaFatura linha : linhasUnicas) {
+                Log.d("DetalhesFatura", "Linha única processada - Fatura ID=" + linha.getFaturaId() +
+                        ", Produto ID=" + linha.getProdutoId() +
+                        ", Quantidade=" + linha.getQuantidade() +
+                        ", Preço=" + linha.getPrecoVenda() +
+                        ", Subtotal=" + linha.getSubTotal());
+            }
         }
     }
+
+
 
     @Override
     public void onLinhaFaturaCriada(LinhaFatura linhaFatura) {

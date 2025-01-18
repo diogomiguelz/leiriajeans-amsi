@@ -661,6 +661,7 @@ public class SingletonProdutos {
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {
                     Log.d("CarrinhoDebug", "Linha adicionada com sucesso: " + response);
+                    Toast.makeText(context, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
                 },
                 error -> {
                     Log.e("CarrinhoDebug", "Erro ao adicionar linha: " + error.getMessage());
@@ -1157,6 +1158,30 @@ public class SingletonProdutos {
         volleyQueue.add(userDataRequest);
     }
 
+    public void getFaturaByIdAPI(Context context, int faturaId, FaturasListener listener) {
+        getFaturasAPI(context, getUserId(context), new FaturasListener() {
+            @Override
+            public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
+                if (faturas != null && !faturas.isEmpty()) {
+                    ArrayList<Fatura> faturaFiltrada = new ArrayList<>();
+                    for (Fatura f : faturas) {
+                        if (f.getId() == faturaId) {
+                            faturaFiltrada.add(f);
+                            break;
+                        }
+                    }
+                    listener.onRefreshListaFatura(faturaFiltrada);
+                } else {
+                    listener.onRefreshListaFatura(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onFaturaCriada(Fatura fatura) {
+                listener.onFaturaCriada(fatura);
+            }
+        });
+    }
 
     // Metodo para criar uma linha de fatura
     public void criarLinhaFaturaAPI(final Context context, final LinhaFatura linhaFatura, final LinhasFaturasListener listener) {

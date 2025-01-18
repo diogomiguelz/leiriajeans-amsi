@@ -5,117 +5,223 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_login"
+    android:fillViewport="true"
     tools:context=".RegistarActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="24dp">
 
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_Criarconta"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_preencha_os_dados_para_se_registar"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-        <View
-            android:id="@+id/ContainerComponents_Registo"
-            style="@style/ContainerComponents_Registar"
-            android:layout_marginHorizontal="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
 
-        <EditText
-            android:id="@+id/etNome"
-            style="@style/TextView_Email"
-            android:hint="@string/txt_username_hint"
-            android:inputType="text"
-            android:drawableRight="@drawable/ic_nome"
-            app:layout_constraintTop_toTopOf="@id/ContainerComponents_Registo"
-            app:layout_constraintStart_toStartOf="@id/ContainerComponents_Registo"
-            app:layout_constraintEnd_toEndOf="@id/ContainerComponents_Registo" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-        <EditText
-            android:id="@+id/etEmailRegistar"
-            style="@style/TextView_Email"
-            android:hint="@string/txt_EmailHint"
-            android:drawableRight="@drawable/ic_email"
-            android:inputType="textEmailAddress"
-            app:layout_constraintTop_toBottomOf="@id/etNome"
-            app:layout_constraintStart_toStartOf="@id/etNome"
-            app:layout_constraintEnd_toEndOf="@id/etNome" />
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/txtnome_de_utilizador"
+                    app:startIconDrawable="@drawable/ic_nome">
 
-        <EditText
-            android:id="@+id/etPassRegistar"
-            style="@style/TextView_Email"
-            android:drawableRight="@drawable/ic_olho"
-            android:hint="@string/txt_PasswordHint"
-            android:inputType="textPassword"
-            app:layout_constraintTop_toBottomOf="@id/etEmailRegistar"
-            app:layout_constraintStart_toStartOf="@id/etEmailRegistar"
-            app:layout_constraintEnd_toEndOf="@id/etEmailRegistar" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etNome"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="@string/txt_email"
+                    app:startIconDrawable="@drawable/ic_email">
 
-        <EditText
-            android:id="@+id/etRua"
-            style="@style/TextView_Email"
-            android:hint="@string/txt_morada"
-            android:inputType="text"
-            app:layout_constraintTop_toBottomOf="@id/etPassRegistar"
-            app:layout_constraintStart_toStartOf="@id/etPassRegistar"
-            app:layout_constraintEnd_toEndOf="@id/etPassRegistar" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etEmailRegistar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etCodPostal"
-            style="@style/TextView_Email"
-            android:hint="@string/txt_codpostal"
-            android:inputType="text"
-            app:layout_constraintTop_toBottomOf="@id/etRua"
-            app:layout_constraintStart_toStartOf="@id/etRua"
-            app:layout_constraintEnd_toEndOf="@id/etRua" />
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="@string/txtpassword"
+                    app:passwordToggleEnabled="true"
+                    app:startIconDrawable="@drawable/ic_olho">
 
-        <EditText
-            android:id="@+id/etLocalidade"
-            style="@style/TextView_Email"
-            android:hint="@string/txt_localidade"
-            android:inputType="text"
-            app:layout_constraintTop_toBottomOf="@id/etCodPostal"
-            app:layout_constraintStart_toStartOf="@id/etCodPostal"
-            app:layout_constraintEnd_toEndOf="@id/etCodPostal" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPassRegistar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etNif"
-            style="@style/TextView_Email"
-            android:hint="@string/txt_nif"
-            android:inputType="number"
-            app:layout_constraintTop_toBottomOf="@id/etLocalidade"
-            app:layout_constraintStart_toStartOf="@id/etLocalidade"
-            app:layout_constraintEnd_toEndOf="@id/etLocalidade" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txtendereço"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="24dp"/>
 
-        <EditText
-            android:id="@+id/etTelefone"
-            style="@style/TextView_Email"
-            android:hint="@string/txt_telefone"
-            android:inputType="number"
-            app:layout_constraintTop_toBottomOf="@id/etNif"
-            app:layout_constraintStart_toStartOf="@id/etNif"
-            app:layout_constraintEnd_toEndOf="@id/etNif" />
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/txtrua">
 
-        <EditText
-            android:id="@+id/etNomeUtilizador"
-            style="@style/TextView_Email"
-            android:hint="@string/txt_nomeproprio"
-            android:inputType="text"
-            app:layout_constraintTop_toBottomOf="@id/etTelefone"
-            app:layout_constraintStart_toStartOf="@id/etTelefone"
-            app:layout_constraintEnd_toEndOf="@id/etTelefone" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etRua"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp">
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:hint="@string/txt_codigo_postal">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnRegistar"
-            style="@style/Bt_login"
-            android:text="@string/txt_registar"
-            android:onClick="onClickSignup"
-            android:layout_marginTop="25dp"
-            app:layout_constraintTop_toBottomOf="@id/etNomeUtilizador"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCodPostal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/localidade">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLocalidade"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Seção de Dados Pessoais -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_dados_pessoais"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="24dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:hint="@string/txtnif">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etNif"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/txttelefone">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etTelefone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="phone"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="@string/txtnomeproprio">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etNomeUtilizador"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegistar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/txtregistar"
+                    android:padding="12dp"
+                    android:textSize="16sp"
+                    app:cornerRadius="8dp"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

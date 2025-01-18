@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,23 +11,111 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Método de Pagamento"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
+
     <Spinner
         android:id="@+id/spinnerMetodoPagamento"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:prompt="@string/selecione_metodo_pagamento" />
+        android:layout_marginTop="8dp"/>
+
+    <!-- Campos específicos para cada método de pagamento -->
+    <LinearLayout
+        android:id="@+id/containerCamposPagamento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp">
+
+        <!-- Campo MBWay -->
+        <EditText
+            android:id="@+id/etNumeroMBWay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Número de telefone MBWay"
+            android:inputType="phone"
+            android:visibility="gone"/>
+
+        <!-- Campo PayPal -->
+        <EditText
+            android:id="@+id/etEmailPayPal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email PayPal"
+            android:inputType="textEmailAddress"
+            android:visibility="gone"/>
+
+        <!-- Campos Multibanco -->
+        <LinearLayout
+            android:id="@+id/containerMultibanco"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#F5F5F5"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dados para Pagamento Multibanco"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvEntidade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Entidade: 12345"/>
+
+            <TextView
+                android:id="@+id/tvReferencia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Referência: 123 456 789"/>
+
+            <TextView
+                android:id="@+id/tvValorMultibanco"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Valor: 0.00€"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Método de Expedição"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
 
     <Spinner
         android:id="@+id/spinnerMetodoExpedicao"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:prompt="@string/selecione_metodo_expedicao" />
+        android:layout_marginTop="8dp"/>
 
+    <TextView
+        android:id="@+id/tvTotalCompra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total: 0.00€"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:gravity="end"
+        android:layout_marginTop="16dp"/>
 
     <Button
         android:id="@+id/btnFinalizarCompra"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Finalizar Compra" />
+        android:text="Finalizar Compra"/>
 </LinearLayout>

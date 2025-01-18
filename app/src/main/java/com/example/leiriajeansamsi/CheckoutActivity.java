@@ -2,9 +2,14 @@ package com.example.leiriajeansamsi;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +31,12 @@ import java.util.List;
 public class CheckoutActivity extends AppCompatActivity {
 
     private RecyclerView recyclerLinhasCheckout;
+    private Spinner spinnerMetodoPagamento, spinnerMetodoExpedicao;
+    private EditText etNumeroMBWay, etEmailPayPal;
+    private LinearLayout containerMultibanco;
+    private TextView tvValorMultibanco;
+    private TextView tvTotalCompra;
+    private float valorTotal = 0;
     private Button btnFinalizarCompra;
     private LinhasFaturasAdaptador adaptador;
     private List<LinhaFatura> linhasFaturas = new ArrayList<>();
@@ -37,20 +48,168 @@ public class CheckoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
 
-        recyclerLinhasCheckout = findViewById(R.id.recyclerLinhasCheckout);
-        btnFinalizarCompra = findViewById(R.id.btnFinalizarCompra);
-        Spinner spinnerMetodoPagamento = findViewById(R.id.spinnerMetodoPagamento);
-        Spinner spinnerMetodoExpedicao = findViewById(R.id.spinnerMetodoExpedicao);
+        // Inicializar todas as views
+        inicializarComponentes();
 
+        // Configurar RecyclerView
+        configurarRecyclerView();
+
+        // Carregar dados
+        carregarDados();
+
+        // Configurar listeners
+        configurarListeners();
+    }
+
+    private void inicializarComponentes() {
+        // Usar as variáveis de classe ao invés de criar novas locais
+        recyclerLinhasCheckout = findViewById(R.id.recyclerLinhasCheckout);
+        spinnerMetodoPagamento = findViewById(R.id.spinnerMetodoPagamento);
+        spinnerMetodoExpedicao = findViewById(R.id.spinnerMetodoExpedicao);
+        btnFinalizarCompra = findViewById(R.id.btnFinalizarCompra);
+        tvTotalCompra = findViewById(R.id.tvTotalCompra);
+        tvValorMultibanco = findViewById(R.id.tvValorMultibanco);
+        containerMultibanco = findViewById(R.id.containerMultibanco);
+        etNumeroMBWay = findViewById(R.id.etNumeroMBWay);
+        etEmailPayPal = findViewById(R.id.etEmailPayPal);
+    }
+
+    private void configurarRecyclerView() {
         adaptador = new LinhasFaturasAdaptador(this, linhasFaturas);
         recyclerLinhasCheckout.setLayoutManager(new LinearLayoutManager(this));
         recyclerLinhasCheckout.setAdapter(adaptador);
+    }
 
+    private void carregarDados() {
         carregarLinhasFaturas();
         carregarMetodosPagamento(spinnerMetodoPagamento);
         carregarMetodosExpedicao(spinnerMetodoExpedicao);
+        atualizarTotal();
+    }
 
-        btnFinalizarCompra.setOnClickListener(v -> finalizarCompra(spinnerMetodoPagamento, spinnerMetodoExpedicao));
+    private void configurarListeners() {
+        btnFinalizarCompra.setOnClickListener(v -> validarEFinalizarCompra());
+
+        spinnerMetodoPagamento.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!metodosPagamento.isEmpty()) {
+                    atualizarCamposPagamento(metodosPagamento.get(position));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                esconderTodosCamposPagamento();
+            }
+        });
+
+        spinnerMetodoExpedicao.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                atualizarTotal();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                atualizarTotal();
+            }
+        });
+    }
+
+
+
+    private void atualizarCamposPagamento(MetodoPagamento metodoPagamento) {
+        esconderTodosCamposPagamento();
+
+        switch (metodoPagamento.getNome().toLowerCase()) {
+            case "mbway":
+                etNumeroMBWay.setVisibility(View.VISIBLE);
+                break;
+            case "paypal":
+                etEmailPayPal.setVisibility(View.VISIBLE);
+                break;
+            case "multibanco":
+                containerMultibanco.setVisibility(View.VISIBLE);
+                atualizarDadosMultibanco();
+                break;
+        }
+    }
+
+    private void atualizarTotal() {
+        float subtotal = 0;
+        float totalIva = 0;
+
+        for (LinhaFatura linha : linhasFaturas) {
+            subtotal += linha.getSubTotal();
+            totalIva += linha.getValorIva();
+        }
+
+        float custoExpedicao = 0;
+        if (!metodosExpedicao.isEmpty() && spinnerMetodoExpedicao != null &&
+                spinnerMetodoExpedicao.getSelectedItemPosition() >= 0) {
+            MetodoExpedicao metodoSelecionado = metodosExpedicao.get(spinnerMetodoExpedicao.getSelectedItemPosition());
+            custoExpedicao = metodoSelecionado.getCusto();
+        }
+
+        valorTotal = subtotal + totalIva + custoExpedicao;
+
+        tvTotalCompra.setText(String.format("Subtotal: %.2f€\nIVA: %.2f€\nExpedição: %.2f€\nTotal: %.2f€",
+                subtotal, totalIva, custoExpedicao, valorTotal));
+
+        if (containerMultibanco.getVisibility() == View.VISIBLE) {
+            atualizarDadosMultibanco();
+        }
+    }
+
+
+
+    private void atualizarDadosMultibanco() {
+        tvValorMultibanco.setText(String.format("Valor a pagar: %.2f€", valorTotal));
+    }
+
+    private void validarEFinalizarCompra() {
+        if (metodosPagamento.isEmpty() || metodosExpedicao.isEmpty()) {
+            Toast.makeText(this, "Selecione métodos válidos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        MetodoPagamento metodoPagamento = metodosPagamento.get(spinnerMetodoPagamento.getSelectedItemPosition());
+
+        switch (metodoPagamento.getNome().toLowerCase()) {
+            case "mbway":
+                String numeroMBWay = etNumeroMBWay.getText().toString().trim();
+                if (numeroMBWay.isEmpty()) {
+                    etNumeroMBWay.setError("Insira o número de telefone");
+                    return;
+                }
+                if (!numeroMBWay.matches("^9[1236][0-9]{7}$")) {
+                    etNumeroMBWay.setError("Número de telefone inválido");
+                    return;
+                }
+                break;
+
+            case "paypal":
+                String emailPayPal = etEmailPayPal.getText().toString().trim();
+                if (emailPayPal.isEmpty()) {
+                    etEmailPayPal.setError("Insira o email PayPal");
+                    return;
+                }
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(emailPayPal).matches()) {
+                    etEmailPayPal.setError("Email inválido");
+                    return;
+                }
+                break;
+        }
+
+        // Se passou pelas validações, prossegue com a finalização
+        finalizarCompra(spinnerMetodoPagamento, spinnerMetodoExpedicao);
+    }
+
+    private void esconderTodosCamposPagamento() {
+        etNumeroMBWay.setVisibility(View.GONE);
+        etEmailPayPal.setVisibility(View.GONE);
+        containerMultibanco.setVisibility(View.GONE);
     }
 
     private void carregarLinhasFaturas() {
