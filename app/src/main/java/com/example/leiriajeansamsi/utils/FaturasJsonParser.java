@@ -22,7 +22,6 @@ public class FaturasJsonParser {
         fatura.setMetodoExpedicaoId(jsonResponse.optInt("metodoexpedicao_id", 0));
         fatura.setData(jsonResponse.optString("data", ""));
 
-        // Corrigir aqui - usar o campo correto do JSON
         fatura.setValorTotal((float) jsonResponse.optDouble("valorTotal", 0.0));
 
         // Se houver userdata_id no JSON

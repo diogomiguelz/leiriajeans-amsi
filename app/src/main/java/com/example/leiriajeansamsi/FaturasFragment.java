@@ -25,6 +25,7 @@ import com.example.leiriajeansamsi.listeners.FaturaListener;
 import com.example.leiriajeansamsi.listeners.FaturasListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FaturasFragment extends Fragment implements FaturasListener, FaturaListener {
@@ -155,6 +156,10 @@ public class FaturasFragment extends Fragment implements FaturasListener, Fatura
         if (faturas == null) {
             faturas = new ArrayList<>();
         }
+
+        //reverter o array das faturas
+        Collections.reverse(faturas);
+
         if (adaptador != null) {
             adaptador.updateFaturas(faturas);
 

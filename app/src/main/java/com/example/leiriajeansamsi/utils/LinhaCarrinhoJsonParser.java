@@ -28,7 +28,6 @@ public class LinhaCarrinhoJsonParser {
         if (produto == null) {
             throw new JSONException("Produto não encontrado: " + produtoId);
         }
-
         return new LinhaCarrinho(id, quantidade, carrinhoId, produto, valorIva, precoVenda);
     }
 

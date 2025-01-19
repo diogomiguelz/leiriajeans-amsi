@@ -20,7 +20,6 @@ public class LinhasFaturasJsonParser {
         linha.setProdutoId(jsonLinhaFatura.optInt("produto_id"));
         linha.setQuantidade(jsonLinhaFatura.optInt("quantidade"));
 
-        // A usar os nomes corretos dos campos
         linha.setPrecoVenda((float) jsonLinhaFatura.optDouble("precoVenda", 0.0));
         linha.setValorIva((float) jsonLinhaFatura.optDouble("valorIva", 0.0));
         linha.setSubTotal((float) jsonLinhaFatura.optDouble("subTotal", 0.0));
@@ -45,6 +44,6 @@ public class LinhasFaturasJsonParser {
     }
 
     public static LinhaFatura criarLinhaFatura(JSONObject response) throws JSONException {
-        return parseLinhaFatura(response, 0); // Ou passe o faturaId apropriado
+        return parseLinhaFatura(response, 0);
     }
 }

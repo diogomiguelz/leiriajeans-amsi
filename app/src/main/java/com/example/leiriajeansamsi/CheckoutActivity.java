@@ -215,9 +215,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private void carregarLinhasFaturas() {
         linhasFaturas.clear();
-        // Converte LinhaCarrinho para LinhaFatura
         for (LinhaCarrinho linhaCarrinho : Singleton.getInstance(this).getLinhaCarrinhos()) {
-            // Calcular o valor do IVA corretamente
             float precoVenda = linhaCarrinho.getProduto().getPreco();
             float taxaIva = linhaCarrinho.getProduto().getIva() / 100f; // Converte percentagem para decimal
             float valorIva = precoVenda * taxaIva * linhaCarrinho.getQuantidade();
@@ -229,8 +227,8 @@ public class CheckoutActivity extends AppCompatActivity {
                     0,                                     // ivaId
                     linhaCarrinho.getProduto().getId(),    // produtoId
                     precoVenda,                            // precoVenda
-                    valorIva,                              // valorIva (corrigido)
-                    subTotal,                              // subTotal (corrigido)
+                    valorIva,                              // valorIva
+                    subTotal,                              // subTotal
                     linhaCarrinho.getQuantidade()          // quantidade
             );
             linhasFaturas.add(linhaFatura);
@@ -285,7 +283,6 @@ public class CheckoutActivity extends AppCompatActivity {
                 new FaturasListener() {
                     @Override
                     public void onRefreshListaFatura(ArrayList<Fatura> faturas) {
-                        // Não utilizado aqui
                     }
 
                     @Override
@@ -353,7 +350,6 @@ public class CheckoutActivity extends AppCompatActivity {
 
                         @Override
                         public void onRefreshListaLinhasFaturas(int faturaId, ArrayList<LinhaFatura> linhas) {
-                            // Não utilizado aqui
                         }
                     });
         }

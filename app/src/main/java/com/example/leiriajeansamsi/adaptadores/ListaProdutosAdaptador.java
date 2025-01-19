@@ -73,7 +73,7 @@ public class ListaProdutosAdaptador extends RecyclerView.Adapter<ListaProdutosAd
             // Primeiro verifica se já existe um carrinho
             singleton.getCarrinhoAPI(context);
 
-            // O método getCarrinhoAPI já inclui a lógica de criar o carrinho se não existir
+            // O metodo getCarrinhoAPI já inclui a lógica de criar o carrinho se não existir
             // e depois adicionar o produto como uma linha do carrinho
             singleton.criarLinhaCarrinhoAPI(context, product, 1);
             Toast.makeText(context, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();

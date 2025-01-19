@@ -30,7 +30,7 @@ public class ProdutoJsonParser {
                 int iva = produtoJSON.optInt("iva", 0);
                 String categoria = produtoJSON.optString("categoria", "");
                 String imagem = produtoJSON.optString("imagens", "");
-                String sexo = produtoJSON.optString("sexo", "U"); // U para Unissex como padrão
+                String sexo = produtoJSON.optString("sexo");
 
                 Produto produto = new Produto(id, iva, stock, nome, descricao, categoria, imagem, cor, sexo, preco);
                 produtos.add(produto);

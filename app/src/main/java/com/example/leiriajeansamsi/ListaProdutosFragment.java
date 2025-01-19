@@ -209,7 +209,7 @@ public class ListaProdutosFragment extends Fragment implements ProdutosListener,
 
             // Passar dados (exemplo do ID do produto)
             Bundle args = new Bundle();
-            args.putParcelable(DetalhesProdutosFragment.PRODUTO, product);  // Corrigido aqui
+            args.putParcelable(DetalhesProdutosFragment.PRODUTO, product);
             detalhesProdutoFragment.setArguments(args);
 
             // Iniciar a transação do fragmento

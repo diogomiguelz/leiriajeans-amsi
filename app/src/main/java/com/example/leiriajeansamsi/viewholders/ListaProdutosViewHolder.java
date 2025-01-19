@@ -33,5 +33,4 @@ public class ListaProdutosViewHolder extends RecyclerView.ViewHolder {
         }*/
     }
 
-
 }
