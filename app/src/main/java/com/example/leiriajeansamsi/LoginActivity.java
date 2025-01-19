@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, S
     private void sincronizarFaturas() {
         try {
             if (isConnectedToInternet()) {
-                Log.d("LoginActivity", "Sincronizando faturas online");
+                Log.d("LoginActivity", "A sincronizar as faturas online");
                 Singleton.getInstance(this).setFaturasListener(this);
                 Singleton.getInstance(this).getFaturasAPI(this);
             } else {

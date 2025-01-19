@@ -20,7 +20,7 @@ public class LinhasFaturasJsonParser {
         linha.setProdutoId(jsonLinhaFatura.optInt("produto_id"));
         linha.setQuantidade(jsonLinhaFatura.optInt("quantidade"));
 
-        // Usando os nomes corretos dos campos
+        // A usar os nomes corretos dos campos
         linha.setPrecoVenda((float) jsonLinhaFatura.optDouble("precoVenda", 0.0));
         linha.setValorIva((float) jsonLinhaFatura.optDouble("valorIva", 0.0));
         linha.setSubTotal((float) jsonLinhaFatura.optDouble("subTotal", 0.0));

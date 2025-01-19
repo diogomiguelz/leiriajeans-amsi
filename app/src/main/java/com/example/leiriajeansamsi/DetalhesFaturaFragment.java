@@ -145,7 +145,7 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
     private void atualizarInterfaceFatura(Fatura fatura) {
         if (!isAdded() || getContext() == null) return;
 
-        Log.d("DetalhesFatura", "Atualizando interface com fatura: " + fatura.toString());
+        Log.d("DetalhesFatura", "A atualizar a interface com fatura: " + fatura.toString());
 
         // Formatação da data
         if (fatura.getData() != null) {
@@ -253,7 +253,7 @@ public class DetalhesFaturaFragment extends Fragment implements LinhasFaturasLis
 
     private String formatarData(String data) {
         try {
-            Log.d("DetalhesFatura", "Tentando formatar data: " + data);
+            Log.d("DetalhesFatura", "A tentar formatar data: " + data);
 
             // Primeiro, tente o formato completo
             SimpleDateFormat formatoEntrada;

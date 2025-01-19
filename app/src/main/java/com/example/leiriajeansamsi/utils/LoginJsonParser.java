@@ -41,7 +41,7 @@ public class LoginJsonParser {
 
     public static Utilizador parserJsonGetUtilizadorData(JSONObject userForm) {
         try {
-            Log.d("DEBUG_PARSER", "Iniciando parsing do userForm: " + userForm.toString());
+            Log.d("DEBUG_PARSER", "A inicar o parsing do userForm: " + userForm.toString());
 
             Utilizador utilizador = new Utilizador();
 

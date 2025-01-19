@@ -333,7 +333,7 @@ public class CheckoutActivity extends AppCompatActivity {
         Log.d("CheckoutActivity", "Total de linhas a processar: " + total);
 
         for (LinhaFatura linha : linhasFaturas) {
-            Log.d("CheckoutActivity", "Criando linha com fatura_id: " + linha.getFaturaId());
+            Log.d("CheckoutActivity", "A criar a linha com fatura_id: " + linha.getFaturaId());
 
             Singleton.getInstance(this).criarLinhaFaturaAPI(this, linha,
                     new LinhasFaturasListener() {
